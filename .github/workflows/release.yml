@@ -65,6 +65,8 @@ jobs:
           new_version="v$new_version"
           echo "New version: $new_version"
 
+          tar -czvf sd-webui-discord-release-$new_version.tar.gz release
+
           # 创建release
           echo "NEW_VERSION=$new_version" >> $GITHUB_OUTPUT
 
@@ -78,3 +80,13 @@ jobs:
           release_name: ${{ env.NEW_VERSION }}
           draft: false
           prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ./sd-webui-discord-release-$NEW_VERSION.tar.gz
+          asset_name: sd-webui-discord-release-$NEW_VERSION.tar.gz
+          asset_content_type: application/gzip
