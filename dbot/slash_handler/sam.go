@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:27:32
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 18:20:08
+ * @LastEditTime: 2023-08-18 01:25:55
  * @Description: file content
  */
 package slash_handler
@@ -108,7 +108,7 @@ func (shdl SlashHandler) SamSetOptions(dsOpt []*discordgo.ApplicationCommandInte
 
 	// default value
 	if opt.DinoModelName == nil {
-		opt.DinoModelName = shdl.dinoModelChoice()[0].Value.(*string)
+		opt.DinoModelName = func() *string { v := shdl.dinoModelChoice()[0].Value.(string); return &v }()
 	}
 
 }
