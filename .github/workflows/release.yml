@@ -1,0 +1,80 @@
+name: Release Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to execute'
+        required: true
+        default: 'release'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.19
+
+      - name: Get latest tag
+        uses: actions/github-script@v4
+        id: get-latest-tag
+        with:
+          script: |
+            const response = await github.repos.listTags({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            const latestTag = response.data[0].name;
+            core.setOutput('latest-tag', latestTag)
+
+      - name: Copy files and increment version
+        id: copy-files
+        run: |
+          git pull
+          # 创建目标目录
+          mkdir release
+          # 编译项目
+          bash build.sh
+          current_version=${{ steps.get-latest-tag.outputs.latest-tag }}
+          echo "Current version: $current_version"
+
+          version=$(echo $current_version | cut -c 2-)
+          IFS='.' read -ra version_parts <<< "$version"
+          major=${version_parts[0]}
+          minor=${version_parts[1]}
+          patch=${version_parts[2]}
+          # 版本递增，patch+1超过5，minor+1,minor超过10,major+1
+          if [ "$patch" -lt 5 ]; then
+            patch=$((patch + 1))
+          elif [ "$minor" -lt 10 ]; then
+            minor=$((minor + 1))
+            patch=0
+          else
+            major=$((major + 1))
+            minor=0
+            patch=0
+          fi
+
+          new_version="$major.$minor.$patch"
+          new_version="v$new_version"
+          echo "New version: $new_version"
+
+          # 创建release
+          echo "NEW_VERSION=$new_version" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_VERSION : ${{ steps.copy-files.outputs.NEW_VERSION }}
+        with:
+          tag_name: ${{ env.NEW_VERSION }}
+          release_name: ${{ env.NEW_VERSION }}
+          draft: false
+          prerelease: false
