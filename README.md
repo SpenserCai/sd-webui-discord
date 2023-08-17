@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 22:30:03
+ * @LastEditTime: 2023-08-17 22:38:27
  * @Description: file content
 -->
 <div align="center">
@@ -42,11 +42,11 @@ The command is still under active development, and there are two ways to experie
 [![Discord](https://discordapp.com/api/guilds/1140177489008807966/widget.png?style=banner2)](https://discord.gg/uNJpzEE4sZ)
 
 #### Segment Anything With Prompt
- - Extension: [sd-webui-segment-anything](https://github.com/continue-revolution/sd-webui-segment-anything)
- - ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/sam_demo.png)
- - ![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/sam_options.png)
+  - Extension: [sd-webui-segment-anything](https://github.com/continue-revolution/sd-webui-segment-anything)
+  ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/sam_demo.png)
+  ![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/sam_options.png)
 
 #### Deoldify
  - Extension: [sd-webui-deoldify](https://github.com/SpenserCai/sd-webui-deoldify)
- - ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_demo.png)
- - ![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_options.png)
+  ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_demo.png)
+  ![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_options.png)
