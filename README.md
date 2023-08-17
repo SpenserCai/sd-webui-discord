@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 23:13:13
+ * @LastEditTime: 2023-08-18 00:09:13
  * @Description: file content
 -->
 <div align="center">
@@ -50,3 +50,48 @@ The command is still under active development, and there are two ways to experie
  - Extension: [sd-webui-deoldify](https://github.com/SpenserCai/sd-webui-deoldify)
   ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_demo.png)
   ![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_options.png)
+
+### Self-Deploy
+
+1.Download the latest release from [here](https://github.com/SpenserCai/sd-webui-discord/releases/latest).
+
+2.Create a bot account on Discord and get the token.
+
+3.Configuration and Startup
+```bash
+tar -zxvf sd-webui-discord-release-v*.tar.gz // unzip the release package
+
+cd sd-webui-discord-release-v*/release/
+```
+Edit the `config.json` file and fill in the token and other information.
+
+```json
+{
+    "sd_webui":{
+        "servers":[
+            {
+                "name":"webui-1",
+                "host":"127.0.0.1:7860",
+                "max_concurrent":5,
+                "max_queue":100,
+                "max_vram":"20G"
+            }
+        ]
+    },
+    "discord":{
+        "token":"<your token here>",
+        "server_id":"<your servers id here if empty all servers>"
+    }
+}
+```
+
+Start The Bot
+```bash
+# if you can't connect discord,you need use proxy and run this command:
+# export https_proxy=http://127.0.0.1:8888;export http_proxy=http://127.0.0.1:8888;
+./sd-webui-discord
+```
+
+## Participating
+This is an ongoing project, and if you are interested in contributing, you can join our [Discord Server](https://discord.gg/uNJpzEE4sZ). We welcome any feedback or suggestions, so feel free to submit an issue.
+
