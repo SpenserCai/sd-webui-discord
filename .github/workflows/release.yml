@@ -71,7 +71,8 @@ jobs:
           echo "NEW_VERSION=$new_version" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        uses: actions/create-release@v1
+        uses: actions/create-release@master
+        id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEW_VERSION : ${{ steps.copy-files.outputs.NEW_VERSION }}
@@ -82,11 +83,11 @@ jobs:
           prerelease: false
 
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./sd-webui-discord-release-$NEW_VERSION.tar.gz
           asset_name: sd-webui-discord-release-$NEW_VERSION.tar.gz
           asset_content_type: application/gzip
