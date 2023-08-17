@@ -65,7 +65,9 @@ jobs:
           new_version="v$new_version"
           echo "New version: $new_version"
 
-          tar -czvf sd-webui-discord-release-${{ new_version }}.tar.gz release
+          tar -czvf sd-webui-discord-release-$new_version.tar.gz release
+
+          ls
 
           # 创建release
           echo "NEW_VERSION=$new_version" >> $GITHUB_OUTPUT
@@ -89,6 +91,6 @@ jobs:
           NEW_VERSION : ${{ steps.copy-files.outputs.NEW_VERSION }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./sd-webui-discord-release-${{ NEW_VERSION }}.tar.gz
-          asset_name: sd-webui-discord-release-$NEW_VERSION.tar.gz
+          asset_path: ./sd-webui-discord-release-${{ env.NEW_VERSION }}.tar.gz
+          asset_name: sd-webui-discord-release-${{ env.NEW_VERSION }}.tar.gz
           asset_content_type: application/gzip
