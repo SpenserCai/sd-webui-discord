@@ -3,12 +3,12 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 22:38:27
+ * @LastEditTime: 2023-08-17 23:09:16
  * @Description: file content
 -->
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/logo.png" width="200" height="200" alt="sd-webui-discord">
+<img src="https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/wrapper.png" width="256" height="128" alt="sd-webui-discord">
 
 # SD-WEBUI-DISCORD
 Support For Clustered Stable Diffusion WebUi Discord Bot
