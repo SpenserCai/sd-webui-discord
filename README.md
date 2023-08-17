@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 00:09:13
+ * @LastEditTime: 2023-08-18 00:12:03
  * @Description: file content
 -->
 <div align="center">
@@ -16,6 +16,9 @@ Support For Clustered Stable Diffusion WebUi Discord Bot
 </div>
 
 <div align="center">
+  <a href="https://raw.githubusercontent.com/SpenserCai/sd-webui-go/main/LICENSE">
+    <img src="https://img.shields.io/github/license/SpenserCai/sd-webui-go?color=blueviolet" alt="license">
+  </a>
   <img src="https://img.shields.io/badge/Go-1.19+-blue" alt="go">
   <a href="https://github.com/SpenserCai/sd-webui-go/releases">
     <img src="https://img.shields.io/github/v/release/SpenserCai/sd-webui-discord?color=rgb(255%2C0%2C0)&include_prereleases" alt="release">
