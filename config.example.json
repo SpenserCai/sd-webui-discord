@@ -1,0 +1,17 @@
+{
+    "sd_webui":{
+        "servers":[
+            {
+                "name":"webui-1",
+                "host":"127.0.0.1:7860",
+                "max_concurrent":5,
+                "max_queue":100,
+                "max_vram":"20G"
+            }
+        ]
+    },
+    "discord":{
+        "token":"<your token here>",
+        "server_id":"<your servers id here if empty all servers>"
+    }
+}
