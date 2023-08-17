@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:27:32
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 01:25:55
+ * @LastEditTime: 2023-08-18 01:52:28
  * @Description: file content
  */
 package slash_handler
@@ -114,8 +114,7 @@ func (shdl SlashHandler) SamSetOptions(dsOpt []*discordgo.ApplicationCommandInte
 }
 
 func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.SamSamPredictRequest, node *cluster.ClusterNode) {
-	shdl.ReportCommandInfo(s, i)
-	msg, err := shdl.SendRunningMessage(s, i)
+	msg, err := shdl.SendStateMessage("Running", s, i)
 	if err != nil {
 		log.Println(err)
 		return
@@ -159,6 +158,7 @@ func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.Interactio
 func (shdl SlashHandler) SamCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.SamSamPredictRequest{}
 	shdl.SamSetOptions(i.ApplicationCommandData().Options, option)
+	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
 		shdl.SamAction(s, i, option, node)

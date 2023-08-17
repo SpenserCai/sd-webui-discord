@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 17:25:33
+ * @LastEditTime: 2023-08-18 01:48:44
  * @Description: file content
  */
 package slash_handler
@@ -40,9 +40,9 @@ func (shdl SlashHandler) GenerateTaskID(i *discordgo.InteractionCreate) string {
 	return fmt.Sprintf("%s_%s_%s", i.Interaction.ID, i.Interaction.Member.User.ID, i.Interaction.Member.User.Username)
 }
 
-func (shdl SlashHandler) SendRunningMessage(s *discordgo.Session, i *discordgo.InteractionCreate) (*discordgo.Message, error) {
+func (shdl SlashHandler) SendStateMessage(state string, s *discordgo.Session, i *discordgo.InteractionCreate) (*discordgo.Message, error) {
 	msg, err := s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
-		Content: "Running...",
+		Content: fmt.Sprintf("%s...", state),
 		Files:   []*discordgo.File{},
 	})
 	if err != nil {

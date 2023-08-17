@@ -3,12 +3,13 @@
  * @Date: 2023-08-16 22:27:15
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 17:20:58
+ * @LastEditTime: 2023-08-18 01:52:21
  * @Description: file content
  */
 package slash_handler
 
 import (
+	"log"
 	"sd-webui-discord/cluster"
 	"sd-webui-discord/global"
 	"sd-webui-discord/utils"
@@ -67,15 +68,9 @@ func (shdl SlashHandler) DeoldifySetOptions(dsOpt []*discordgo.ApplicationComman
 }
 
 func (shdl SlashHandler) DeoldifyAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.DeoldifyImageRequest, node *cluster.ClusterNode) {
-	shdl.ReportCommandInfo(s, i)
-	msg, err := s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
-		Content: "Deoldifing...",
-		Files:   []*discordgo.File{},
-	})
+	msg, err := shdl.SendStateMessage("Running", s, i)
 	if err != nil {
-		s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
-			Content: "Something went wrong",
-		})
+		log.Println(err)
 		return
 	}
 	deoldify := &intersvc.DeoldifyImage{RequestItem: opt}
@@ -108,6 +103,7 @@ func (shdl SlashHandler) DeoldifyAction(s *discordgo.Session, i *discordgo.Inter
 func (shdl SlashHandler) DeoldifyCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.DeoldifyImageRequest{}
 	shdl.DeoldifySetOptions(i.ApplicationCommandData().Options, option)
+	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
 		shdl.DeoldifyAction(s, i, option, node)
