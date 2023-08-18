@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:10:00
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 15:17:16
+ * @LastEditTime: 2023-08-18 11:22:18
  * @Description: file content
  */
 package dbot
@@ -38,4 +38,5 @@ func (dbot *DiscordBot) GenerateSlashMap() error {
 func (dbot *DiscordBot) GenerateCommandList() {
 	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.DeoldifyOptions())
 	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.SamOptions())
+	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.RembgOptions())
 }
