@@ -3,14 +3,15 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 01:48:44
+ * @LastEditTime: 2023-08-18 13:04:01
  * @Description: file content
  */
 package slash_handler
 
 import (
 	"fmt"
-	"sd-webui-discord/utils"
+
+	"github.com/SpenserCai/sd-webui-discord/utils"
 
 	"github.com/bwmarrin/discordgo"
 )

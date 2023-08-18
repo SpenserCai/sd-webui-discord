@@ -1,4 +1,4 @@
-module sd-webui-discord
+module github.com/SpenserCai/sd-webui-discord
 
 go 1.19
 

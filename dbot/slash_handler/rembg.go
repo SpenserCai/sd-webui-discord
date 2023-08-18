@@ -3,16 +3,18 @@
  * @Date: 2023-08-18 11:11:48
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 12:33:34
+ * @LastEditTime: 2023-08-18 13:03:38
  * @Description: file content
  */
 package slash_handler
 
 import (
 	"log"
-	"sd-webui-discord/cluster"
-	"sd-webui-discord/global"
-	"sd-webui-discord/utils"
+
+	"github.com/SpenserCai/sd-webui-discord/utils"
+
+	"github.com/SpenserCai/sd-webui-discord/cluster"
+	"github.com/SpenserCai/sd-webui-discord/global"
 
 	"github.com/SpenserCai/sd-webui-go/intersvc"
 	"github.com/bwmarrin/discordgo"

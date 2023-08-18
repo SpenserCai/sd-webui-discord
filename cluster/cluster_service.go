@@ -3,14 +3,14 @@
  * @Date: 2023-08-16 15:17:45
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 13:38:29
+ * @LastEditTime: 2023-08-18 13:04:46
  * @Description: file content
  */
 package cluster
 
 import (
-	"sd-webui-discord/config"
-	"sd-webui-discord/queue"
+	"github.com/SpenserCai/sd-webui-discord/config"
+	"github.com/SpenserCai/sd-webui-discord/queue"
 
 	"log"
 

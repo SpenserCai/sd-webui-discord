@@ -3,7 +3,7 @@
  * @Date: 2023-08-15 21:55:36
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 16:45:17
+ * @LastEditTime: 2023-08-18 13:05:22
  * @Description: file content
  */
 package main
@@ -13,10 +13,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sd-webui-discord/cluster"
-	"sd-webui-discord/dbot"
-	"sd-webui-discord/global"
-	"sd-webui-discord/queue"
+
+	"github.com/SpenserCai/sd-webui-discord/cluster"
+	"github.com/SpenserCai/sd-webui-discord/dbot"
+	"github.com/SpenserCai/sd-webui-discord/global"
+	"github.com/SpenserCai/sd-webui-discord/queue"
 )
 
 func LoadConfig() error {

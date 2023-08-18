@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:10:00
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 11:22:18
+ * @LastEditTime: 2023-08-18 13:02:42
  * @Description: file content
  */
 package dbot
@@ -11,8 +11,9 @@ package dbot
 import (
 	"log"
 	"reflect"
-	"sd-webui-discord/dbot/slash_handler"
-	"sd-webui-discord/utils"
+
+	"github.com/SpenserCai/sd-webui-discord/dbot/slash_handler"
+	"github.com/SpenserCai/sd-webui-discord/utils"
 
 	"github.com/bwmarrin/discordgo"
 )
