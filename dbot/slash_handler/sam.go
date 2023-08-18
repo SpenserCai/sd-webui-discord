@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:27:32
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 01:52:28
+ * @LastEditTime: 2023-08-18 10:35:17
  * @Description: file content
  */
 package slash_handler
@@ -147,9 +147,12 @@ func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.Interactio
 				ContentType: "image/png",
 			})
 		}
+		if len(files) >= 3 {
+			files = files[0:3]
+		}
 		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
 			Content: func() *string { v := "Success!"; return &v }(),
-			Files:   files[0:3],
+			Files:   files,
 		})
 	}
 
