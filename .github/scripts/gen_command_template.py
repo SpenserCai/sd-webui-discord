@@ -3,7 +3,7 @@ Author: SpenserCai
 Date: 2023-08-19 15:41:07
 version: 
 LastEditors: SpenserCai
-LastEditTime: 2023-08-19 16:20:32
+LastEditTime: 2023-08-19 20:55:25
 Description: file content
 '''
 
@@ -62,10 +62,10 @@ func (shdl SlashHandler) {Cmd}Action(s *discordgo.Session, i *discordgo.Interact
 
 func (shdl SlashHandler) {Cmd}CommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {{
 	option := &intersvc.{RequestName}Request{{}}
-	shdl.{Cmd}SetOptions(i.ApplicationCommandData().Options, option)
 	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{{}}, error) {{
+		shdl.{Cmd}SetOptions(i.ApplicationCommandData().Options, option)
 		shdl.{Cmd}Action(s, i, option, node)
 		return nil, nil
 	}}
