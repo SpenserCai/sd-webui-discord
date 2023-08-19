@@ -3,7 +3,7 @@
  * @Date: 2023-08-18 11:11:48
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 13:03:38
+ * @LastEditTime: 2023-08-19 20:52:46
  * @Description: file content
  */
 package slash_handler
@@ -122,6 +122,7 @@ func (shdl SlashHandler) RembgCommandHandler(s *discordgo.Session, i *discordgo.
 	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
+		shdl.RembgSetOptions(i.ApplicationCommandData().Options, option)
 		shdl.RembgAction(s, i, option, node)
 		return nil, nil
 	}

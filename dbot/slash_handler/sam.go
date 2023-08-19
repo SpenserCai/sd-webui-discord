@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:27:32
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 13:03:52
+ * @LastEditTime: 2023-08-19 20:52:59
  * @Description: file content
  */
 package slash_handler
@@ -166,6 +166,7 @@ func (shdl SlashHandler) SamCommandHandler(s *discordgo.Session, i *discordgo.In
 	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
+		shdl.SamSetOptions(i.ApplicationCommandData().Options, option)
 		shdl.SamAction(s, i, option, node)
 		return nil, nil
 	}

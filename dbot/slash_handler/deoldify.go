@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:27:15
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 13:03:25
+ * @LastEditTime: 2023-08-19 20:52:31
  * @Description: file content
  */
 package slash_handler
@@ -103,10 +103,10 @@ func (shdl SlashHandler) DeoldifyAction(s *discordgo.Session, i *discordgo.Inter
 
 func (shdl SlashHandler) DeoldifyCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.DeoldifyImageRequest{}
-	shdl.DeoldifySetOptions(i.ApplicationCommandData().Options, option)
 	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
+		shdl.DeoldifySetOptions(i.ApplicationCommandData().Options, option)
 		shdl.DeoldifyAction(s, i, option, node)
 		return nil, nil
 	}
