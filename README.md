@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 10:49:39
+ * @LastEditTime: 2023-08-22 22:12:30
  * @Description: file content
 -->
 <div align="center">
@@ -43,6 +43,9 @@ The command is still under active development, and there are two ways to experie
 
 ### Join Our Discord Server
 [![Discord](https://discordapp.com/api/guilds/1140177489008807966/widget.png?style=banner2)](https://discord.gg/uNJpzEE4sZ)
+
+#### Text to Image
+![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/txt2img_demo.png)
 
 #### Segment Anything With Prompt
 Extension: [sd-webui-segment-anything](https://github.com/continue-revolution/sd-webui-segment-anything)
