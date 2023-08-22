@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-22 22:12:30
+ * @LastEditTime: 2023-08-23 01:43:07
  * @Description: file content
 -->
 <div align="center">
@@ -46,6 +46,10 @@ The command is still under active development, and there are two ways to experie
 
 #### Text to Image
 ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/txt2img_demo.png)
+
+#### Roop
+Extension: [sd-webui-roop](https://github.com/s0md3v/sd-webui-roop)
+![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/roop_demo.jpeg)
 
 #### Segment Anything With Prompt
 Extension: [sd-webui-segment-anything](https://github.com/continue-revolution/sd-webui-segment-anything)
