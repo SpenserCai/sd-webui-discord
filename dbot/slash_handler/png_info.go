@@ -3,7 +3,7 @@
  * @Date: 2023-08-19 18:27:34
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-19 20:51:52
+ * @LastEditTime: 2023-08-22 14:36:40
  * @Description: file content
  */
 package slash_handler
@@ -24,7 +24,7 @@ import (
 func (shdl SlashHandler) PngInfoOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "png_info",
-		Description: "Remove background from image",
+		Description: "Get image info",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
 				Type:        discordgo.ApplicationCommandOptionString,

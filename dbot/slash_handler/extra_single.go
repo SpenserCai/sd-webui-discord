@@ -3,7 +3,7 @@
  * @Date: 2023-08-19 16:21:45
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-19 18:48:06
+ * @LastEditTime: 2023-08-22 14:35:37
  * @Description: file content
  */
 package slash_handler
@@ -40,7 +40,7 @@ func (shdl SlashHandler) upscalerModelChoise() []*discordgo.ApplicationCommandOp
 func (shdl SlashHandler) ExtraSingleOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "extra_single",
-		Description: "Remove background from image",
+		Description: "Upscaler and face restorer for single image",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
 				Type:        discordgo.ApplicationCommandOptionString,

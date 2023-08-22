@@ -3,7 +3,7 @@
  * @Date: 2023-08-20 12:45:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-20 14:52:44
+ * @LastEditTime: 2023-08-22 14:36:15
  * @Description: file content
  */
 
@@ -84,7 +84,7 @@ func (shdl SlashHandler) controlnetModuleChoice() []*discordgo.ApplicationComman
 func (shdl SlashHandler) ControlnetDetectOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "controlnet_detect",
-		Description: "Remove background from image",
+		Description: "ControlNet detect",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
