@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 13:04:01
+ * @LastEditTime: 2023-08-22 19:54:27
  * @Description: file content
  */
 package slash_handler
@@ -38,7 +38,12 @@ func (shdl SlashHandler) ReportCommandInfo(s *discordgo.Session, i *discordgo.In
 }
 
 func (shdl SlashHandler) GenerateTaskID(i *discordgo.InteractionCreate) string {
-	return fmt.Sprintf("%s_%s_%s", i.Interaction.ID, i.Interaction.Member.User.ID, i.Interaction.Member.User.Username)
+	// 判断是群消息还是私聊消息
+	if i.GuildID == "" {
+		return fmt.Sprintf("%s_%s_%s", i.Interaction.ID, i.Interaction.User.ID, i.Interaction.User.Username)
+	} else {
+		return fmt.Sprintf("%s_%s_%s", i.Interaction.ID, i.Interaction.Member.User.ID, i.Interaction.Member.User.Username)
+	}
 }
 
 func (shdl SlashHandler) SendStateMessage(state string, s *discordgo.Session, i *discordgo.InteractionCreate) (*discordgo.Message, error) {
