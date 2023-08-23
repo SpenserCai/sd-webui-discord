@@ -3,13 +3,12 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-23 15:04:51
+ * @LastEditTime: 2023-08-23 15:49:31
  * @Description: file content
  */
 package slash_handler
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -107,20 +106,6 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			},
 		},
 	}
-}
-
-func (shdl SlashHandler) GetControlNetScript(jsonStr string) (*intersvc.ControlnetPredictScript, error) {
-	script := &intersvc.ControlnetPredictScript{}
-	// 把jsonStr转成intersvc.ControlnetScriptArgsItem
-	arg := &intersvc.ControlnetPredictArgsItem{}
-	err := json.Unmarshal([]byte(jsonStr), arg)
-	if err != nil {
-		return nil, err
-	}
-	arg.Image, _ = utils.GetImageBase64(arg.Image)
-	script.Args = append(script.Args, *arg)
-	return script, nil
-
 }
 
 func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.SdapiV1Txt2imgRequest) {

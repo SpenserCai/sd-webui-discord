@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-23 01:43:07
+ * @LastEditTime: 2023-08-23 17:12:51
  * @Description: file content
 -->
 <div align="center">
@@ -44,22 +44,54 @@ The command is still under active development, and there are two ways to experie
 ### Join Our Discord Server
 [![Discord](https://discordapp.com/api/guilds/1140177489008807966/widget.png?style=banner2)](https://discord.gg/uNJpzEE4sZ)
 
+<!--支持收起-->
+
 #### Text to Image
-![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/txt2img_demo.png)
+<details>
+<summary>See Image</summary>
+
+  ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/txt2img_demo.png)
+
+</details>
+
+#### ControlNet
+Extension: [sd-webui-controlnet](https://github.com/Mikubill/sd-webui-controlnet)
+<details>
+<summary>See Image</summary>
+
+  ![Demo1](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/controlnet_1.png)
+  ![Demo2](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/controlnet_2.png)
+
+</details>
 
 #### Roop
 Extension: [sd-webui-roop](https://github.com/s0md3v/sd-webui-roop)
-![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/roop_demo.jpeg)
+<details>
+<summary>See Image</summary>
+
+  ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/roop_demo.jpeg)
+
+</details>
 
 #### Segment Anything With Prompt
 Extension: [sd-webui-segment-anything](https://github.com/continue-revolution/sd-webui-segment-anything)
-![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/sam_demo.png)
-![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/sam_options.png)
+<details>
+<summary>See Image</summary>
+
+  ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/sam_demo.png)
+  ![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/sam_options.png)
+
+</details>
 
 #### Deoldify
 Extension: [sd-webui-deoldify](https://github.com/SpenserCai/sd-webui-deoldify)
-![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_demo.png)
-![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_options.png)
+<details>
+<summary>See Image</summary>
+
+  ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_demo.png)
+  ![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_options.png)
+
+</details>
 
 ### Self-Deploy
 

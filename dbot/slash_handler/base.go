@@ -3,15 +3,17 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-23 15:06:55
+ * @LastEditTime: 2023-08-23 15:49:22
  * @Description: file content
  */
 package slash_handler
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/SpenserCai/sd-webui-discord/utils"
+	"github.com/SpenserCai/sd-webui-go/intersvc"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -63,4 +65,18 @@ func (shdl SlashHandler) SendStateMessage(state string, s *discordgo.Session, i 
 		return nil, err
 	}
 	return msg, nil
+}
+
+func (shdl SlashHandler) GetControlNetScript(jsonStr string) (*intersvc.ControlnetPredictScript, error) {
+	script := &intersvc.ControlnetPredictScript{}
+	// 把jsonStr转成intersvc.ControlnetScriptArgsItem
+	arg := &intersvc.ControlnetPredictArgsItem{}
+	err := json.Unmarshal([]byte(jsonStr), arg)
+	if err != nil {
+		return nil, err
+	}
+	arg.Image, _ = utils.GetImageBase64(arg.Image)
+	script.Args = append(script.Args, *arg)
+	return script, nil
+
 }
