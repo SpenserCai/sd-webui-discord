@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-23 17:12:51
+ * @LastEditTime: 2023-08-23 17:15:13
  * @Description: file content
 -->
 <div align="center">
@@ -59,8 +59,8 @@ Extension: [sd-webui-controlnet](https://github.com/Mikubill/sd-webui-controlnet
 <details>
 <summary>See Image</summary>
 
-  ![Demo1](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/controlnet_1.png)
-  ![Demo2](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/controlnet_2.png)
+  ![Demo1](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/controlnet_1.jpeg)
+  ![Demo2](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/controlnet_2.jpeg)
 
 </details>
 
