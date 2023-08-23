@@ -3,13 +3,14 @@
  * @Date: 2023-08-20 12:45:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-22 14:36:15
+ * @LastEditTime: 2023-08-23 13:21:31
  * @Description: file content
  */
 
 package slash_handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -21,6 +22,61 @@ import (
 	"github.com/SpenserCai/sd-webui-go/intersvc"
 	"github.com/bwmarrin/discordgo"
 )
+
+func (shdl SlashHandler) controlnetControlModeChoice() []*discordgo.ApplicationCommandOptionChoice {
+	return []*discordgo.ApplicationCommandOptionChoice{
+		{
+			Name:  "Balanced",
+			Value: 0,
+		},
+		{
+			Name:  "My prompt is more important",
+			Value: 1,
+		},
+		{
+			Name:  "ControlNet is more important",
+			Value: 2,
+		},
+	}
+}
+
+func (shdl SlashHandler) controlnetZoomModeChoice() []*discordgo.ApplicationCommandOptionChoice {
+	return []*discordgo.ApplicationCommandOptionChoice{
+		{
+			Name:  "Resize Only (Stretch)",
+			Value: 0,
+		},
+		{
+			Name:  "Crop and Resize",
+			Value: 1,
+		},
+		{
+			Name:  "Resize and Fill",
+			Value: 2,
+		},
+	}
+}
+
+func (shdl SlashHandler) controlnetModelChoice() []*discordgo.ApplicationCommandOptionChoice {
+	choices := []*discordgo.ApplicationCommandOptionChoice{}
+	modesvc := &intersvc.ControlnetModelList{}
+	modesvc.Action(global.ClusterManager.GetNodeAuto().StableClient)
+	if modesvc.Error != nil {
+		log.Println(modesvc.Error)
+		return choices
+	}
+	models := modesvc.GetResponse().ModelList
+	for _, model := range models {
+		// 如果是control开头才添加，如果choices中已经25个了就不添加了
+		if strings.HasPrefix(model, "control") && len(choices) < 25 {
+			choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
+				Name:  model,
+				Value: model,
+			})
+		}
+	}
+	return choices
+}
 
 func (shdl SlashHandler) controlnetModuleChoice() []*discordgo.ApplicationCommandOptionChoice {
 	exclued := []string{
@@ -100,21 +156,60 @@ func (shdl SlashHandler) ControlnetDetectOptions() *discordgo.ApplicationCommand
 				Choices:     shdl.controlnetModuleChoice(),
 			},
 			{
+				Type:        discordgo.ApplicationCommandOptionString,
+				Name:        "model",
+				Description: "The model to use",
+				Required:    true,
+				Choices:     shdl.controlnetModelChoice(),
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionInteger,
+				Name:        "control_mode",
+				Description: "Control mode. Default: Balanced",
+				Required:    false,
+				Choices:     shdl.controlnetControlModeChoice(),
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionInteger,
+				Name:        "zoom_mode",
+				Description: "Zoom mode. Default: Crop and Resize",
+				Required:    false,
+				Choices:     shdl.controlnetZoomModeChoice(),
+			},
+			{
 				Type:        discordgo.ApplicationCommandOptionInteger,
 				Name:        "processor_res",
-				Description: "The resolution of the processor",
+				Description: "The resolution of the processor. Default: 512",
 				Required:    false,
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionNumber,
 				Name:        "threshold_a",
-				Description: "The threshold of the processor",
+				Description: "The threshold of the processor. Default: 64.0",
 				Required:    false,
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionNumber,
 				Name:        "threshold_b",
-				Description: "The threshold of the processor",
+				Description: "The threshold of the processor. Default: 64.0",
+				Required:    false,
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionBoolean,
+				Name:        "pixel_perfect",
+				Description: "Whether to use pixel perfect. Default: false",
+				Required:    false,
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionNumber,
+				Name:        "guidance_start",
+				Description: "The guidance start. Default: 0.0",
+				Required:    false,
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionNumber,
+				Name:        "guidance_end",
+				Description: "The guidance end. Default: 1.0",
 				Required:    false,
 			},
 		},
@@ -147,6 +242,48 @@ func (shdl SlashHandler) ControlnetDetectSetOptions(dsOpt []*discordgo.Applicati
 	}
 }
 
+func (shdl SlashHandler) ControlnetArgJsonGen(dsOpt []*discordgo.ApplicationCommandInteractionDataOption) string {
+	cnArg := &intersvc.ControlnetPredictArgsItem{}
+	cnArg.Enabled = true
+	cnArg.Weight = 1.0
+	cnArg.ControlMode = 0
+	cnArg.ResizeMode = 1
+	cnArg.ProcessorRes = 512
+	cnArg.ThresholdA = 64.0
+	cnArg.ThresholdB = 64.0
+	cnArg.GuidanceStart = 0.0
+	cnArg.GuidanceEnd = 1.0
+	cnArg.PixelPerFect = false
+	for _, v := range dsOpt {
+		switch v.Name {
+		case "control_mode":
+			cnArg.ControlMode = v.IntValue()
+		case "zoom_mode":
+			cnArg.ResizeMode = v.IntValue()
+		case "processor_res":
+			cnArg.ProcessorRes = v.FloatValue()
+		case "threshold_a":
+			cnArg.ThresholdA = v.FloatValue()
+		case "threshold_b":
+			cnArg.ThresholdB = v.FloatValue()
+		case "pixel_perfect":
+			cnArg.PixelPerFect = v.BoolValue()
+		case "module":
+			cnArg.Module = v.StringValue()
+		case "model":
+			cnArg.Model = v.StringValue()
+		case "image_url":
+			cnArg.Image = v.StringValue()
+		case "guidance_start":
+			cnArg.GuidanceStart = v.FloatValue()
+		case "guidance_end":
+			cnArg.GuidanceEnd = v.FloatValue()
+		}
+	}
+	jsonStr, _ := json.Marshal(cnArg)
+	return string(jsonStr)
+}
+
 func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.ControlnetDetectRequest, node *cluster.ClusterNode) {
 	msg, err := shdl.SendStateMessage("Running", s, i)
 	if err != nil {
@@ -166,6 +303,7 @@ func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discord
 			Content: func() *string { v := controlnet_detect.Error.Error(); return &v }(),
 		})
 	} else {
+		cnArgs := "First Image ControlNet Args:\n"
 		files := make([]*discordgo.File, 0)
 		for n, img := range controlnet_detect.GetResponse().Images {
 			imageReader, err := utils.GetImageReaderByBase64(img)
@@ -181,8 +319,9 @@ func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discord
 				ContentType: "image/png",
 			})
 		}
+		cnArgs += "```json\n" + shdl.ControlnetArgJsonGen(i.ApplicationCommandData().Options) + "\n```"
 		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
-			Content: func() *string { v := "Success"; return &v }(),
+			Content: &cnArgs,
 			Files:   files,
 		})
 	}

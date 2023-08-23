@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-22 19:54:27
+ * @LastEditTime: 2023-08-23 15:06:55
  * @Description: file content
  */
 package slash_handler
@@ -23,6 +23,11 @@ func (shdl SlashHandler) GetCommandStr(i *discordgo.Interaction) string {
 	// 把命令的名字和参数拼接起来
 	cmd += fmt.Sprintf("Command: %s\n", i.ApplicationCommandData().Name)
 	for _, v := range i.ApplicationCommandData().Options {
+		// 判断v.Value是否是字符串，如果是字符串则判断是否是json字符串，如果是json字符串则格式化输出
+		if v.Type == discordgo.ApplicationCommandOptionString && utils.IsJsonString(v.Value.(string)) {
+			cmd += fmt.Sprintf("%v: ```json\n%v```\n", utils.FormatCommand(v.Name), v.Value)
+			continue
+		}
 		cmd += fmt.Sprintf("%v: %v\n", utils.FormatCommand(v.Name), v.Value)
 	}
 	return cmd

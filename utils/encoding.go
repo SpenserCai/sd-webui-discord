@@ -3,13 +3,14 @@
  * @Date: 2023-08-17 00:40:47
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 11:19:55
+ * @LastEditTime: 2023-08-23 14:52:23
  * @Description: file content
  */
 package utils
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"strings"
 
 	"golang.org/x/text/cases"
@@ -34,4 +35,10 @@ func FormatCommand(cmdName string) string {
 		reCmdName += cases.Title(language.English, cases.NoLower).String(v)
 	}
 	return reCmdName
+}
+
+// 判断字符串是否是json字符串
+func IsJsonString(str string) bool {
+	var js map[string]interface{}
+	return json.Unmarshal([]byte(str), &js) == nil
 }

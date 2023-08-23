@@ -3,7 +3,7 @@
  * @Date: 2023-08-19 16:21:45
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-22 14:35:37
+ * @LastEditTime: 2023-08-23 12:08:55
  * @Description: file content
  */
 package slash_handler
@@ -79,9 +79,11 @@ func (shdl SlashHandler) ExtraSingleOptions() *discordgo.ApplicationCommand {
 				Choices:     shdl.upscalerModelChoise(),
 			},
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
+				Type:        discordgo.ApplicationCommandOptionNumber,
 				Name:        "upscaler_2_visibility",
-				Description: "The upscaler2 visibility",
+				Description: "The upscaler2 visibility. Default: 0.0",
+				MinValue:    func() *float64 { v := 0.0; return &v }(),
+				MaxValue:    1.0,
 				Required:    false,
 			},
 			{
@@ -149,6 +151,7 @@ func (shdl SlashHandler) ExtraSingleSetOptions(dsOpt []*discordgo.ApplicationCom
 	opt.UpscalingResize = 2.0
 	opt.ShowExtrasResults = func() *bool { v := true; return &v }()
 	opt.CodeformerVisibility = func() *float64 { v := 0.0; return &v }()
+	opt.ExtrasUpscaler2Visibility = func() *float64 { v := 0.0; return &v }()
 	opt.CodeformerWeight = func() *float64 { v := 0.0; return &v }()
 	opt.UpscaleFirst = func() *bool { v := false; return &v }()
 	opt.UpscalingCrop = func() *bool { v := true; return &v }()

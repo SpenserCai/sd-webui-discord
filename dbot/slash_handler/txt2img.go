@@ -3,12 +3,13 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-22 19:25:33
+ * @LastEditTime: 2023-08-23 15:04:51
  * @Description: file content
  */
 package slash_handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -98,8 +99,28 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				Description: "Seed of the generated image. Default: -1",
 				Required:    false,
 			},
+			{
+				Type:        discordgo.ApplicationCommandOptionString,
+				Name:        "controlnet_args",
+				Description: "Controlnet args of the generated image. Default: {}",
+				Required:    false,
+			},
 		},
 	}
+}
+
+func (shdl SlashHandler) GetControlNetScript(jsonStr string) (*intersvc.ControlnetPredictScript, error) {
+	script := &intersvc.ControlnetPredictScript{}
+	// 把jsonStr转成intersvc.ControlnetScriptArgsItem
+	arg := &intersvc.ControlnetPredictArgsItem{}
+	err := json.Unmarshal([]byte(jsonStr), arg)
+	if err != nil {
+		return nil, err
+	}
+	arg.Image, _ = utils.GetImageBase64(arg.Image)
+	script.Args = append(script.Args, *arg)
+	return script, nil
+
 }
 
 func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.SdapiV1Txt2imgRequest) {
@@ -113,6 +134,7 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 	opt.NIter = func() *int64 { v := int64(1); return &v }()
 	opt.Styles = []string{}
 	opt.ScriptArgs = []interface{}{}
+	opt.AlwaysonScripts = map[string]interface{}{}
 
 	for _, v := range dsOpt {
 		switch v.Name {
@@ -132,6 +154,13 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 			opt.CfgScale = func() *float64 { v := v.FloatValue(); return &v }()
 		case "seed":
 			opt.Seed = func() *int64 { v := v.IntValue(); return &v }()
+		case "controlnet_args":
+			script, err := shdl.GetControlNetScript(v.StringValue())
+			if err == nil {
+				tmpAScript := opt.AlwaysonScripts.(map[string]interface{})
+				tmpAScript["controlnet"] = script
+				opt.AlwaysonScripts = tmpAScript
+			}
 		}
 	}
 
