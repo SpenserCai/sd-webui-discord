@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:06:01
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 12:45:27
+ * @LastEditTime: 2023-08-26 00:30:59
  * @Description: file content
  */
 package dbot
@@ -36,6 +36,9 @@ func NewDiscordBot(token string, serverID string) (*DiscordBot, error) {
 		AppCommand:      make([]*discordgo.ApplicationCommand, 0),
 		AddedCommand:    make([]*discordgo.ApplicationCommand, 0),
 	}
+
+	// 预存长选项
+	dbot.SetLongChoice()
 
 	// 生成命令列表
 	dbot.GenerateCommandList()

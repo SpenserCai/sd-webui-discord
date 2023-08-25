@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:10:00
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-22 19:12:03
+ * @LastEditTime: 2023-08-26 00:59:59
  * @Description: file content
  */
 package dbot
@@ -13,6 +13,7 @@ import (
 	"reflect"
 
 	"github.com/SpenserCai/sd-webui-discord/dbot/slash_handler"
+	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/utils"
 
 	"github.com/bwmarrin/discordgo"
@@ -45,4 +46,10 @@ func (dbot *DiscordBot) GenerateCommandList() {
 	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.ControlnetDetectOptions())
 	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.RoopImageOptions())
 	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.Txt2imgOptions())
+}
+
+func (dbot *DiscordBot) SetLongChoice() {
+	global.LongDBotChoice = make(map[string][]*discordgo.ApplicationCommandOptionChoice)
+	global.LongDBotChoice["control_net_module"] = slash_handler.SlashHandler{}.ControlnetModuleChoice()
+	global.LongDBotChoice["control_net_model"] = slash_handler.SlashHandler{}.ControlnetModelChoice()
 }

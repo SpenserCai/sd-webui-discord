@@ -3,7 +3,7 @@
  * @Date: 2023-08-20 12:45:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-25 22:30:48
+ * @LastEditTime: 2023-08-26 01:03:35
  * @Description: file content
  */
 
@@ -57,7 +57,7 @@ func (shdl SlashHandler) controlnetZoomModeChoice() []*discordgo.ApplicationComm
 	}
 }
 
-func (shdl SlashHandler) controlnetModelChoice() []*discordgo.ApplicationCommandOptionChoice {
+func (shdl SlashHandler) ControlnetModelChoice() []*discordgo.ApplicationCommandOptionChoice {
 	choices := []*discordgo.ApplicationCommandOptionChoice{}
 	modesvc := &intersvc.ControlnetModelList{}
 	modesvc.Action(global.ClusterManager.GetNodeAuto().StableClient)
@@ -67,49 +67,15 @@ func (shdl SlashHandler) controlnetModelChoice() []*discordgo.ApplicationCommand
 	}
 	models := modesvc.GetResponse().ModelList
 	for _, model := range models {
-		// 如果是control开头才添加，如果choices中已经25个了就不添加了
-		if strings.HasPrefix(model, "control") && len(choices) < 25 {
-			choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
-				Name:  model,
-				Value: model,
-			})
-		}
-	}
-	if len(choices) > 25 {
-		choices = choices[:25]
+		choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
+			Name:  model,
+			Value: model,
+		})
 	}
 	return choices
 }
 
-func (shdl SlashHandler) controlnetModuleChoice() []*discordgo.ApplicationCommandOptionChoice {
-	exclued := []string{
-		"clip_vision",
-		"t2ia_color_grid",
-		"pidinet",
-		"pidinet_safe",
-		"t2ia_sketch_pidi",
-		"scribble_pidinet",
-		"scribble_xdog",
-		"scribble_hed",
-		"normal_bae",
-		"lineart_realistic",
-		"lineart_coarse",
-		"lineart_anime",
-		"pidinet",
-		"pidinet_safe",
-		"pidinet_sketch",
-		"pidinet_scribble",
-		"inpaint_global_harmonious",
-		"inpaint_only",
-		"inpaint_only+lama",
-		"normal_map",
-		"invert",
-		"shuffle",
-		"tile_colorfix",
-		"tile_colorfix+sharp",
-		"reference_adain+attn",
-		"mediapipe_face",
-	}
+func (shdl SlashHandler) ControlnetModuleChoice() []*discordgo.ApplicationCommandOptionChoice {
 	choices := []*discordgo.ApplicationCommandOptionChoice{}
 	modulesvc := &intersvc.ControlnetModuleList{}
 	modulesvc.Action(global.ClusterManager.GetNodeAuto().StableClient)
@@ -124,23 +90,7 @@ func (shdl SlashHandler) controlnetModuleChoice() []*discordgo.ApplicationComman
 			Value: model,
 		})
 	}
-	newChoices := []*discordgo.ApplicationCommandOptionChoice{}
-	for _, choice := range choices {
-		exclu := false
-		for _, ex := range exclued {
-			if strings.Contains(choice.Name, ex) {
-				exclu = true
-				break
-			}
-		}
-		if !exclu {
-			newChoices = append(newChoices, choice)
-		}
-	}
-	if len(newChoices) > 25 {
-		newChoices = newChoices[:25]
-	}
-	return newChoices
+	return choices
 }
 
 func (shdl SlashHandler) ControlnetDetectOptions() *discordgo.ApplicationCommand {
@@ -155,18 +105,18 @@ func (shdl SlashHandler) ControlnetDetectOptions() *discordgo.ApplicationCommand
 				Required:    true,
 			},
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "module",
-				Description: "The module to use",
-				Required:    true,
-				Choices:     shdl.controlnetModuleChoice(),
+				Type:         discordgo.ApplicationCommandOptionString,
+				Name:         "module",
+				Description:  "The module to use",
+				Required:     true,
+				Autocomplete: true,
 			},
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "model",
-				Description: "The model to use",
-				Required:    true,
-				Choices:     shdl.controlnetModelChoice(),
+				Type:         discordgo.ApplicationCommandOptionString,
+				Name:         "model",
+				Description:  "The model to use",
+				Required:     true,
+				Autocomplete: true,
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionInteger,
@@ -334,14 +284,64 @@ func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discord
 }
 
 func (shdl SlashHandler) ControlnetDetectCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	option := &intersvc.ControlnetDetectRequest{}
-	shdl.ReportCommandInfo(s, i)
-	node := global.ClusterManager.GetNodeAuto()
-	action := func() (map[string]interface{}, error) {
-		shdl.ControlnetDetectSetOptions(i.ApplicationCommandData().Options, option)
-		shdl.ControlnetDetectAction(s, i, option, node)
-		return nil, nil
+	switch i.Type {
+	case discordgo.InteractionApplicationCommand:
+		option := &intersvc.ControlnetDetectRequest{}
+		shdl.ReportCommandInfo(s, i)
+		node := global.ClusterManager.GetNodeAuto()
+		action := func() (map[string]interface{}, error) {
+			shdl.ControlnetDetectSetOptions(i.ApplicationCommandData().Options, option)
+			shdl.ControlnetDetectAction(s, i, option, node)
+			return nil, nil
+		}
+		callback := func() {}
+		node.ActionQueue.AddTask(shdl.GenerateTaskID(i), action, callback)
+	case discordgo.InteractionApplicationCommandAutocomplete:
+		repChoices := []*discordgo.ApplicationCommandOptionChoice{}
+		data := i.ApplicationCommandData()
+		switch {
+		case data.Options[1].Focused:
+			choices := global.LongDBotChoice["control_net_module"]
+			if data.Options[1].StringValue() == "" {
+				// 取得choices的前25个
+				if len(choices) > 25 {
+					repChoices = choices[:25]
+				} else {
+					repChoices = choices
+				}
+			} else {
+				// 如果有输入，就过滤choices
+				newChoices := []*discordgo.ApplicationCommandOptionChoice{}
+				for _, choice := range choices {
+					if strings.Contains(choice.Name, data.Options[1].StringValue()) {
+						newChoices = append(newChoices, choice)
+					}
+				}
+				repChoices = newChoices
+			}
+		case data.Options[2].Focused:
+			choices := global.LongDBotChoice["control_net_model"]
+			if data.Options[2].StringValue() == "" {
+				if len(choices) > 25 {
+					repChoices = choices[:25]
+				} else {
+					repChoices = choices
+				}
+			} else {
+				newChoices := []*discordgo.ApplicationCommandOptionChoice{}
+				for _, choice := range choices {
+					if strings.Contains(choice.Name, data.Options[2].StringValue()) {
+						newChoices = append(newChoices, choice)
+					}
+				}
+				repChoices = newChoices
+			}
+		}
+		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionApplicationCommandAutocompleteResult,
+			Data: &discordgo.InteractionResponseData{
+				Choices: repChoices,
+			},
+		})
 	}
-	callback := func() {}
-	node.ActionQueue.AddTask(shdl.GenerateTaskID(i), action, callback)
 }

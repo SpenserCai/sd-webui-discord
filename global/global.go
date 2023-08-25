@@ -11,9 +11,11 @@ package global
 import (
 	"github.com/SpenserCai/sd-webui-discord/cluster"
 	"github.com/SpenserCai/sd-webui-discord/config"
+	"github.com/bwmarrin/discordgo"
 )
 
 var (
 	Config         *config.Config
 	ClusterManager *cluster.ClusterService
+	LongDBotChoice map[string][]*discordgo.ApplicationCommandOptionChoice
 )
