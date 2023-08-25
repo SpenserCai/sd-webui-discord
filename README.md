@@ -100,6 +100,19 @@ Extension: [sd-webui-deoldify](https://github.com/SpenserCai/sd-webui-deoldify)
 </details>
 
 ### Self-Deploy
+You need to install the following extensions on the SD webui:
+
+[sd-webui-segment-anythin](https://github.com/continue-revolution/sd-webui-segment-anything)
+
+[sd-weubi-deoldify](https://github.com/SpenserCai/sd-webui-deoldify)
+
+[stable-diffusion-webui-rembg](https://github.com/AUTOMATIC1111/stable-diffusion-webui-rembg)
+
+[sd-webui-roop](https://github.com/s0md3v/sd-webui-roop)
+
+[sd-webui-controlnet](https://github.com/Mikubill/sd-webui-controlnet)
+
+***
 
 1.Download the latest release from [here](https://github.com/SpenserCai/sd-webui-discord/releases/latest).
 
