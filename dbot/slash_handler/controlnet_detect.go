@@ -3,7 +3,7 @@
  * @Date: 2023-08-20 12:45:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-23 13:21:31
+ * @LastEditTime: 2023-08-25 22:30:48
  * @Description: file content
  */
 
@@ -75,6 +75,9 @@ func (shdl SlashHandler) controlnetModelChoice() []*discordgo.ApplicationCommand
 			})
 		}
 	}
+	if len(choices) > 25 {
+		choices = choices[:25]
+	}
 	return choices
 }
 
@@ -133,6 +136,9 @@ func (shdl SlashHandler) controlnetModuleChoice() []*discordgo.ApplicationComman
 		if !exclu {
 			newChoices = append(newChoices, choice)
 		}
+	}
+	if len(newChoices) > 25 {
+		newChoices = newChoices[:25]
 	}
 	return newChoices
 }
