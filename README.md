@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 00:37:58
+ * @LastEditTime: 2023-08-27 01:50:30
  * @Description: file content
 -->
 <div align="center">
@@ -155,7 +155,8 @@ If you want set default value with sd-webui
             "cfg_scale": 8,
             "negative_prompt": "bad,text,watermask",
             "height":1024,
-            "width":1024
+            "width":1024,
+            "steps":32
         }
     }
     ...
