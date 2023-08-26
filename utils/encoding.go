@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 00:40:47
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-23 14:52:23
+ * @LastEditTime: 2023-08-26 23:58:29
  * @Description: file content
  */
 package utils
@@ -11,6 +11,7 @@ package utils
 import (
 	"encoding/base64"
 	"encoding/json"
+	"reflect"
 	"strings"
 
 	"golang.org/x/text/cases"
@@ -41,4 +42,15 @@ func FormatCommand(cmdName string) string {
 func IsJsonString(str string) bool {
 	var js map[string]interface{}
 	return json.Unmarshal([]byte(str), &js) == nil
+}
+
+func IsZeroValue(value interface{}) bool {
+	if value == nil {
+		return true
+	}
+
+	reflectValue := reflect.ValueOf(value)
+	zeroValue := reflect.Zero(reflectValue.Type()).Interface()
+
+	return reflect.DeepEqual(value, zeroValue)
 }

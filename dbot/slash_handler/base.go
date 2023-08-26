@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-23 15:49:22
+ * @LastEditTime: 2023-08-27 00:29:05
  * @Description: file content
  */
 package slash_handler
@@ -11,7 +11,9 @@ package slash_handler
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 
+	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/utils"
 	"github.com/SpenserCai/sd-webui-go/intersvc"
 
@@ -79,4 +81,28 @@ func (shdl SlashHandler) GetControlNetScript(jsonStr string) (*intersvc.Controln
 	script.Args = append(script.Args, *arg)
 	return script, nil
 
+}
+
+// Only Step 1,will be change to support every user every setting
+func (shdl SlashHandler) GetSdDefaultSetting(key string, defaultValue interface{}) interface{} {
+	// 把global.Config.SDWebUi.DefaultSetting转成map[string]interface{}
+	defaultSettingMap := make(map[string]interface{})
+	defaultSettingJson, _ := json.Marshal(global.Config.SDWebUi.DefaultSetting)
+	json.Unmarshal(defaultSettingJson, &defaultSettingMap)
+
+	// 判断key是否被赋值如果没有返回defaultValue
+	keyValue, ok := defaultSettingMap[key]
+	if ok && utils.IsZeroValue(keyValue) {
+		return defaultValue
+	} else {
+		defaultValueType := reflect.TypeOf(defaultValue)
+		if defaultValueType.Kind() == reflect.Ptr {
+			defaultValueType = defaultValueType.Elem()
+		}
+		if keyValue != nil && reflect.TypeOf(keyValue) != defaultValueType {
+			convertedValue := reflect.ValueOf(keyValue).Convert(defaultValueType).Interface()
+			return convertedValue
+		}
+		return keyValue
+	}
 }

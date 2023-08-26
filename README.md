@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-23 17:58:04
+ * @LastEditTime: 2023-08-27 00:37:58
  * @Description: file content
 -->
 <div align="center">
@@ -143,6 +143,22 @@ Edit the `config.json` file and fill in the token and other information.
         "token":"<your token here>",
         "server_id":"<your servers id here if empty all servers>"
     }
+}
+```
+
+If you want set default value with sd-webui
+```json
+{
+    "sd_webui":{
+        "servers":[...],
+        "default_setting": {
+            "cfg_scale": 8,
+            "negative_prompt": "bad,text,watermask",
+            "height":1024,
+            "width":1024
+        }
+    }
+    ...
 }
 ```
 

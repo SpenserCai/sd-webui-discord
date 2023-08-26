@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-23 15:49:31
+ * @LastEditTime: 2023-08-27 00:31:13
  * @Description: file content
  */
 package slash_handler
@@ -109,17 +109,18 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 }
 
 func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.SdapiV1Txt2imgRequest) {
-	opt.NegativePrompt = ""
-	opt.Height = func() *int64 { v := int64(512); return &v }()
-	opt.Width = func() *int64 { v := int64(512); return &v }()
+	opt.NegativePrompt = shdl.GetSdDefaultSetting("negative_prompt", "").(string)
+	opt.Height = func() *int64 { v := shdl.GetSdDefaultSetting("height", int64(512)).(int64); return &v }()
+	opt.Width = func() *int64 { v := shdl.GetSdDefaultSetting("width", int64(512)).(int64); return &v }()
 	opt.SamplerIndex = func() *string { v := "Euler"; return &v }()
 	opt.Steps = func() *int64 { v := int64(20); return &v }()
-	opt.CfgScale = func() *float64 { v := 7.0; return &v }()
+	opt.CfgScale = func() *float64 { v := shdl.GetSdDefaultSetting("cfg_scale", 7.0).(float64); return &v }()
 	opt.Seed = func() *int64 { v := int64(-1); return &v }()
 	opt.NIter = func() *int64 { v := int64(1); return &v }()
 	opt.Styles = []string{}
 	opt.ScriptArgs = []interface{}{}
 	opt.AlwaysonScripts = map[string]interface{}{}
+	opt.OverrideSettings = map[string]interface{}{}
 
 	for _, v := range dsOpt {
 		switch v.Name {
@@ -167,6 +168,7 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		})
 	} else {
 		files := make([]*discordgo.File, 0)
+		outinfo := txt2img.GetResponse().Info
 		for j, v := range txt2img.GetResponse().Images {
 			imageReader, err := utils.GetImageReaderByBase64(v)
 			if err != nil {
@@ -185,7 +187,7 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 			files = files[0:4]
 		}
 		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
-			Content: func() *string { v := "Success"; return &v }(),
+			Content: func() *string { v := fmt.Sprintf("```\n%v```\n", *outinfo); return &v }(),
 			Files:   files,
 		})
 	}
