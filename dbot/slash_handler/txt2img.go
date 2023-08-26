@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 00:31:13
+ * @LastEditTime: 2023-08-27 01:36:35
  * @Description: file content
  */
 package slash_handler
@@ -113,7 +113,7 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 	opt.Height = func() *int64 { v := shdl.GetSdDefaultSetting("height", int64(512)).(int64); return &v }()
 	opt.Width = func() *int64 { v := shdl.GetSdDefaultSetting("width", int64(512)).(int64); return &v }()
 	opt.SamplerIndex = func() *string { v := "Euler"; return &v }()
-	opt.Steps = func() *int64 { v := int64(20); return &v }()
+	opt.Steps = func() *int64 { v := shdl.GetSdDefaultSetting("steps", int64(20)).(int64); return &v }()
 	opt.CfgScale = func() *float64 { v := shdl.GetSdDefaultSetting("cfg_scale", 7.0).(float64); return &v }()
 	opt.Seed = func() *int64 { v := int64(-1); return &v }()
 	opt.NIter = func() *int64 { v := int64(1); return &v }()

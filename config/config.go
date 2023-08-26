@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 00:01:34
+ * @LastEditTime: 2023-08-27 01:35:37
  * @Description: file content
  */
 package config
@@ -32,4 +32,5 @@ type DefaultSetting struct {
 	NegativePrompt string  `json:"negative_prompt"`
 	Height         int64   `json:"height"`
 	Width          int64   `json:"width"`
+	Steps          int64   `json:"steps"`
 }
