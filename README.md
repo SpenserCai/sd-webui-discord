@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 22:40:47
+ * @LastEditTime: 2023-08-28 01:01:36
  * @Description: file content
 -->
 <div align="center">
@@ -28,6 +28,9 @@ Support For Clustered Stable Diffusion WebUi Discord Bot
   </a>
   <a href="https://discord.gg/uNJpzEE4sZ">
     <img src="https://discordapp.com/api/guilds/1140177489008807966/widget.png?style=shield"   alt="Discord Server">
+  </a>
+  <a href="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&appChannel=share&inviteCode=21gYdX0DSw2&businessType=7&from=181074&biz=ka">
+    <img src="https://img.shields.io/badge/QQ%E9%A2%91%E9%81%93-SD%20WEBUI%20DISCORD-5492ff?style=flat-square" alt="QQ Channel">
   </a>
 </div>
 
