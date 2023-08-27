@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:27:15
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-19 20:52:31
+ * @LastEditTime: 2023-08-27 22:15:27
  * @Description: file content
  */
 package slash_handler
@@ -27,9 +27,9 @@ func (shdl SlashHandler) DeoldifyOptions() *discordgo.ApplicationCommand {
 		Description: "Deoldify a image",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "image_url",
-				Description: "The url of the image",
+				Type:        discordgo.ApplicationCommandOptionAttachment,
+				Name:        "image",
+				Description: "The image",
 				Required:    true,
 			},
 			{
@@ -50,11 +50,11 @@ func (shdl SlashHandler) DeoldifyOptions() *discordgo.ApplicationCommand {
 	}
 }
 
-func (shdl SlashHandler) DeoldifySetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.DeoldifyImageRequest) {
-	for _, v := range dsOpt {
+func (shdl SlashHandler) DeoldifySetOptions(cmd discordgo.ApplicationCommandInteractionData, opt *intersvc.DeoldifyImageRequest) {
+	for _, v := range cmd.Options {
 		switch v.Name {
-		case "image_url":
-			opt.InputImage = v.StringValue()
+		case "image":
+			opt.InputImage = cmd.Resolved.Attachments[v.Value.(string)].URL
 		case "render_factor":
 			opt.RenderFactor = func() *int64 { v := v.IntValue(); return &v }()
 		case "artistic":
@@ -106,7 +106,7 @@ func (shdl SlashHandler) DeoldifyCommandHandler(s *discordgo.Session, i *discord
 	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
-		shdl.DeoldifySetOptions(i.ApplicationCommandData().Options, option)
+		shdl.DeoldifySetOptions(i.ApplicationCommandData(), option)
 		shdl.DeoldifyAction(s, i, option, node)
 		return nil, nil
 	}

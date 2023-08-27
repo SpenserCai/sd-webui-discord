@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 12:58:13
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-22 14:38:09
+ * @LastEditTime: 2023-08-27 22:23:27
  * @Description: file content
  */
 package slash_handler
@@ -25,15 +25,15 @@ func (shdl SlashHandler) RoopImageOptions() *discordgo.ApplicationCommand {
 		Description: "Image face swap with roop",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "source_url",
-				Description: "The url of the source face image",
+				Type:        discordgo.ApplicationCommandOptionAttachment,
+				Name:        "source_image",
+				Description: "The source face image",
 				Required:    true,
 			},
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "target_url",
-				Description: "The url of the target image",
+				Type:        discordgo.ApplicationCommandOptionAttachment,
+				Name:        "target_image",
+				Description: "The target image",
 				Required:    true,
 			},
 			{
@@ -53,18 +53,18 @@ func (shdl SlashHandler) RoopImageOptions() *discordgo.ApplicationCommand {
 	}
 }
 
-func (shdl SlashHandler) RoopImageSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.RoopImageRequest) {
+func (shdl SlashHandler) RoopImageSetOptions(cmd discordgo.ApplicationCommandInteractionData, opt *intersvc.RoopImageRequest) {
 	opt.Model = func() *string { v := "inswapper_128.onnx"; return &v }()
 	opt.FaceIndex = []int64{0}
 	opt.Scale = func() *int64 { var v int64 = 1; return &v }()
 	opt.UpscaleVisibility = func() *float64 { var v float64 = 1.0; return &v }()
 	opt.RestorerVisibility = func() *float64 { v := 1.0; return &v }()
-	for _, v := range dsOpt {
+	for _, v := range cmd.Options {
 		switch v.Name {
-		case "source_url":
-			opt.SourceImage, _ = utils.GetImageBase64(v.StringValue())
-		case "target_url":
-			opt.TargetImage, _ = utils.GetImageBase64(v.StringValue())
+		case "source_image":
+			opt.SourceImage, _ = utils.GetImageBase64(cmd.Resolved.Attachments[v.Value.(string)].URL)
+		case "target_image":
+			opt.TargetImage, _ = utils.GetImageBase64(cmd.Resolved.Attachments[v.Value.(string)].URL)
 		case "face_restorer":
 			opt.FaceRestorer = func() *string { v := v.StringValue(); return &v }()
 		case "restorer_visibility":
@@ -112,7 +112,7 @@ func (shdl SlashHandler) RoopImageCommandHandler(s *discordgo.Session, i *discor
 	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
-		shdl.RoopImageSetOptions(i.ApplicationCommandData().Options, option)
+		shdl.RoopImageSetOptions(i.ApplicationCommandData(), option)
 		shdl.RoopImageAction(s, i, option, node)
 		return nil, nil
 	}
