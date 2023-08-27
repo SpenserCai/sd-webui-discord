@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 01:50:30
+ * @LastEditTime: 2023-08-27 22:40:47
  * @Description: file content
 -->
 <div align="center">
@@ -34,8 +34,19 @@ Support For Clustered Stable Diffusion WebUi Discord Bot
 SD-WEBUI-DISCORD is a Discord bot developed in Go language for [stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui). It utilizes the [sd-webui-go](https://github.com/SpenserCai/sd-webui-go) to invoke the sd-webui API and supports cluster deployment of multiple sd-webui nodes with automatic scheduling and allocation.
 
 ## News
+### **2023-08-27:**
+ - Support txt2img choice model checkpoint
+ - Support upload image with attachment: `deoldify` `png_info` `roop_image` commands
+   <details>
+   <summary>See Image</summary>
+
+      ![example](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/support_attechment.png)
+    
+   </details>
+  
+### **2023-08-26: Support Setting default sd-webui options**
 ### **2023-08-23: Support ControlNet for `txt2img` command**
-By using the `controlnet_detect` command to obtain the parameters of ControlNet and filling them into the `controlnet_args` parameter of the `txt2img` command, you can use ControlNet in txt2img.
+ - By using the `controlnet_detect` command to obtain the parameters of ControlNet and filling them into the `controlnet_args` parameter of the `txt2img` command, you can use ControlNet in txt2img.
 ### **2023-08-22: Support `txt2img` command**
 ### **2023-08-22: Support `roop` command** 
 ### **2023-08-20: Support `controlnet_detect` command**
