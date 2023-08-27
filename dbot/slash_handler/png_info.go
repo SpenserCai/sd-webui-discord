@@ -3,7 +3,7 @@
  * @Date: 2023-08-19 18:27:34
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-22 14:36:40
+ * @LastEditTime: 2023-08-27 19:30:36
  * @Description: file content
  */
 package slash_handler
@@ -27,21 +27,22 @@ func (shdl SlashHandler) PngInfoOptions() *discordgo.ApplicationCommand {
 		Description: "Get image info",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "image_url",
-				Description: "The url of the image",
+				Type:        discordgo.ApplicationCommandOptionAttachment,
+				Name:        "image",
+				Description: "The image",
 				Required:    true,
 			},
 		},
 	}
 }
 
-func (shdl SlashHandler) PngInfoSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.SdapiV1PngInfoRequest) {
+func (shdl SlashHandler) PngInfoSetOptions(cmd discordgo.ApplicationCommandInteractionData, opt *intersvc.SdapiV1PngInfoRequest) {
 
-	for _, v := range dsOpt {
+	for _, v := range cmd.Options {
 		switch v.Name {
-		case "image_url":
-			opt.Image = func() *string { v, _ := utils.GetImageBase64(v.StringValue()); return &v }()
+		case "image":
+			fileUrl := cmd.Resolved.Attachments[v.Value.(string)].URL
+			opt.Image = func() *string { v, _ := utils.GetImageBase64(fileUrl); return &v }()
 		}
 	}
 }
@@ -73,7 +74,7 @@ func (shdl SlashHandler) PngInfoCommandHandler(s *discordgo.Session, i *discordg
 	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
-		shdl.PngInfoSetOptions(i.ApplicationCommandData().Options, option)
+		shdl.PngInfoSetOptions(i.ApplicationCommandData(), option)
 		shdl.PngInfoAction(s, i, option, node)
 		return nil, nil
 	}
