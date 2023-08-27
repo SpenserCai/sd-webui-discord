@@ -3,7 +3,7 @@
  * @Date: 2023-08-19 18:27:34
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 19:30:36
+ * @LastEditTime: 2023-08-27 23:43:10
  * @Description: file content
  */
 package slash_handler
@@ -37,12 +37,13 @@ func (shdl SlashHandler) PngInfoOptions() *discordgo.ApplicationCommand {
 }
 
 func (shdl SlashHandler) PngInfoSetOptions(cmd discordgo.ApplicationCommandInteractionData, opt *intersvc.SdapiV1PngInfoRequest) {
-
 	for _, v := range cmd.Options {
 		switch v.Name {
 		case "image":
-			fileUrl := cmd.Resolved.Attachments[v.Value.(string)].URL
-			opt.Image = func() *string { v, _ := utils.GetImageBase64(fileUrl); return &v }()
+			opt.Image = func() *string {
+				v, _ := utils.GetImageBase64(cmd.Resolved.Attachments[v.Value.(string)].URL)
+				return &v
+			}()
 		}
 	}
 }

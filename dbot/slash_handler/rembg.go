@@ -3,7 +3,7 @@
  * @Date: 2023-08-18 11:11:48
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-19 20:52:46
+ * @LastEditTime: 2023-08-27 23:42:19
  * @Description: file content
  */
 package slash_handler
@@ -46,9 +46,9 @@ func (shdl SlashHandler) RembgOptions() *discordgo.ApplicationCommand {
 		Description: "Remove background from image",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "image_url",
-				Description: "The url of the image",
+				Type:        discordgo.ApplicationCommandOptionAttachment,
+				Name:        "image",
+				Description: "The image",
 				Required:    true,
 			},
 			{
@@ -68,13 +68,12 @@ func (shdl SlashHandler) RembgOptions() *discordgo.ApplicationCommand {
 	}
 }
 
-func (shdl SlashHandler) RembgSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.RembgRequest) {
+func (shdl SlashHandler) RembgSetOptions(cmd discordgo.ApplicationCommandInteractionData, opt *intersvc.RembgRequest) {
 	opt.AlphaMatting = func() *bool { v := false; return &v }()
-
-	for _, v := range dsOpt {
+	for _, v := range cmd.Options {
 		switch v.Name {
-		case "image_url":
-			opt.InputImage, _ = utils.GetImageBase64(v.StringValue())
+		case "image":
+			opt.InputImage, _ = utils.GetImageBase64(cmd.Resolved.Attachments[v.Value.(string)].URL)
 		case "model":
 			opt.Model = func() *string { v := v.StringValue(); return &v }()
 		case "return_mask":
@@ -118,11 +117,10 @@ func (shdl SlashHandler) RembgAction(s *discordgo.Session, i *discordgo.Interact
 
 func (shdl SlashHandler) RembgCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.RembgRequest{}
-	shdl.RembgSetOptions(i.ApplicationCommandData().Options, option)
 	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
-		shdl.RembgSetOptions(i.ApplicationCommandData().Options, option)
+		shdl.RembgSetOptions(i.ApplicationCommandData(), option)
 		shdl.RembgAction(s, i, option, node)
 		return nil, nil
 	}

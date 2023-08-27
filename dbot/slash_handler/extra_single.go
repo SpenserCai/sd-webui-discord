@@ -3,7 +3,7 @@
  * @Date: 2023-08-19 16:21:45
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-23 12:08:55
+ * @LastEditTime: 2023-08-27 23:34:05
  * @Description: file content
  */
 package slash_handler
@@ -43,9 +43,9 @@ func (shdl SlashHandler) ExtraSingleOptions() *discordgo.ApplicationCommand {
 		Description: "Upscaler and face restorer for single image",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "image_url",
-				Description: "The url of the image",
+				Type:        discordgo.ApplicationCommandOptionAttachment,
+				Name:        "image",
+				Description: "The image",
 				Required:    true,
 			},
 			{
@@ -146,7 +146,7 @@ func (shdl SlashHandler) ExtraSingleOptions() *discordgo.ApplicationCommand {
 	}
 }
 
-func (shdl SlashHandler) ExtraSingleSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.SdapiV1ExtraSingleImageRequest) {
+func (shdl SlashHandler) ExtraSingleSetOptions(cmd discordgo.ApplicationCommandInteractionData, opt *intersvc.SdapiV1ExtraSingleImageRequest) {
 	// default value
 	opt.UpscalingResize = 2.0
 	opt.ShowExtrasResults = func() *bool { v := true; return &v }()
@@ -158,10 +158,10 @@ func (shdl SlashHandler) ExtraSingleSetOptions(dsOpt []*discordgo.ApplicationCom
 	opt.UpscalingResizew = 512
 	opt.UpscalingResizeh = 512
 	opt.Upscaler2 = func() *string { v := "None"; return &v }()
-	for _, v := range dsOpt {
+	for _, v := range cmd.Options {
 		switch v.Name {
-		case "image_url":
-			opt.Image, _ = utils.GetImageBase64(v.StringValue())
+		case "image":
+			opt.Image, _ = utils.GetImageBase64(cmd.Resolved.Attachments[v.Value.(string)].URL)
 		case "upscaler_1":
 			opt.Upscaler1 = func() *string { v := v.StringValue(); return &v }()
 		case "upscaler_2":
@@ -228,7 +228,7 @@ func (shdl SlashHandler) ExtraSingleCommandHandler(s *discordgo.Session, i *disc
 	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
-		shdl.ExtraSingleSetOptions(i.ApplicationCommandData().Options, option)
+		shdl.ExtraSingleSetOptions(i.ApplicationCommandData(), option)
 		shdl.ExtraSingleAction(s, i, option, node)
 		return nil, nil
 	}

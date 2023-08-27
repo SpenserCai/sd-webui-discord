@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:27:32
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-19 20:52:59
+ * @LastEditTime: 2023-08-27 23:52:24
  * @Description: file content
  */
 package slash_handler
@@ -58,9 +58,9 @@ func (shdl SlashHandler) SamOptions() *discordgo.ApplicationCommand {
 		Description: "Segment Anythin with prompt",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "image_url",
-				Description: "The url of the image",
+				Type:        discordgo.ApplicationCommandOptionAttachment,
+				Name:        "image",
+				Description: "The image",
 				Required:    true,
 			},
 			{
@@ -87,18 +87,20 @@ func (shdl SlashHandler) SamOptions() *discordgo.ApplicationCommand {
 	}
 }
 
-func (shdl SlashHandler) SamSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.SamSamPredictRequest) {
+func (shdl SlashHandler) SamSetOptions(cmd discordgo.ApplicationCommandInteractionData, opt *intersvc.SamSamPredictRequest) {
 	opt.DinoEnabled = func() *bool { v := true; return &v }()
 	opt.DinoBoxThreshold = func() *float64 { v := 0.3; return &v }()
 	opt.DinoPreviewCheckbox = func() *bool { v := false; return &v }()
 	opt.DinoPreviewBoxesSelection = []int64{0}
 	opt.SamNegativePoints = [][]float64{}
 	opt.SamPositivePoints = [][]float64{}
-	for _, v := range dsOpt {
+	for _, v := range cmd.Options {
 		switch v.Name {
-		case "image_url":
-			image, _ := utils.GetImageBase64(v.StringValue())
-			opt.InputImage = &image
+		case "image":
+			opt.InputImage = func() *string {
+				v, _ := utils.GetImageBase64(cmd.Resolved.Attachments[v.Value.(string)].URL)
+				return &v
+			}()
 		case "prompt":
 			opt.DinoTextPrompt = v.StringValue()
 		case "model":
@@ -162,11 +164,10 @@ func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.Interactio
 
 func (shdl SlashHandler) SamCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.SamSamPredictRequest{}
-	shdl.SamSetOptions(i.ApplicationCommandData().Options, option)
 	shdl.ReportCommandInfo(s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
-		shdl.SamSetOptions(i.ApplicationCommandData().Options, option)
+		shdl.SamSetOptions(i.ApplicationCommandData(), option)
 		shdl.SamAction(s, i, option, node)
 		return nil, nil
 	}
