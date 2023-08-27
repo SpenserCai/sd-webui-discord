@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 01:36:35
+ * @LastEditTime: 2023-08-27 17:10:19
  * @Description: file content
  */
 package slash_handler
@@ -33,6 +33,24 @@ func (shdl SlashHandler) samplerChoice() []*discordgo.ApplicationCommandOptionCh
 		choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
 			Name:  *model.Name,
 			Value: *model.Name,
+		})
+	}
+	return choices
+}
+
+func (shdl SlashHandler) SdModelChoice() []*discordgo.ApplicationCommandOptionChoice {
+	choices := []*discordgo.ApplicationCommandOptionChoice{}
+	modesvc := &intersvc.SdapiV1SdModels{}
+	modesvc.Action(global.ClusterManager.GetNodeAuto().StableClient)
+	if modesvc.Error != nil {
+		log.Println(modesvc.Error)
+		return choices
+	}
+	models := modesvc.GetResponse()
+	for _, model := range *models {
+		choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
+			Name:  *model.ModelName,
+			Value: *model.Title,
 		})
 	}
 	return choices
@@ -104,6 +122,13 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				Description: "Controlnet args of the generated image. Default: {}",
 				Required:    false,
 			},
+			{
+				Type:         discordgo.ApplicationCommandOptionString,
+				Name:         "checkpoints",
+				Description:  "Sd model checkpoints. Default: SDXL 1.0",
+				Required:     false,
+				Autocomplete: true,
+			},
 		},
 	}
 }
@@ -147,6 +172,10 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 				tmpAScript["controlnet"] = script
 				opt.AlwaysonScripts = tmpAScript
 			}
+		case "checkpoints":
+			tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
+			tmpOverrideSettings["sd_model_checkpoint"] = v.StringValue()
+			opt.OverrideSettings = tmpOverrideSettings
 		}
 	}
 
@@ -195,14 +224,33 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 }
 
 func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	option := &intersvc.SdapiV1Txt2imgRequest{}
-	shdl.ReportCommandInfo(s, i)
-	node := global.ClusterManager.GetNodeAuto()
-	action := func() (map[string]interface{}, error) {
-		shdl.Txt2imgSetOptions(i.ApplicationCommandData().Options, option)
-		shdl.Txt2imgAction(s, i, option, node)
-		return nil, nil
+	switch i.Type {
+	case discordgo.InteractionApplicationCommand:
+		option := &intersvc.SdapiV1Txt2imgRequest{}
+		shdl.ReportCommandInfo(s, i)
+		node := global.ClusterManager.GetNodeAuto()
+		action := func() (map[string]interface{}, error) {
+			shdl.Txt2imgSetOptions(i.ApplicationCommandData().Options, option)
+			shdl.Txt2imgAction(s, i, option, node)
+			return nil, nil
+		}
+		callback := func() {}
+		node.ActionQueue.AddTask(shdl.GenerateTaskID(i), action, callback)
+	case discordgo.InteractionApplicationCommandAutocomplete:
+		repChoices := []*discordgo.ApplicationCommandOptionChoice{}
+		data := i.ApplicationCommandData()
+
+		for _, opt := range data.Options {
+			if opt.Name == "checkpoints" && opt.Focused {
+				repChoices = shdl.FilterChoice(global.LongDBotChoice["sd_model_checkpoint"], opt)
+				continue
+			}
+		}
+		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionApplicationCommandAutocompleteResult,
+			Data: &discordgo.InteractionResponseData{
+				Choices: repChoices,
+			},
+		})
 	}
-	callback := func() {}
-	node.ActionQueue.AddTask(shdl.GenerateTaskID(i), action, callback)
 }

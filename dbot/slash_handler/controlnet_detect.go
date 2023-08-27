@@ -3,7 +3,7 @@
  * @Date: 2023-08-20 12:45:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-26 01:03:35
+ * @LastEditTime: 2023-08-27 18:46:12
  * @Description: file content
  */
 
@@ -299,43 +299,16 @@ func (shdl SlashHandler) ControlnetDetectCommandHandler(s *discordgo.Session, i 
 	case discordgo.InteractionApplicationCommandAutocomplete:
 		repChoices := []*discordgo.ApplicationCommandOptionChoice{}
 		data := i.ApplicationCommandData()
-		switch {
-		case data.Options[1].Focused:
-			choices := global.LongDBotChoice["control_net_module"]
-			if data.Options[1].StringValue() == "" {
-				// 取得choices的前25个
-				if len(choices) > 25 {
-					repChoices = choices[:25]
-				} else {
-					repChoices = choices
-				}
-			} else {
-				// 如果有输入，就过滤choices
-				newChoices := []*discordgo.ApplicationCommandOptionChoice{}
-				for _, choice := range choices {
-					if strings.Contains(choice.Name, data.Options[1].StringValue()) {
-						newChoices = append(newChoices, choice)
-					}
-				}
-				repChoices = newChoices
+		for _, opt := range data.Options {
+			if opt.Name == "module" && opt.Focused {
+				repChoices = shdl.FilterChoice(global.LongDBotChoice["control_net_module"], opt)
+				continue
 			}
-		case data.Options[2].Focused:
-			choices := global.LongDBotChoice["control_net_model"]
-			if data.Options[2].StringValue() == "" {
-				if len(choices) > 25 {
-					repChoices = choices[:25]
-				} else {
-					repChoices = choices
-				}
-			} else {
-				newChoices := []*discordgo.ApplicationCommandOptionChoice{}
-				for _, choice := range choices {
-					if strings.Contains(choice.Name, data.Options[2].StringValue()) {
-						newChoices = append(newChoices, choice)
-					}
-				}
-				repChoices = newChoices
+			if opt.Name == "model" && opt.Focused {
+				repChoices = shdl.FilterChoice(global.LongDBotChoice["control_net_model"], opt)
+				continue
 			}
+
 		}
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionApplicationCommandAutocompleteResult,

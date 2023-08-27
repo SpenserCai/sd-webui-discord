@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 00:29:05
+ * @LastEditTime: 2023-08-27 16:19:12
  * @Description: file content
  */
 package slash_handler
@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/utils"
@@ -104,5 +105,25 @@ func (shdl SlashHandler) GetSdDefaultSetting(key string, defaultValue interface{
 			return convertedValue
 		}
 		return keyValue
+	}
+}
+
+func (shdl SlashHandler) FilterChoice(choices []*discordgo.ApplicationCommandOptionChoice, option *discordgo.ApplicationCommandInteractionDataOption) []*discordgo.ApplicationCommandOptionChoice {
+	if option.StringValue() == "" {
+		// 取得choices的前25个
+		if len(choices) > 25 {
+			return choices[:25]
+		} else {
+			return choices
+		}
+	} else {
+		// 如果有输入，就过滤choices
+		newChoices := []*discordgo.ApplicationCommandOptionChoice{}
+		for _, choice := range choices {
+			if strings.Contains(choice.Name, option.StringValue()) {
+				newChoices = append(newChoices, choice)
+			}
+		}
+		return newChoices
 	}
 }
