@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 17:10:19
+ * @LastEditTime: 2023-08-28 14:13:00
  * @Description: file content
  */
 package slash_handler
@@ -11,6 +11,7 @@ package slash_handler
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/SpenserCai/sd-webui-discord/cluster"
 	"github.com/SpenserCai/sd-webui-discord/global"
@@ -118,6 +119,12 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
+				Name:        "styles",
+				Description: "Style of the generated image,splite with | . Default: None",
+				Required:    false,
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "controlnet_args",
 				Description: "Controlnet args of the generated image. Default: {}",
 				Required:    false,
@@ -165,6 +172,13 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 			opt.CfgScale = func() *float64 { v := v.FloatValue(); return &v }()
 		case "seed":
 			opt.Seed = func() *int64 { v := v.IntValue(); return &v }()
+		case "styles":
+			styleList := strings.Split(v.StringValue(), "|")
+			outStyleList := []string{}
+			for _, style := range styleList {
+				outStyleList = append(outStyleList, strings.TrimSpace(style))
+			}
+			opt.Styles = outStyleList
 		case "controlnet_args":
 			script, err := shdl.GetControlNetScript(v.StringValue())
 			if err == nil {
