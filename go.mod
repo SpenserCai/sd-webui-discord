@@ -3,7 +3,7 @@ module github.com/SpenserCai/sd-webui-discord
 go 1.19
 
 require (
-	github.com/SpenserCai/sd-webui-go v0.3.3
+	github.com/SpenserCai/sd-webui-go v0.3.5
 	github.com/bwmarrin/discordgo v0.27.1
 	golang.org/x/text v0.7.0
 )
@@ -30,9 +30,9 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	go.mongodb.org/mongo-driver v1.12.1 // indirect
-	go.opentelemetry.io/otel v1.16.0 // indirect
-	go.opentelemetry.io/otel/metric v1.16.0 // indirect
-	go.opentelemetry.io/otel/trace v1.16.0 // indirect
+	go.opentelemetry.io/otel v1.17.0 // indirect
+	go.opentelemetry.io/otel/metric v1.17.0 // indirect
+	go.opentelemetry.io/otel/trace v1.17.0 // indirect
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

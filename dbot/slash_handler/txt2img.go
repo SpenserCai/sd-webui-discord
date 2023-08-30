@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-28 14:13:00
+ * @LastEditTime: 2023-08-29 23:30:11
  * @Description: file content
  */
 package slash_handler
@@ -212,6 +212,19 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 	} else {
 		files := make([]*discordgo.File, 0)
 		outinfo := txt2img.GetResponse().Info
+		context := ""
+		// 如果outinfo长度大于2000则context为：Success！，并创建info.json文件
+		if len(*outinfo) > 2000 {
+			context = "Success!"
+			infoJson, _ := utils.GetJsonReaderByJsonString(*outinfo)
+			files = append(files, &discordgo.File{
+				Name:        "info.json",
+				ContentType: "application/json",
+				Reader:      infoJson,
+			})
+		} else {
+			context = fmt.Sprintf("```\n%v```\n", *outinfo)
+		}
 		for j, v := range txt2img.GetResponse().Images {
 			imageReader, err := utils.GetImageReaderByBase64(v)
 			if err != nil {
@@ -230,7 +243,7 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 			files = files[0:4]
 		}
 		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
-			Content: func() *string { v := fmt.Sprintf("```\n%v```\n", *outinfo); return &v }(),
+			Content: &context,
 			Files:   files,
 		})
 	}

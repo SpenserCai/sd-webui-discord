@@ -3,12 +3,13 @@
  * @Date: 2023-08-17 00:40:47
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-26 23:58:29
+ * @LastEditTime: 2023-08-30 09:04:38
  * @Description: file content
  */
 package utils
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"reflect"
@@ -53,4 +54,16 @@ func IsZeroValue(value interface{}) bool {
 	zeroValue := reflect.Zero(reflectValue.Type()).Interface()
 
 	return reflect.DeepEqual(value, zeroValue)
+}
+
+func GetJsonReaderByJsonString(jsonStr string) (*strings.Reader, error) {
+	// 格式化json字符串
+	var fJsonStr bytes.Buffer
+	err := json.Indent(&fJsonStr, []byte(jsonStr), "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	// 把格式化后的json字符串转换成Reader
+	jsonReader := strings.NewReader(fJsonStr.String())
+	return jsonReader, nil
 }

@@ -3,7 +3,7 @@
  * @Date: 2023-08-20 12:45:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 18:46:12
+ * @LastEditTime: 2023-08-30 09:46:29
  * @Description: file content
  */
 
@@ -117,6 +117,12 @@ func (shdl SlashHandler) ControlnetDetectOptions() *discordgo.ApplicationCommand
 				Description:  "The model to use",
 				Required:     true,
 				Autocomplete: true,
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionNumber,
+				Name:        "weight",
+				Description: "The weight of the module. Default: 1.0",
+				Required:    false,
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionInteger,
@@ -234,6 +240,8 @@ func (shdl SlashHandler) ControlnetArgJsonGen(dsOpt []*discordgo.ApplicationComm
 			cnArg.GuidanceStart = v.FloatValue()
 		case "guidance_end":
 			cnArg.GuidanceEnd = v.FloatValue()
+		case "weight":
+			cnArg.Weight = v.FloatValue()
 		}
 	}
 	jsonStr, _ := json.Marshal(cnArg)
@@ -259,8 +267,21 @@ func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discord
 			Content: func() *string { v := controlnet_detect.Error.Error(); return &v }(),
 		})
 	} else {
-		cnArgs := "First Image ControlNet Args:\n"
 		files := make([]*discordgo.File, 0)
+		outinfo := shdl.ControlnetArgJsonGen(i.ApplicationCommandData().Options)
+		context := ""
+		// 如果outinfo长度大于2000则context为：Success！，并创建info.json文件
+		if len(outinfo) > 2000 {
+			context = "Success!"
+			infoJson, _ := utils.GetJsonReaderByJsonString(outinfo)
+			files = append(files, &discordgo.File{
+				Name:        "args.json",
+				ContentType: "application/json",
+				Reader:      infoJson,
+			})
+		} else {
+			context = fmt.Sprintf("```json\n%v```\n", outinfo)
+		}
 		for n, img := range controlnet_detect.GetResponse().Images {
 			imageReader, err := utils.GetImageReaderByBase64(img)
 			if err != nil {
@@ -275,9 +296,9 @@ func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discord
 				ContentType: "image/png",
 			})
 		}
-		cnArgs += "```json\n" + shdl.ControlnetArgJsonGen(i.ApplicationCommandData().Options) + "\n```"
+
 		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
-			Content: &cnArgs,
+			Content: &context,
 			Files:   files,
 		})
 	}

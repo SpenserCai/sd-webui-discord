@@ -3,7 +3,7 @@
  * @Date: 2023-08-19 16:21:45
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 23:34:05
+ * @LastEditTime: 2023-08-30 09:47:26
  * @Description: file content
  */
 package slash_handler
@@ -213,7 +213,7 @@ func (shdl SlashHandler) ExtraSingleAction(s *discordgo.Session, i *discordgo.In
 				Content: func() *string { v := "Success"; return &v }(),
 				Files: []*discordgo.File{
 					{
-						Name:        "rembg.png",
+						Name:        "extra_single.png",
 						ContentType: "image/png",
 						Reader:      image,
 					},
