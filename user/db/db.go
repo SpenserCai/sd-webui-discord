@@ -3,14 +3,14 @@
  * @Date: 2023-08-30 21:21:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-30 21:30:44
+ * @LastEditTime: 2023-08-30 21:50:12
  * @Description: file content
  */
 package db
 
 import "gorm.io/gorm"
 
-type DbotDb struct {
+type BotDb struct {
 	Db *gorm.DB
 }
 
