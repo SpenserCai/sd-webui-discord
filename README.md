@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-28 01:01:36
+ * @LastEditTime: 2023-08-30 20:36:51
  * @Description: file content
 -->
 <div align="center">
@@ -35,7 +35,7 @@ Support For Clustered Stable Diffusion WebUi Discord Bot
 </div>
 
 SD-WEBUI-DISCORD is a Discord bot developed in Go language for [stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui). It utilizes the [sd-webui-go](https://github.com/SpenserCai/sd-webui-go) to invoke the sd-webui API and supports cluster deployment of multiple sd-webui nodes with automatic scheduling and allocation.
-
+At the same time, there is also the [sd-webui-discord-ex](https://github.com/SpenserCai/sd-webui-discord-ex), which is an extension on the stable-diffusion-webui that you can install and use directly. It will automatically update every time you restart SD webui.
 ## News
 ### **2023-08-27:**
  - Support txt2img choice model checkpoint
