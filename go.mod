@@ -6,6 +6,7 @@ require (
 	github.com/SpenserCai/sd-webui-go v0.3.5
 	github.com/bwmarrin/discordgo v0.27.1
 	golang.org/x/text v0.7.0
+	gorm.io/gorm v1.25.4
 )
 
 require (
@@ -23,6 +24,8 @@ require (
 	github.com/go-openapi/swag v0.22.4 // indirect
 	github.com/go-openapi/validate v0.22.1 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
