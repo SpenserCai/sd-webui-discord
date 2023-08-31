@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 22:34:44
+ * @LastEditTime: 2023-08-31 22:43:55
  * @Description: file content
 -->
 <div align="center">
@@ -34,8 +34,11 @@ Support For Clustered Stable Diffusion WebUi Discord Bot
   </a>
 </div>
 
+## Introduction
 SD-WEBUI-DISCORD is a Discord bot developed in Go language for [stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui). It utilizes the [sd-webui-go](https://github.com/SpenserCai/sd-webui-go) to invoke the sd-webui API and supports cluster deployment of multiple sd-webui nodes with automatic scheduling and allocation.
 At the same time, there is also the [sd-webui-discord-ex](https://github.com/SpenserCai/sd-webui-discord-ex), which is an extension on the stable-diffusion-webui that you can install and use directly. It will automatically update every time you restart SD webui.
+
+## Screenshots
 
 ![First](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/first_page.png)
 
@@ -159,10 +162,10 @@ Extension: [sd-webui-deoldify](https://github.com/SpenserCai/sd-webui-deoldify)
 
 </details>
 
-### Self-Deploy
+### Installation
 You need to install the following extensions on the SD webui:
 
-[sd-webui-segment-anythin](https://github.com/continue-revolution/sd-webui-segment-anything)
+[sd-webui-segment-anything](https://github.com/continue-revolution/sd-webui-segment-anything)
 
 [sd-weubi-deoldify](https://github.com/SpenserCai/sd-webui-deoldify)
 
@@ -180,7 +183,7 @@ You need to install the following extensions on the SD webui:
 
 3.Configuration and Startup
 ```bash
-tar -zxvf sd-webui-discord-release-v*.tar.gz // unzip the release package
+tar -zxvf sd-webui-discord-release-v*.tar.gz # unzip the release package
 
 cd sd-webui-discord-release-v*/release/
 ```
@@ -220,6 +223,21 @@ If you want set default value with sd-webui
         }
     }
     ...
+}
+```
+
+If you want to enable the **User Center**
+```json
+{
+  ...
+  "user_center":{
+        "enable":false,
+        "db_config":{
+            "type":"sqlite", // support mysql and sqlite
+            "dsn":"./user_center.db"
+        }
+  }
+  ...
 }
 ```
 
