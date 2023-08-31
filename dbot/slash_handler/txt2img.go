@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 18:22:35
+ * @LastEditTime: 2023-08-31 23:29:25
  * @Description: file content
  */
 package slash_handler
@@ -21,7 +21,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func (shdl SlashHandler) samplerChoice() []*discordgo.ApplicationCommandOptionChoice {
+func (shdl SlashHandler) SamplerChoice() []*discordgo.ApplicationCommandOptionChoice {
 	choices := []*discordgo.ApplicationCommandOptionChoice{}
 	modesvc := &intersvc.SdapiV1Samplers{}
 	modesvc.Action(global.ClusterManager.GetNodeAuto().StableClient)
@@ -91,11 +91,11 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				Required:    false,
 			},
 			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "sampler",
-				Description: "Sampler of the generated image. Default: Euler",
-				Required:    false,
-				Choices:     shdl.samplerChoice(),
+				Type:         discordgo.ApplicationCommandOptionString,
+				Name:         "sampler",
+				Description:  "Sampler of the generated image. Default: Euler",
+				Required:     false,
+				Autocomplete: true,
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionInteger,
@@ -270,6 +270,10 @@ func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordg
 		for _, opt := range data.Options {
 			if opt.Name == "checkpoints" && opt.Focused {
 				repChoices = shdl.FilterChoice(global.LongDBotChoice["sd_model_checkpoint"], opt)
+				continue
+			}
+			if opt.Name == "sampler" && opt.Focused {
+				repChoices = shdl.FilterChoice(shdl.SamplerChoice(), opt)
 				continue
 			}
 		}
