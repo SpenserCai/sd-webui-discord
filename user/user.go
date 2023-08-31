@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 11:37:48
+ * @LastEditTime: 2023-08-31 14:23:53
  * @Description: file content
  */
 package user
@@ -55,11 +55,16 @@ func NewUserCenterService(ucsCfg *config.UserCenter) (*UserCenterService, error)
 func (ucs *UserCenterService) GetUserInfo(id string) (*UserInfo, error) {
 	userInfo := &db_backend.UserInfo{}
 	ucs.Db.Db.Where("id = ?", id).First(userInfo)
+	if userInfo.ID == "" {
+		return nil, nil
+	}
 
 	stableConfig := StableConfig{}
-	err := json.NewDecoder(strings.NewReader(userInfo.StableConfig)).Decode(&stableConfig)
-	if err != nil {
-		return nil, err
+	if userInfo.StableConfig != "" {
+		err := json.NewDecoder(strings.NewReader(userInfo.StableConfig)).Decode(&stableConfig)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &UserInfo{
@@ -79,6 +84,9 @@ func (ucs *UserCenterService) RegisterUser(user *UserInfo) (string, error) {
 	}
 	// 如果用户存在则更新用户信息
 	if userInfo != nil {
+		if !userInfo.Enable {
+			return "USER BANNED", nil
+		}
 		err := ucs.UpdateUserInfo(user)
 		if err != nil {
 			return "", err
@@ -90,8 +98,8 @@ func (ucs *UserCenterService) RegisterUser(user *UserInfo) (string, error) {
 	newUserInfo := &db_backend.UserInfo{
 		ID:           user.Id,
 		Name:         user.Name,
-		Enable:       user.Enable,
-		Roles:        user.Roles,
+		Enable:       true,
+		Roles:        "user",
 		StableConfig: "{}",
 	}
 	err = ucs.Db.Db.Create(newUserInfo).Error

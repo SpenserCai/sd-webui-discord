@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:10:00
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 16:10:16
+ * @LastEditTime: 2023-08-31 14:09:24
  * @Description: file content
  */
 package dbot
@@ -46,6 +46,9 @@ func (dbot *DiscordBot) GenerateCommandList() {
 	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.ControlnetDetectOptions())
 	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.RoopImageOptions())
 	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.Txt2imgOptions())
+	if global.Config.UserCenter.Enable {
+		dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.RegisterOptions())
+	}
 }
 
 func (dbot *DiscordBot) SetLongChoice() {
