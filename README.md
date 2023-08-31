@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 22:43:55
+ * @LastEditTime: 2023-08-31 22:56:24
  * @Description: file content
 -->
 <div align="center">
@@ -179,7 +179,7 @@ You need to install the following extensions on the SD webui:
 
 1.Download the latest release from [here](https://github.com/SpenserCai/sd-webui-discord/releases/latest).
 
-2.Create a bot account on Discord and get the token.
+2.Create a bot account on Discord and get the token. [How To Create Discord App](https://discord.com/developers/docs/getting-started).
 
 3.Configuration and Startup
 ```bash
