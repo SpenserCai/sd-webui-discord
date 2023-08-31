@@ -15,7 +15,7 @@
         "server_id":"<your servers id here if empty all servers>"
     },
     "user_center":{
-        "enabled":false,
+        "enable":false,
         "db_config":{
             "type":"sqlite",
             "dsn":"./user_center.db"

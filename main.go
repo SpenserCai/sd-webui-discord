@@ -3,7 +3,7 @@
  * @Date: 2023-08-15 21:55:36
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-18 13:05:22
+ * @LastEditTime: 2023-08-31 11:48:39
  * @Description: file content
  */
 package main
@@ -18,6 +18,7 @@ import (
 	"github.com/SpenserCai/sd-webui-discord/dbot"
 	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/queue"
+	"github.com/SpenserCai/sd-webui-discord/user"
 )
 
 func LoadConfig() error {
@@ -42,6 +43,13 @@ func LoadConfig() error {
 func InitClusterManager() {
 	global.ClusterManager = cluster.NewClusterService(global.Config)
 	global.ClusterManager.Start()
+}
+
+func InitUserCenterService() error {
+	var err error
+	global.UserCenterSvc, err = user.NewUserCenterService(&global.Config.UserCenter)
+	return err
+
 }
 
 func PrintEvent() {
@@ -72,6 +80,14 @@ func main() {
 	if err != nil {
 		log.Println(err)
 		return
+	}
+	if global.Config.UserCenter.Enable {
+		err := InitUserCenterService()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Println("UserCenterService Init Success")
 	}
 	InitClusterManager()
 	go PrintEvent()

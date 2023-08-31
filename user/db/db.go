@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 21:21:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 09:46:47
+ * @LastEditTime: 2023-08-31 12:03:39
  * @Description: file content
  */
 package db
@@ -54,6 +54,10 @@ func NewBotDb(dbCfg *config.DbConfig) (*BotDb, error) {
 
 	botDb := &BotDb{
 		Db: db,
+	}
+	err = botDb.CreateOrUpdateDb()
+	if err != nil {
+		return nil, err
 	}
 	return botDb, nil
 }

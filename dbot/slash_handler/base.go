@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 19:30:05
+ * @LastEditTime: 2023-08-31 13:35:35
  * @Description: file content
  */
 package slash_handler
@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/SpenserCai/sd-webui-discord/global"
+	"github.com/SpenserCai/sd-webui-discord/user"
 	"github.com/SpenserCai/sd-webui-discord/utils"
 	"github.com/SpenserCai/sd-webui-go/intersvc"
 
@@ -129,5 +130,14 @@ func (shdl SlashHandler) FilterChoice(choices []*discordgo.ApplicationCommandOpt
 			}
 		}
 		return newChoices
+	}
+}
+
+func (shdl SlashHandler) GetUserInfoWithInteraction(i *discordgo.InteractionCreate) (*user.UserInfo, error) {
+	// 判断是群消息还是私聊消息
+	if i.GuildID == "" {
+		return global.UserCenterSvc.GetUserInfo(i.Interaction.User.ID)
+	} else {
+		return global.UserCenterSvc.GetUserInfo(i.Interaction.Member.User.ID)
 	}
 }

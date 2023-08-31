@@ -3,16 +3,18 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 10:40:33
+ * @LastEditTime: 2023-08-31 11:37:48
  * @Description: file content
  */
 package user
 
 import (
 	"encoding/json"
+	"strings"
 
 	"reflect"
 
+	"github.com/SpenserCai/sd-webui-discord/config"
 	"github.com/SpenserCai/sd-webui-discord/user/db"
 	"github.com/SpenserCai/sd-webui-discord/user/db/db_backend"
 )
@@ -39,12 +41,23 @@ type UserCenterService struct {
 	Db *db.BotDb
 }
 
+func NewUserCenterService(ucsCfg *config.UserCenter) (*UserCenterService, error) {
+	db, err := db.NewBotDb(&ucsCfg.DbConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return &UserCenterService{
+		Db: db,
+	}, nil
+}
+
 func (ucs *UserCenterService) GetUserInfo(id string) (*UserInfo, error) {
 	userInfo := &db_backend.UserInfo{}
 	ucs.Db.Db.Where("id = ?", id).First(userInfo)
 
 	stableConfig := StableConfig{}
-	err := json.Unmarshal([]byte(userInfo.StableConfig), &stableConfig)
+	err := json.NewDecoder(strings.NewReader(userInfo.StableConfig)).Decode(&stableConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +119,12 @@ func (ucs *UserCenterService) BanUser(id string) error {
 }
 
 func (ucs *UserCenterService) UpdateStableConfig(user *UserInfo) error {
-	return nil
+	stableConfig, err := json.Marshal(user.StableConfig)
+	if err != nil {
+		return err
+	}
+	err = ucs.Db.Db.Model(&db_backend.UserInfo{}).Where("id = ?", user.Id).Update("stable_config", stableConfig).Error
+	return err
 }
 
 func (ucs *UserCenterService) GetUserStableConfigItem(id string, key string, defaultValue interface{}) (interface{}, error) {
