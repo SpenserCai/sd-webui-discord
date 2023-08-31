@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 14:23:53
+ * @LastEditTime: 2023-08-31 16:19:04
  * @Description: file content
  */
 package user
@@ -11,6 +11,7 @@ package user
 import (
 	"encoding/json"
 	"strings"
+	"time"
 
 	"reflect"
 
@@ -98,6 +99,7 @@ func (ucs *UserCenterService) RegisterUser(user *UserInfo) (string, error) {
 	newUserInfo := &db_backend.UserInfo{
 		ID:           user.Id,
 		Name:         user.Name,
+		Created:      time.Now().Format("2023-08-31 12:59:59"),
 		Enable:       true,
 		Roles:        "user",
 		StableConfig: "{}",
@@ -127,6 +129,7 @@ func (ucs *UserCenterService) BanUser(id string) error {
 }
 
 func (ucs *UserCenterService) UpdateStableConfig(user *UserInfo) error {
+
 	stableConfig, err := json.Marshal(user.StableConfig)
 	if err != nil {
 		return err

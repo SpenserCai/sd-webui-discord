@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 14:00:01
+ * @LastEditTime: 2023-08-31 18:19:19
  * @Description: file content
  */
 package slash_handler
@@ -87,6 +87,19 @@ func (shdl SlashHandler) GetControlNetScript(jsonStr string) (*intersvc.Controln
 	script.Args = append(script.Args, *arg)
 	return script, nil
 
+}
+
+func (shdl SlashHandler) GetDefaultSettingFromUser(key string, defaultValue interface{}, i *discordgo.InteractionCreate) interface{} {
+	if global.Config.UserCenter.Enable {
+		userInfo, err := shdl.GetUserInfoWithInteraction(i)
+		if userInfo != nil && err == nil {
+			value, err := global.UserCenterSvc.GetUserStableConfigItem(userInfo.Id, key, shdl.GetSdDefaultSetting(key, defaultValue))
+			if err == nil {
+				return value
+			}
+		}
+	}
+	return shdl.GetSdDefaultSetting(key, defaultValue)
 }
 
 // Only Step 1,will be change to support every user every setting

@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-29 23:30:11
+ * @LastEditTime: 2023-08-31 18:22:35
  * @Description: file content
  */
 package slash_handler
@@ -140,13 +140,13 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 	}
 }
 
-func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.SdapiV1Txt2imgRequest) {
-	opt.NegativePrompt = shdl.GetSdDefaultSetting("negative_prompt", "").(string)
-	opt.Height = func() *int64 { v := shdl.GetSdDefaultSetting("height", int64(512)).(int64); return &v }()
-	opt.Width = func() *int64 { v := shdl.GetSdDefaultSetting("width", int64(512)).(int64); return &v }()
+func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *intersvc.SdapiV1Txt2imgRequest, i *discordgo.InteractionCreate) {
+	opt.NegativePrompt = shdl.GetDefaultSettingFromUser("negative_prompt", "", i).(string)
+	opt.Height = func() *int64 { v := shdl.GetDefaultSettingFromUser("height", int64(512), i).(int64); return &v }()
+	opt.Width = func() *int64 { v := shdl.GetDefaultSettingFromUser("width", int64(512), i).(int64); return &v }()
 	opt.SamplerIndex = func() *string { v := "Euler"; return &v }()
-	opt.Steps = func() *int64 { v := shdl.GetSdDefaultSetting("steps", int64(20)).(int64); return &v }()
-	opt.CfgScale = func() *float64 { v := shdl.GetSdDefaultSetting("cfg_scale", 7.0).(float64); return &v }()
+	opt.Steps = func() *int64 { v := shdl.GetDefaultSettingFromUser("steps", int64(20), i).(int64); return &v }()
+	opt.CfgScale = func() *float64 { v := shdl.GetDefaultSettingFromUser("cfg_scale", 7.0, i).(float64); return &v }()
 	opt.Seed = func() *int64 { v := int64(-1); return &v }()
 	opt.NIter = func() *int64 { v := int64(1); return &v }()
 	opt.Styles = []string{}
@@ -257,7 +257,7 @@ func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordg
 		shdl.ReportCommandInfo(s, i)
 		node := global.ClusterManager.GetNodeAuto()
 		action := func() (map[string]interface{}, error) {
-			shdl.Txt2imgSetOptions(i.ApplicationCommandData().Options, option)
+			shdl.Txt2imgSetOptions(i.ApplicationCommandData().Options, option, i)
 			shdl.Txt2imgAction(s, i, option, node)
 			return nil, nil
 		}
