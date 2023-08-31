@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 21:21:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 00:58:05
+ * @LastEditTime: 2023-08-31 09:46:47
  * @Description: file content
  */
 package db
@@ -20,6 +20,20 @@ import (
 
 type BotDb struct {
 	Db *gorm.DB
+}
+
+func (botDb *BotDb) Close() error {
+	db, err := botDb.Db.DB()
+	if err != nil {
+		return err
+	}
+	err = db.Close()
+	return err
+}
+
+func (botDb *BotDb) CreateOrUpdateDb() error {
+	err := botDb.Db.AutoMigrate(&db_backend.UserInfo{})
+	return err
 }
 
 func NewBotDb(dbCfg *config.DbConfig) (*BotDb, error) {
