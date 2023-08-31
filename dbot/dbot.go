@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:06:01
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-26 00:30:59
+ * @LastEditTime: 2023-09-01 00:24:54
  * @Description: file content
  */
 package dbot
@@ -12,6 +12,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -29,6 +30,7 @@ func NewDiscordBot(token string, serverID string) (*DiscordBot, error) {
 	if err != nil {
 		return nil, err
 	}
+	session.Client.Timeout = 60 * time.Second
 	dbot := &DiscordBot{
 		Session:         session,
 		ServerID:        serverID,
