@@ -3,12 +3,14 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-01 12:18:12
+ * @LastEditTime: 2023-09-01 13:41:26
  * @Description: file content
  */
 package slash_handler
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -223,7 +225,9 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 				Reader:      infoJson,
 			})
 		} else {
-			context = fmt.Sprintf("```\n%v```\n", *outinfo)
+			var fOutput bytes.Buffer
+			json.Indent(&fOutput, []byte(*outinfo), "", "  ")
+			context = fmt.Sprintf("```json\n%v```\n", fOutput.String())
 		}
 		for j, v := range txt2img.GetResponse().Images {
 			imageReader, err := utils.GetImageReaderByBase64(v)
