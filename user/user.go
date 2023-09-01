@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 16:19:04
+ * @LastEditTime: 2023-09-01 12:12:59
  * @Description: file content
  */
 package user
@@ -27,6 +27,7 @@ type StableConfig struct {
 	Steps          int64   `json:"steps"`
 	CfgScale       float64 `json:"cfg_scale"`
 	NegativePrompt string  `json:"negative_prompt"`
+	Sampler        string  `json:"sampler"`
 }
 
 type UserInfo struct {

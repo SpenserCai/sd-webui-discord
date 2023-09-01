@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 14:59:27
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 16:49:13
+ * @LastEditTime: 2023-09-01 12:16:56
  * @Description: file content
  */
 package slash_handler
@@ -30,6 +30,13 @@ func (shdl SlashHandler) SettingOptions() *discordgo.ApplicationCommand {
 			{
 				Name:         "sd_model_checkpoint",
 				Description:  "Model checkpoint",
+				Type:         discordgo.ApplicationCommandOptionString,
+				Required:     false,
+				Autocomplete: true,
+			},
+			{
+				Name:         "sampler",
+				Description:  "Sampler",
 				Type:         discordgo.ApplicationCommandOptionString,
 				Required:     false,
 				Autocomplete: true,
@@ -84,6 +91,8 @@ func (shdl SlashHandler) SettingSetOptions(dsOpt []*discordgo.ApplicationCommand
 			opt.CfgScale = v.FloatValue()
 		case "negative_prompt":
 			opt.NegativePrompt = v.StringValue()
+		case "sampler":
+			opt.Sampler = v.StringValue()
 		}
 	}
 }
@@ -153,6 +162,10 @@ func (shdl SlashHandler) SettingCommandHandler(s *discordgo.Session, i *discordg
 		for _, opt := range data.Options {
 			if opt.Name == "sd_model_checkpoint" && opt.Focused {
 				repChoices = shdl.FilterChoice(global.LongDBotChoice["sd_model_checkpoint"], opt)
+				continue
+			}
+			if opt.Name == "sampler" && opt.Focused {
+				repChoices = shdl.FilterChoice(global.LongDBotChoice["sampler"], opt)
 				continue
 			}
 		}
