@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-01 13:41:26
+ * @LastEditTime: 2023-09-03 23:06:53
  * @Description: file content
  */
 package slash_handler
@@ -138,6 +138,21 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				Required:     false,
 				Autocomplete: true,
 			},
+			{
+				Type:         discordgo.ApplicationCommandOptionString,
+				Name:         "refiner_checkpoint",
+				Description:  "Refiner checkpoint. Default: None",
+				Required:     false,
+				Autocomplete: true,
+			},
+			{
+				Type:        discordgo.ApplicationCommandOptionNumber,
+				Name:        "refiner_switch_at",
+				Description: "Refiner switch at. Default: 0.0",
+				Required:    false,
+				MinValue:    func() *float64 { v := 0.0; return &v }(),
+				MaxValue:    1.0,
+			},
 		},
 	}
 }
@@ -152,6 +167,8 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 	opt.Seed = func() *int64 { v := int64(-1); return &v }()
 	opt.NIter = func() *int64 { v := int64(1); return &v }()
 	opt.Styles = []string{}
+	opt.RefinerCheckpoint = ""
+	opt.RefinerSwitchAt = float64(0.0)
 	opt.ScriptArgs = []interface{}{}
 	opt.AlwaysonScripts = map[string]interface{}{}
 	opt.OverrideSettings = map[string]interface{}{}
@@ -192,6 +209,10 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 			tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
 			tmpOverrideSettings["sd_model_checkpoint"] = v.StringValue()
 			opt.OverrideSettings = tmpOverrideSettings
+		case "refiner_checkpoint":
+			opt.RefinerCheckpoint = v.StringValue()
+		case "refiner_switch_at":
+			opt.RefinerSwitchAt = v.FloatValue()
 		}
 	}
 
@@ -278,6 +299,10 @@ func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordg
 			}
 			if opt.Name == "sampler" && opt.Focused {
 				repChoices = shdl.FilterChoice(shdl.SamplerChoice(), opt)
+				continue
+			}
+			if opt.Name == "refiner_checkpoint" && opt.Focused {
+				repChoices = shdl.FilterChoice(global.LongDBotChoice["sd_model_checkpoint"], opt)
 				continue
 			}
 		}

@@ -5,6 +5,8 @@ github.com/SpenserCai/sd-webui-go v0.3.5 h1:HFbHuoQ9MFr/gl4i64SOHuVRG21aFvg1QiKj
 github.com/SpenserCai/sd-webui-go v0.3.5/go.mod h1:ckzphVZudQu3kYx124QUggeyAWIOW0fMJj2e4yEKgu0=
 github.com/SpenserCai/sd-webui-go v0.4.0 h1:bWMBc4UjYb4Xtfnmrl05Cm/KLQirfBf/0numbM60e24=
 github.com/SpenserCai/sd-webui-go v0.4.0/go.mod h1:ckzphVZudQu3kYx124QUggeyAWIOW0fMJj2e4yEKgu0=
+github.com/SpenserCai/sd-webui-go v0.4.1 h1:nd/PZHJ5jc7kS5Y3uRjhdntj0c9M+vaj4oe4Sah7EzE=
+github.com/SpenserCai/sd-webui-go v0.4.1/go.mod h1:ckzphVZudQu3kYx124QUggeyAWIOW0fMJj2e4yEKgu0=
 github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=

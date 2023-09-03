@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 22:56:24
+ * @LastEditTime: 2023-09-03 23:18:15
  * @Description: file content
 -->
 <div align="center">
@@ -77,6 +77,7 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
     - Supports specifying module and model through selection, eliminating the need for manual input.
     - Allows previewing preprocessing effects and obtaining args simultaneously (used for user-generated txt2img).
 - Text to Image
+    - **Support SDXL's refiner!(New!)**
     - Supports user-defined default options from the User Center.
     - Enables specifying model, sampler, and other optional parameters through selection, eliminating the need for manual input. 
     - Supports using parameters from "ControlNet Preview" directly. 
