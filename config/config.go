@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-30 21:01:30
+ * @LastEditTime: 2023-09-03 12:24:35
  * @Description: file content
  */
 package config
@@ -19,6 +19,7 @@ type ServerItem struct {
 type DefaultSetting struct {
 	CfgScale       float64 `json:"cfg_scale"`
 	NegativePrompt string  `json:"negative_prompt"`
+	Sampler        string  `json:"sampler"`
 	Height         int64   `json:"height"`
 	Width          int64   `json:"width"`
 	Steps          int64   `json:"steps"`
