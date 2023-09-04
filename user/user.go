@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-01 12:12:59
+ * @LastEditTime: 2023-09-04 20:53:13
  * @Description: file content
  */
 package user
@@ -95,12 +95,11 @@ func (ucs *UserCenterService) RegisterUser(user *UserInfo) (string, error) {
 		}
 		return "UPDATED USER INFO", nil
 	}
-
 	// 如果用户不存在则创建用户
 	newUserInfo := &db_backend.UserInfo{
 		ID:           user.Id,
 		Name:         user.Name,
-		Created:      time.Now().Format("2023-08-31 12:59:59"),
+		Created:      time.Now().Format("2006-01-02 15:04:05"),
 		Enable:       true,
 		Roles:        "user",
 		StableConfig: "{}",

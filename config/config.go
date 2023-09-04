@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-03 12:24:35
+ * @LastEditTime: 2023-09-04 22:53:15
  * @Description: file content
  */
 package config
@@ -23,6 +23,7 @@ type DefaultSetting struct {
 	Height         int64   `json:"height"`
 	Width          int64   `json:"width"`
 	Steps          int64   `json:"steps"`
+	Model          string  `json:"sd_model_checkpoint"`
 }
 
 type DbConfig struct {
