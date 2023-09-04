@@ -262,6 +262,8 @@ func (shdl SlashHandler) Img2imgSetOptions(cmd discordgo.ApplicationCommandInter
 	opt.InpaintFullResPadding = 32
 	resizeByScale := 1.0
 	isSetSize := false
+	isSetCheckpoints := false
+	defaultCheckpoints := shdl.GetDefaultSettingFromUser("sd_model_checkpoint", "", i).(string)
 	for _, v := range cmd.Options {
 		switch v.Name {
 		case "prompt":
@@ -302,6 +304,7 @@ func (shdl SlashHandler) Img2imgSetOptions(cmd discordgo.ApplicationCommandInter
 			tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
 			tmpOverrideSettings["sd_model_checkpoint"] = v.StringValue()
 			opt.OverrideSettings = tmpOverrideSettings
+			isSetCheckpoints = true
 		case "refiner_checkpoint":
 			opt.RefinerCheckpoint = v.StringValue()
 		case "refiner_switch_at":
@@ -335,6 +338,11 @@ func (shdl SlashHandler) Img2imgSetOptions(cmd discordgo.ApplicationCommandInter
 			opt.Width = func() *int64 { v := int64(float64(width) * resizeByScale); return &v }()
 			opt.Height = func() *int64 { v := int64(float64(height) * resizeByScale); return &v }()
 		}
+	}
+	if !isSetCheckpoints && defaultCheckpoints != "" {
+		tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
+		tmpOverrideSettings["sd_model_checkpoint"] = defaultCheckpoints
+		opt.OverrideSettings = tmpOverrideSettings
 	}
 }
 
