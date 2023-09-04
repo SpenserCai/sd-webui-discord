@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-03 23:18:15
+ * @LastEditTime: 2023-09-04 23:01:01
  * @Description: file content
 -->
 <div align="center">
@@ -220,7 +220,9 @@ If you want set default value with sd-webui
             "negative_prompt": "bad,text,watermask",
             "height":1024,
             "width":1024,
-            "steps":32
+            "steps":32,
+            "sampler":"Euler",
+            "sd_model_checkpoint":"sd_xl_base_1.0.safetensors [31e35c80fc]"
         }
     }
     ...
