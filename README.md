@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-05 22:10:44
+ * @LastEditTime: 2023-09-06 00:25:03
  * @Description: file content
 -->
 <div align="center">
@@ -245,6 +245,15 @@ If you want to enable the **User Center**
             "dsn":"./user_center.db"
         }
   }
+  ...
+}
+```
+
+If you want disable return info in `img2img` and `txt2img`
+```json
+{
+  ...
+  "disable_return_gen_info":true
   ...
 }
 ```
