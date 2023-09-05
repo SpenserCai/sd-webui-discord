@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-04 23:01:01
+ * @LastEditTime: 2023-09-05 22:10:44
  * @Description: file content
 -->
 <div align="center">
@@ -44,8 +44,10 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 
 ## News
 <details>
-<summary>2023-08-20~2023-08-31</summary>
+<summary>2023-08-20~2023-09-05</summary>
 
+### **2023-09-05:** Support User Center on Windows
+### **2023-09-04:** Support Image to Image
 ### **2023-08-31:** Support User Center
 ### **2023-08-27:**
  - Support txt2img choice model checkpoint
@@ -81,6 +83,9 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
     - Supports user-defined default options from the User Center.
     - Enables specifying model, sampler, and other optional parameters through selection, eliminating the need for manual input. 
     - Supports using parameters from "ControlNet Preview" directly. 
+- Image to Image
+    - Allows uploading images through an image control, rather than using URLs.
+    - Supports all operations of img2img in sd-webui!
 - Roop Face Swap
     - Allows uploading images through an image control, rather than using URLs.
     - Supports specifying source and target through selection, eliminating the need for manual input.
