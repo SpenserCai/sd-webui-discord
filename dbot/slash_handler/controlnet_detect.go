@@ -3,13 +3,14 @@
  * @Date: 2023-08-20 12:45:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-30 09:46:29
+ * @LastEditTime: 2023-09-05 12:31:55
  * @Description: file content
  */
 
 package slash_handler
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -283,7 +284,13 @@ func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discord
 			context = fmt.Sprintf("```json\n%v```\n", outinfo)
 		}
 		for n, img := range controlnet_detect.GetResponse().Images {
-			imageReader, err := utils.GetImageReaderByBase64(img)
+			var imageReader *bytes.Reader
+			var err error
+			if *opt.ControlnetModule == "none" {
+				imageReader, err = utils.GetImageReaderByBase64(opt.ControlnetInputImages[0])
+			} else {
+				imageReader, err = utils.GetImageReaderByBase64(img)
+			}
 			if err != nil {
 				s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
 					Content: func() *string { v := err.Error(); return &v }(),

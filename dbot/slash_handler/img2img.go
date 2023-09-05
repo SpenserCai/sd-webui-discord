@@ -363,7 +363,7 @@ func (shdl SlashHandler) Img2imgAction(s *discordgo.Session, i *discordgo.Intera
 		outinfo := img2img.GetResponse().Info
 		context := ""
 		// 如果outinfo长度大于2000则context为：Success！，并创建info.json文件
-		if len(*outinfo) > 2000 {
+		if len(*outinfo) > 1800 {
 			context = "Success!"
 			infoJson, _ := utils.GetJsonReaderByJsonString(*outinfo)
 			files = append(files, &discordgo.File{
