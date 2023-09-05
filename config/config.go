@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-04 22:53:15
+ * @LastEditTime: 2023-09-06 00:14:17
  * @Description: file content
  */
 package config
@@ -45,5 +45,6 @@ type Config struct {
 		Token    string `json:"token"`
 		ServerId string `json:"server_id"`
 	} `json:"discord"`
-	UserCenter UserCenter `json:"user_center"`
+	UserCenter           UserCenter `json:"user_center"`
+	DisableReturnGenInfo bool       `json:"disable_return_gen_info"`
 }

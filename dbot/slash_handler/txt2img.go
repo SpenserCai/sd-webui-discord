@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-05 13:00:48
+ * @LastEditTime: 2023-09-06 00:16:08
  * @Description: file content
  */
 package slash_handler
@@ -244,19 +244,21 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		files := make([]*discordgo.File, 0)
 		outinfo := txt2img.GetResponse().Info
 		context := ""
-		// 如果outinfo长度大于2000则context为：Success！，并创建info.json文件
-		if len(*outinfo) > 1800 {
-			context = "Success!"
-			infoJson, _ := utils.GetJsonReaderByJsonString(*outinfo)
-			files = append(files, &discordgo.File{
-				Name:        "info.json",
-				ContentType: "application/json",
-				Reader:      infoJson,
-			})
-		} else {
-			var fOutput bytes.Buffer
-			json.Indent(&fOutput, []byte(*outinfo), "", "  ")
-			context = fmt.Sprintf("```json\n%v```\n", fOutput.String())
+		if !global.Config.DisableReturnGenInfo {
+			// 如果outinfo长度大于2000则context为：Success！，并创建info.json文件
+			if len(*outinfo) > 1800 {
+				context = "Success!"
+				infoJson, _ := utils.GetJsonReaderByJsonString(*outinfo)
+				files = append(files, &discordgo.File{
+					Name:        "info.json",
+					ContentType: "application/json",
+					Reader:      infoJson,
+				})
+			} else {
+				var fOutput bytes.Buffer
+				json.Indent(&fOutput, []byte(*outinfo), "", "  ")
+				context = fmt.Sprintf("```json\n%v```\n", fOutput.String())
+			}
 		}
 		for j, v := range txt2img.GetResponse().Images {
 			imageReader, err := utils.GetImageReaderByBase64(v)

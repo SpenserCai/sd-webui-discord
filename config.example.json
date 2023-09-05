@@ -8,7 +8,8 @@
                 "max_queue":100,
                 "max_vram":"20G"
             }
-        ]
+        ],
+        "default_setting":{}
     },
     "discord":{
         "token":"<your token here>",
@@ -20,5 +21,6 @@
             "type":"sqlite",
             "dsn":"./user_center.db"
         }
-    }
+    },
+    "disable_return_gen_info":false
 }
