@@ -3,7 +3,7 @@
  * @Date: 2023-08-20 12:45:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-05 12:31:55
+ * @LastEditTime: 2023-09-06 23:59:27
  * @Description: file content
  */
 
@@ -224,7 +224,7 @@ func (shdl SlashHandler) ControlnetArgJsonGen(dsOpt []*discordgo.ApplicationComm
 		case "zoom_mode":
 			cnArg.ResizeMode = v.IntValue()
 		case "processor_res":
-			cnArg.ProcessorRes = v.FloatValue()
+			cnArg.ProcessorRes = v.IntValue()
 		case "threshold_a":
 			cnArg.ThresholdA = v.FloatValue()
 		case "threshold_b":
