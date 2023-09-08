@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-06 00:42:22
+ * @LastEditTime: 2023-09-08 23:33:49
  * @Description: file content
 -->
 <div align="center">
@@ -115,9 +115,8 @@ The command is still under active development, and there are two ways to experie
 1. Join our Discord Server where you can try out the latest features and contribute by submitting issues and pull requests. 
 2. Self-deploy it to have your own sd-webui-discord instance.
 
-
-### Join Our Discord Server
-[![Discord](https://discordapp.com/api/guilds/1140177489008807966/widget.png?style=banner2)](https://discord.gg/uNJpzEE4sZ)
+### Discord Server
+[![Discord](https://invidget.switchblade.xyz/uNJpzEE4sZ)](https://discord.gg/uNJpzEE4sZ)
 
 <!--支持收起-->
 

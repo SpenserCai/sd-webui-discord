@@ -3,7 +3,7 @@ module github.com/SpenserCai/sd-webui-discord
 go 1.19
 
 require (
-	github.com/SpenserCai/sd-webui-go v0.4.2
+	github.com/SpenserCai/sd-webui-go v0.4.3
 	github.com/bwmarrin/discordgo v0.27.1
 	golang.org/x/text v0.7.0
 	gorm.io/driver/mysql v1.5.1
