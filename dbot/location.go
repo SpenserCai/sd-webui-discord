@@ -3,7 +3,7 @@
  * @Date: 2023-09-10 16:18:27
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-10 22:17:50
+ * @LastEditTime: 2023-09-10 22:31:32
  * @Description: file content
  */
 package dbot
@@ -75,7 +75,6 @@ func (dbot *DiscordBot) SetLocation() error {
 		return err
 	}
 	exeDir := filepath.Dir(exePath) + "/location"
-	// 将exeDir中的所有文件名读取到locationList中
 	err = filepath.Walk(exeDir, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
 			name, locationItem, err := GetLocationItem(filepath.Join(exeDir, info.Name()))
@@ -90,11 +89,8 @@ func (dbot *DiscordBot) SetLocation() error {
 		fmt.Println(err)
 		return err
 	}
-	// log.Println(locationMap)
-	// 循环遍历dbot.AppCommand
 	for _, cmd := range dbot.AppCommand {
 		AddLocationDescriptionMap(cmd)
-		// 循环遍历locationMap
 		for k, localCmdItemList := range locationMap {
 			locale := GetLocation(k)
 			if locale == discordgo.Unknown {
