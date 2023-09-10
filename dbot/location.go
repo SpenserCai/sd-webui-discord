@@ -3,7 +3,7 @@
  * @Date: 2023-09-10 16:18:27
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-10 22:31:32
+ * @LastEditTime: 2023-09-10 22:44:27
  * @Description: file content
  */
 package dbot
@@ -30,7 +30,6 @@ type Location struct {
 func GetLocationItem(filePath string) (string, []LocationItem, error) {
 	var location Location
 	var locationItem []LocationItem
-	// 从filePath中读取文件名，并将文件 内容读取到locationItem中 不用扩展名
 	locationName := filepath.Base(filePath)
 	locationName = locationName[:len(locationName)-len(filepath.Ext(locationName))]
 	file, err := os.Open(filePath)
