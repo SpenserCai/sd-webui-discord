@@ -3,7 +3,7 @@
  * @Date: 2023-09-10 16:18:27
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-10 22:06:40
+ * @LastEditTime: 2023-09-10 22:17:50
  * @Description: file content
  */
 package dbot
@@ -101,7 +101,7 @@ func (dbot *DiscordBot) SetLocation() error {
 				continue
 			}
 			for _, localCmdItem := range localCmdItemList {
-				if cmd.Name == localCmdItem.Command {
+				if cmd.Name == localCmdItem.Command && localCmdItem.Description != "" {
 					(*cmd.DescriptionLocalizations)[locale] = localCmdItem.Description
 				}
 			}

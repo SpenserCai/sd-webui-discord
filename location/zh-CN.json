@@ -9,7 +9,7 @@
             "description":"老照片上色"
         },
         {
-            "command":"roop",
+            "command":"roop_image",
             "description":"换脸"
         },
         {
@@ -23,6 +23,26 @@
         {
             "command":"sam",
             "description":"通过自然语言从图片中分割内容"
+        },
+        {
+            "command":"register",
+            "description":"用户注册，要使用自定义默认选项必须现注册"
+        },
+        {
+            "command":"setting",
+            "description":"自定义默认选项，包括模型、采样器，图片大小等等"
+        },
+        {
+            "command":"img2img",
+            "description":"图片生成图片"
+        },
+        {
+            "command":"extra_single",
+            "description":"超分、人脸修复"
+        },
+        {
+            "command":"png_info",
+            "description":"获取图片生成参数"
         }
     ]
 }
