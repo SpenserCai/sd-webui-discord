@@ -2,7 +2,7 @@
     "location_list": [
         {
             "command": "txt2img",
-            "description": "文本生成图片"
+            "description": "文字生成圖片"
         },
         {
             "command": "deoldify",
@@ -10,39 +10,39 @@
         },
         {
             "command": "roop_image",
-            "description": "换脸"
+            "description": "換臉"
         },
         {
             "command": "controlnet_detect",
-            "description": "ControlNet预览及参数获取"
+            "description": "ControlNet預覽及參數獲取"
         },
         {
             "command": "rembg",
-            "description": "图像去背景"
+            "description": "影像去背景"
         },
         {
             "command": "sam",
-            "description": "通过自然语言从图片中分割内容"
+            "description": "通過自然語言從圖片中分割內容"
         },
         {
             "command": "register",
-            "description": "用户注册，要使用自定义默认选项必须现注册"
+            "description": "用戶註冊,要使用自定義默認選項必須現注册"
         },
         {
             "command": "setting",
-            "description": "自定义默认选项，包括模型、采样器，图片大小等等"
+            "description": "自定義默認選項,包括模型、採樣器,圖片大小等等"
         },
         {
             "command": "img2img",
-            "description": "图片生成图片"
+            "description": "圖片生成圖片"
         },
         {
             "command": "extra_single",
-            "description": "超分、人脸修复"
+            "description": "超分、人臉修復"
         },
         {
             "command": "png_info",
-            "description": "获取图片生成参数"
+            "description": "獲取圖片生成參數"
         }
     ]
 }
