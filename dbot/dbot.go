@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:06:01
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-05 12:41:21
+ * @LastEditTime: 2023-09-10 20:51:39
  * @Description: file content
  */
 package dbot
@@ -44,6 +44,7 @@ func NewDiscordBot(token string, serverID string) (*DiscordBot, error) {
 
 	// 生成命令列表
 	dbot.GenerateCommandList()
+	dbot.SetLocation()
 
 	// 根据命令列表生成Handler
 	dbot.GenerateSlashMap()

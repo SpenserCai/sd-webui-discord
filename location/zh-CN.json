@@ -1,0 +1,28 @@
+{
+    "location_list":[
+        {
+            "command":"txt2img",
+            "description":"文本生成图片"
+        },
+        {
+            "command":"deoldify",
+            "description":"老照片上色"
+        },
+        {
+            "command":"roop",
+            "description":"换脸"
+        },
+        {
+            "command":"controlnet_detect",
+            "description":"ControlNet预览及参数获取"
+        },
+        {
+            "command":"rembg",
+            "description":"图像去背景"
+        },
+        {
+            "command":"sam",
+            "description":"通过自然语言从图片中分割内容"
+        }
+    ]
+}

@@ -3,7 +3,7 @@
  # @Date: 2023-08-17 11:04:55
  # @version: 
  # @LastEditors: SpenserCai
- # @LastEditTime: 2023-09-05 21:50:59
+ # @LastEditTime: 2023-09-10 16:53:51
  # @Description: file content
 ### 
 export GOOS=linux
@@ -26,3 +26,9 @@ if [ ! -f "./release/config.json" ]; then
     echo "config.json not found, copy config.example.json to config.json"
     cp ./config.example.json ./release/config.json
 fi
+
+# 吧location目录和其中的文件复制到release目录，如果存在location目录则删除后再复制
+if [ -d "./release/location" ]; then
+    rm -rf ./release/location
+fi
+cp -r ./location ./release/location
