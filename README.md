@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-11 10:22:36
+ * @LastEditTime: 2023-09-11 15:36:38
  * @Description: file content
 -->
 <div align="center">
@@ -46,7 +46,7 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 <details>
 <summary>2023-08-20~2023-09-10</summary>
 
-### **2023-09-10:** Support location language
+### **2023-09-10:** Support local language
 ### **2023-09-05:** Support User Center on Windows
 ### **2023-09-04:** Support Image to Image
 ### **2023-08-31:** Support User Center
@@ -69,7 +69,7 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 </details>
 
 ## Features
-- Location language support.
+- Local language support.
 - Global sd-webui default options.
 - Supports multi-node (sd-webui) deployment, distributed cluster queue with automatic scheduling.
 - User Center
