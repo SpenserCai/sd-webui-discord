@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-08 23:33:49
+ * @LastEditTime: 2023-09-11 10:22:36
  * @Description: file content
 -->
 <div align="center">
@@ -44,8 +44,9 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 
 ## News
 <details>
-<summary>2023-08-20~2023-09-05</summary>
+<summary>2023-08-20~2023-09-10</summary>
 
+### **2023-09-10:** Support location language
 ### **2023-09-05:** Support User Center on Windows
 ### **2023-09-04:** Support Image to Image
 ### **2023-08-31:** Support User Center
@@ -68,6 +69,7 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 </details>
 
 ## Features
+- Location language support.
 - Global sd-webui default options.
 - Supports multi-node (sd-webui) deployment, distributed cluster queue with automatic scheduling.
 - User Center
@@ -79,7 +81,7 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
     - Supports specifying module and model through selection, eliminating the need for manual input.
     - Allows previewing preprocessing effects and obtaining args simultaneously (used for user-generated txt2img).
 - Text to Image
-    - **Support SDXL's refiner!(New!)**
+    - Support SDXL's refiner!
     - Supports user-defined default options from the User Center.
     - Enables specifying model, sampler, and other optional parameters through selection, eliminating the need for manual input. 
     - Supports using parameters from "ControlNet Preview" directly. 
@@ -118,7 +120,7 @@ The command is still under active development, and there are two ways to experie
 ### Discord Server
 [![Discord](https://invidget.switchblade.xyz/uNJpzEE4sZ)](https://discord.gg/uNJpzEE4sZ)
 
-<!--支持收起-->
+<!--
 
 #### Text to Image
 <details>
@@ -165,7 +167,7 @@ Extension: [sd-webui-deoldify](https://github.com/SpenserCai/sd-webui-deoldify)
   ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_demo.png)
   ![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_options.png)
 
-</details>
+</details> -->
 
 ### Installation
 You need to install the following extensions on the SD webui:
