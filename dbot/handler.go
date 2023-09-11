@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:02:04
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-17 10:04:31
+ * @LastEditTime: 2023-09-11 14:34:27
  * @Description: file content
  */
 package dbot
@@ -20,7 +20,9 @@ func (dbot *DiscordBot) Ready(s *discordgo.Session, event *discordgo.Ready) {
 
 func (dbot *DiscordBot) InteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	if h, ok := dbot.SlashHandlerMap[i.ApplicationCommandData().Name]; ok {
-		h(s, i)
+		if dbot.CheckPermission(i.ApplicationCommandData().Name, s, i) {
+			h(s, i)
+		}
 	}
 
 }

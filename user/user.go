@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-04 20:53:13
+ * @LastEditTime: 2023-09-11 14:49:01
  * @Description: file content
  */
 package user
@@ -19,6 +19,11 @@ import (
 	"github.com/SpenserCai/sd-webui-discord/user/db"
 	"github.com/SpenserCai/sd-webui-discord/user/db/db_backend"
 )
+
+// 权限表,如果命令出现再某个role中，则代表只有这个role的用户才能使用这个命令，key是role，value是命令
+var PermissionTable = map[string][]string{
+	"admin": {"ban", "unban"},
+}
 
 type StableConfig struct {
 	Model          string  `json:"sd_model_checkpoint"`
@@ -76,6 +81,39 @@ func (ucs *UserCenterService) GetUserInfo(id string) (*UserInfo, error) {
 		Roles:        userInfo.Roles,
 		StableConfig: stableConfig,
 	}, nil
+}
+
+func (ucs *UserCenterService) CheckUserPermission(id string, cmd string) bool {
+	userInfo, err := ucs.GetUserInfo(id)
+	if err != nil {
+		return false
+	}
+	if userInfo == nil {
+		// 判断命令是否再任意一个role中，如果在返回false
+		for _, permissionRoles := range PermissionTable {
+			for _, permissionRole := range permissionRoles {
+				if permissionRole == cmd {
+					return false
+				}
+			}
+		}
+		return true
+	}
+	roles := strings.Split(userInfo.Roles, ",")
+	// 判断命令是否再任意一个role中，如果在判断用户是否有这个role，如果有返回true，如果没有返回false
+	for cRole, cmds := range PermissionTable {
+		for _, cCmd := range cmds {
+			if cCmd == cmd {
+				for _, role := range roles {
+					if role == cRole {
+						return true
+					}
+				}
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func (ucs *UserCenterService) RegisterUser(user *UserInfo) (string, error) {

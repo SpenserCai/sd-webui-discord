@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 18:19:19
+ * @LastEditTime: 2023-09-11 14:46:25
  * @Description: file content
  */
 package slash_handler
@@ -152,6 +152,15 @@ func (shdl SlashHandler) GetUserInfoWithInteraction(i *discordgo.InteractionCrea
 		return global.UserCenterSvc.GetUserInfo(i.Interaction.User.ID)
 	} else {
 		return global.UserCenterSvc.GetUserInfo(i.Interaction.Member.User.ID)
+	}
+}
+
+func (shdl SlashHandler) GetDiscordUserId(i *discordgo.InteractionCreate) string {
+	// 判断是群消息还是私聊消息
+	if i.GuildID == "" {
+		return i.Interaction.User.ID
+	} else {
+		return i.Interaction.Member.User.ID
 	}
 }
 
