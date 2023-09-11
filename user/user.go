@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-11 14:49:01
+ * @LastEditTime: 2023-09-11 14:59:58
  * @Description: file content
  */
 package user
@@ -100,6 +100,7 @@ func (ucs *UserCenterService) CheckUserPermission(id string, cmd string) bool {
 		return true
 	}
 	roles := strings.Split(userInfo.Roles, ",")
+	returnValue := true
 	// 判断命令是否再任意一个role中，如果在判断用户是否有这个role，如果有返回true，如果没有返回false
 	for cRole, cmds := range PermissionTable {
 		for _, cCmd := range cmds {
@@ -109,11 +110,11 @@ func (ucs *UserCenterService) CheckUserPermission(id string, cmd string) bool {
 						return true
 					}
 				}
-				return false
+				returnValue = false
 			}
 		}
 	}
-	return true
+	return returnValue
 }
 
 func (ucs *UserCenterService) RegisterUser(user *UserInfo) (string, error) {
