@@ -3,7 +3,7 @@
  * @Date: 2023-09-11 13:43:11
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-11 14:46:56
+ * @LastEditTime: 2023-09-13 09:23:54
  * @Description: file content
  */
 package dbot
@@ -16,6 +16,9 @@ import (
 
 // 权限验证
 func (dbot *DiscordBot) CheckPermission(cmd string, s *discordgo.Session, i *discordgo.InteractionCreate) bool {
+	if !global.Config.UserCenter.Enable {
+		return true
+	}
 	userId := shdl.SlashHandler{}.GetDiscordUserId(i)
 
 	if global.UserCenterSvc.CheckUserPermission(userId, cmd) {
