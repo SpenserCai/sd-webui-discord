@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-06 00:16:08
+ * @LastEditTime: 2023-09-20 12:13:09
  * @Description: file content
  */
 package slash_handler
@@ -57,6 +57,29 @@ func (shdl SlashHandler) SdModelChoice() []*discordgo.ApplicationCommandOptionCh
 		})
 	}
 	return choices
+}
+
+func (shdl SlashHandler) SdVaeChoice() []*discordgo.ApplicationCommandOptionChoice {
+	choice := []*discordgo.ApplicationCommandOptionChoice{}
+	// add Automatic
+	choice = append(choice, &discordgo.ApplicationCommandOptionChoice{
+		Name:  "Automatic",
+		Value: "Automatic",
+	})
+	vaesvc := &intersvc.SdapiV1SdVae{}
+	vaesvc.Action(global.ClusterManager.GetNodeAuto().StableClient)
+	if vaesvc.Error != nil {
+		log.Println(vaesvc.Error)
+		return choice
+	}
+	vaes := vaesvc.GetResponse()
+	for _, vae := range *vaes {
+		choice = append(choice, &discordgo.ApplicationCommandOptionChoice{
+			Name:  *vae.ModelName,
+			Value: *vae.ModelName,
+		})
+	}
+	return choice
 }
 
 func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
@@ -140,6 +163,12 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			},
 			{
 				Type:         discordgo.ApplicationCommandOptionString,
+				Name:         "sd_vae",
+				Required:     false,
+				Autocomplete: true,
+			},
+			{
+				Type:         discordgo.ApplicationCommandOptionString,
 				Name:         "refiner_checkpoint",
 				Description:  "Refiner checkpoint. Default: None",
 				Required:     false,
@@ -212,6 +241,10 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 			tmpOverrideSettings["sd_model_checkpoint"] = v.StringValue()
 			opt.OverrideSettings = tmpOverrideSettings
 			isSetCheckpoints = true
+		case "sd_vae":
+			tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
+			tmpOverrideSettings["sd_vae"] = v.StringValue()
+			opt.OverrideSettings = tmpOverrideSettings
 		case "refiner_checkpoint":
 			opt.RefinerCheckpoint = v.StringValue()
 		case "refiner_switch_at":
@@ -316,6 +349,10 @@ func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordg
 			}
 			if opt.Name == "refiner_checkpoint" && opt.Focused {
 				repChoices = shdl.FilterChoice(global.LongDBotChoice["sd_model_checkpoint"], opt)
+				continue
+			}
+			if opt.Name == "sd_vae" && opt.Focused {
+				repChoices = shdl.FilterChoice(global.LongDBotChoice["sd_vae"], opt)
 				continue
 			}
 		}

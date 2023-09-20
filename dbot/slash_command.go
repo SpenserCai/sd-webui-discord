@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:10:00
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-04 14:08:29
+ * @LastEditTime: 2023-09-20 12:12:28
  * @Description: file content
  */
 package dbot
@@ -59,4 +59,5 @@ func (dbot *DiscordBot) SetLongChoice() {
 	global.LongDBotChoice["control_net_model"] = slash_handler.SlashHandler{}.ControlnetModelChoice()
 	global.LongDBotChoice["sd_model_checkpoint"] = slash_handler.SlashHandler{}.SdModelChoice()
 	global.LongDBotChoice["sampler"] = slash_handler.SlashHandler{}.SamplerChoice()
+	global.LongDBotChoice["sd_vae"] = slash_handler.SlashHandler{}.SdVaeChoice()
 }
