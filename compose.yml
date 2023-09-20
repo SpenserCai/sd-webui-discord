@@ -1,0 +1,29 @@
+volumes:
+  models:
+  extensions:
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./config.json:/usr/local/bin/config.json
+      - ./location:/usr/local/bin/location
+
+  automatic:
+    image: goolashe/automatic1111-sd-webui
+    environment:
+      - CLI_ARGS=--allow-code --medvram --xformers --enable-insecure-extension-access --api --disable-safe-unpickle
+    ports:
+      - "${WEBUI_PORT:-7860}:7860"
+    volumes:
+      - ./data:/data
+      - ./output:/output
+    stop_signal: SIGKILL
+    tty: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+              - driver: nvidia
+                device_ids: ['0']
+                capabilities: [compute, utility]
