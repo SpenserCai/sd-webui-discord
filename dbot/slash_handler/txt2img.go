@@ -131,7 +131,7 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			{
 				Type:        discordgo.ApplicationCommandOptionNumber,
 				Name:        "cfg_scale",
-				Description: "Cfg scale of the generated image. Default:7",
+				Description: "Cfg scale of the generated image. Default: 7",
 				MinValue:    func() *float64 { v := 1.0; return &v }(),
 				MaxValue:    30.0,
 				Required:    false,
@@ -145,7 +145,7 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "styles",
-				Description: "Style of the generated image,splite with | . Default: None",
+				Description: "Style of the generated image, split with | . Default: None",
 				Required:    false,
 			},
 			{
