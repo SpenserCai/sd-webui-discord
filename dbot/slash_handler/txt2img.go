@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-20 12:13:09
+ * @LastEditTime: 2023-09-20 12:26:25
  * @Description: file content
  */
 package slash_handler
@@ -164,6 +164,7 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			{
 				Type:         discordgo.ApplicationCommandOptionString,
 				Name:         "sd_vae",
+				Description:  "Sd vae. Default: Automatic",
 				Required:     false,
 				Autocomplete: true,
 			},
