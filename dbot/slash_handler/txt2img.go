@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-20 12:26:25
+ * @LastEditTime: 2023-09-20 14:51:20
  * @Description: file content
  */
 package slash_handler
@@ -203,7 +203,9 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 	opt.AlwaysonScripts = map[string]interface{}{}
 	opt.OverrideSettings = map[string]interface{}{}
 	isSetCheckpoints := false
+	isSetVae := false
 	defaultCheckpoints := shdl.GetDefaultSettingFromUser("sd_model_checkpoint", "", i).(string)
+	defaultVae := shdl.GetDefaultSettingFromUser("sd_vae", "", i).(string)
 
 	for _, v := range dsOpt {
 		switch v.Name {
@@ -246,6 +248,7 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 			tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
 			tmpOverrideSettings["sd_vae"] = v.StringValue()
 			opt.OverrideSettings = tmpOverrideSettings
+			isSetVae = true
 		case "refiner_checkpoint":
 			opt.RefinerCheckpoint = v.StringValue()
 		case "refiner_switch_at":
@@ -255,6 +258,11 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 	if !isSetCheckpoints && defaultCheckpoints != "" {
 		tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
 		tmpOverrideSettings["sd_model_checkpoint"] = defaultCheckpoints
+		opt.OverrideSettings = tmpOverrideSettings
+	}
+	if !isSetVae && defaultVae != "" && defaultVae != "Automatic" {
+		tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
+		tmpOverrideSettings["sd_vae"] = defaultVae
 		opt.OverrideSettings = tmpOverrideSettings
 	}
 

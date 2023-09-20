@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:02:04
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-11 14:34:27
+ * @LastEditTime: 2023-09-20 13:58:02
  * @Description: file content
  */
 package dbot
@@ -28,6 +28,7 @@ func (dbot *DiscordBot) InteractionCreate(s *discordgo.Session, i *discordgo.Int
 }
 
 func (dbot *DiscordBot) AddCommand() {
+	dbot.ClearCommand()
 	log.Println("Adding commands...")
 	dbot.AddedCommand = make([]*discordgo.ApplicationCommand, len(dbot.AppCommand))
 	for i, v := range dbot.AppCommand {
@@ -38,6 +39,24 @@ func (dbot *DiscordBot) AddCommand() {
 		}
 		dbot.AddedCommand[i] = cmd
 	}
+}
+
+func (dbot *DiscordBot) ClearCommand() {
+	commands, err := dbot.Session.ApplicationCommands(dbot.Session.State.User.ID, dbot.ServerID)
+	if err != nil {
+		log.Panicf("Cannot get commands: %v", err)
+	}
+	if len(commands) > 0 {
+		log.Println("Clearing commands...")
+		for _, v := range commands {
+			err := dbot.Session.ApplicationCommandDelete(dbot.Session.State.User.ID, dbot.ServerID, v.ID)
+			if err != nil {
+				log.Panicf("Cannot remove '%v' command: %v", v.Name, err)
+				continue
+			}
+		}
+	}
+
 }
 
 func (dbot *DiscordBot) RemoveCommand() {

@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-11 14:59:58
+ * @LastEditTime: 2023-09-20 14:37:50
  * @Description: file content
  */
 package user
@@ -27,6 +27,7 @@ var PermissionTable = map[string][]string{
 
 type StableConfig struct {
 	Model          string  `json:"sd_model_checkpoint"`
+	Vae            string  `json:"sd_vae"`
 	Height         int64   `json:"height"`
 	Width          int64   `json:"width"`
 	Steps          int64   `json:"steps"`
