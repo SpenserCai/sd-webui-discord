@@ -8,6 +8,18 @@ services:
     volumes:
       - ./config.json:/usr/local/bin/config.json
       - ./location:/usr/local/bin/location
+      - ./db/user_center.db:/usr/local/bin/user_center.db
+  app-dev:
+    image: cosmtrek/air
+    working_dir: /project
+    environment:
+      - GOFLAGS=-buildvcs=false
+    profiles:
+      - dev
+    volumes:
+      - ./config.json:/project/tmp/config.json
+      - ./location:/project/tmp/location
+      - ./:/project/ 
 
   automatic:
     image: goolashe/automatic1111-sd-webui

@@ -20,6 +20,7 @@ import (
 type DiscordBot struct {
 	AppCommand      []*discordgo.ApplicationCommand
 	AddedCommand    []*discordgo.ApplicationCommand
+	RegisteredCommands    []*discordgo.ApplicationCommand
 	Session         *discordgo.Session
 	ServerID        string
 	SlashHandlerMap map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate)
@@ -37,6 +38,7 @@ func NewDiscordBot(token string, serverID string) (*DiscordBot, error) {
 		SlashHandlerMap: make(map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate)),
 		AppCommand:      make([]*discordgo.ApplicationCommand, 0),
 		AddedCommand:    make([]*discordgo.ApplicationCommand, 0),
+		RegisteredCommands:    make([]*discordgo.ApplicationCommand, 0),
 	}
 
 	// 预存长选项
@@ -61,6 +63,7 @@ func (d *DiscordBot) Run() {
 		log.Println(err)
 		return
 	}
+	d.ClearCommand()
 	d.AddCommand()
 	defer d.Session.Close()
 
@@ -68,6 +71,6 @@ func (d *DiscordBot) Run() {
 	signal.Notify(stop, os.Interrupt)
 	log.Println("Press Ctrl+C to exit")
 	<-stop
-	d.RemoveCommand()
+	//d.RemoveCommand()
 	log.Println("Gracefully shutting down.")
 }

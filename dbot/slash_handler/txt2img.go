@@ -85,7 +85,7 @@ func (shdl SlashHandler) SdVaeChoice() []*discordgo.ApplicationCommandOptionChoi
 func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "txt2img",
-		Description: "Text generate image",
+		Description: "Generate an img from text.",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
@@ -125,7 +125,7 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			{
 				Type:        discordgo.ApplicationCommandOptionInteger,
 				Name:        "steps",
-				Description: "Steps of the generated image. Default: 20",
+				Description: "Steps of the generated image. Default: 30",
 				Required:    false,
 			},
 			{
@@ -151,13 +151,13 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "controlnet_args",
-				Description: "Controlnet args of the generated image. Default: {}",
+				Description: "Controlnet args of the generated image.",
 				Required:    false,
 			},
 			{
 				Type:         discordgo.ApplicationCommandOptionString,
-				Name:         "checkpoints",
-				Description:  "Sd model checkpoints. Default: SDXL 1.0",
+				Name:         "checkpoint",
+				Description:  "Sd model checkpoint. Default: SDXL 1.0",
 				Required:     false,
 				Autocomplete: true,
 			},
@@ -239,7 +239,7 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 				tmpAScript["controlnet"] = script
 				opt.AlwaysonScripts = tmpAScript
 			}
-		case "checkpoints":
+		case "checkpoint":
 			tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
 			tmpOverrideSettings["sd_model_checkpoint"] = v.StringValue()
 			opt.OverrideSettings = tmpOverrideSettings
@@ -348,7 +348,7 @@ func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordg
 		data := i.ApplicationCommandData()
 
 		for _, opt := range data.Options {
-			if opt.Name == "checkpoints" && opt.Focused {
+			if opt.Name == "checkpoint" && opt.Focused {
 				repChoices = shdl.FilterChoice(global.LongDBotChoice["sd_model_checkpoint"], opt)
 				continue
 			}
