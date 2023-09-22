@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-11 15:36:38
+ * @LastEditTime: 2023-09-22 16:49:26
  * @Description: file content
 -->
 <div align="center">
@@ -43,9 +43,11 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 ![First](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/first_page.png)
 
 ## News
-<details>
-<summary>2023-08-20~2023-09-10</summary>
 
+### **2023-09-22:** 
+ - Support `setting_ui` command
+ - Better `txt2img` response ui,thanks for [venetanji](https://github.com/venetanji) support that! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
+ - Optimize command add when bot start,thanks for [venetanji](https://github.com/venetanji) support that! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
 ### **2023-09-10:** Support local language
 ### **2023-09-05:** Support User Center on Windows
 ### **2023-09-04:** Support Image to Image
@@ -66,13 +68,13 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 ### **2023-08-22: Support `txt2img` command**
 ### **2023-08-22: Support `roop` command** 
 ### **2023-08-20: Support `controlnet_detect` command**  
-</details>
 
 ## Features
 - Local language support.
 - Global sd-webui default options.
 - Supports multi-node (sd-webui) deployment, distributed cluster queue with automatic scheduling.
 - User Center
+    - Set user options with ui. 
     - User Center can be freely enabled.
     - Customizable database types, currently supporting MySQL and SQLite.
     - Users can set their own default options. If not specified when generating images, the user's configured options will be used by default, such as image dimensions, cfg, steps, etc. For more details, please refer to the User Center (wiki).
