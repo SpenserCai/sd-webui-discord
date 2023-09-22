@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 16:06:14
+ * @LastEditTime: 2023-09-22 22:21:31
  * @Description: file content
  */
 package slash_handler
@@ -336,13 +336,17 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 			Content: &context,
 			Embeds: &[]*discordgo.MessageEmbed{
 				{
-					Title: data["prompt"].(string),
+					Title: "SD-WEBUI-DISCORD",
 					Image: &discordgo.MessageEmbedImage{
 						URL:    fmt.Sprintf("attachment://%s", files[0].Name),
 						Width:  512,
 						Height: 512,
 					},
 					Fields: []*discordgo.MessageEmbedField{
+						{
+							Name:  "Prompt",
+							Value: opt.Prompt,
+						},
 						{
 							Name:  "Model",
 							Value: data["sd_model_name"].(string),
@@ -361,6 +365,10 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 						{
 							Name:  "Sampler",
 							Value: data["sampler_name"].(string),
+						},
+						{
+							Name:  "Size",
+							Value: fmt.Sprintf("%dx%d", *opt.Height, *opt.Width),
 						},
 						{
 							Name:   "Steps",
