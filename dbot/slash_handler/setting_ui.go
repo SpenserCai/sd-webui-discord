@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 12:16:38
+ * @LastEditTime: 2023-09-22 12:25:33
  * @Description: file content
  */
 package slash_handler
@@ -292,7 +292,7 @@ func (shdl SlashHandler) SettingUiCommandHandler(s *discordgo.Session, i *discor
 				return
 			}
 			// 判断Height和Width是否都>=64,<=2048
-			if userInfo.StableConfig.Height < 64 || userInfo.StableConfig.Height > 2048 || userInfo.StableConfig.Width < 64 || userInfo.StableConfig.Width > 2048 {
+			if tmpHeight < 64 || tmpHeight > 2048 || tmpWidth < 64 || tmpWidth > 2048 {
 				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 					Type: discordgo.InteractionResponseChannelMessageWithSource,
 					Data: &discordgo.InteractionResponseData{
@@ -318,7 +318,7 @@ func (shdl SlashHandler) SettingUiCommandHandler(s *discordgo.Session, i *discor
 				return
 			}
 			// 判断Steps是否>=15,<=100
-			if userInfo.StableConfig.Steps < 15 || userInfo.StableConfig.Steps > 100 {
+			if tmpSteps < 15 || tmpSteps > 100 {
 				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 					Type: discordgo.InteractionResponseChannelMessageWithSource,
 					Data: &discordgo.InteractionResponseData{
@@ -343,7 +343,7 @@ func (shdl SlashHandler) SettingUiCommandHandler(s *discordgo.Session, i *discor
 				return
 			}
 			// 判断CfgScale是否>=0.1,<=1.0
-			if userInfo.StableConfig.CfgScale < 1.0 || userInfo.StableConfig.CfgScale > 30.0 {
+			if tmpCfgScale < 1.0 || tmpCfgScale > 30.0 {
 				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 					Type: discordgo.InteractionResponseChannelMessageWithSource,
 					Data: &discordgo.InteractionResponseData{
