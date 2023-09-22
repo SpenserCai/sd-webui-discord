@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 15:59:30
+ * @LastEditTime: 2023-09-22 16:06:14
  * @Description: file content
  */
 package slash_handler
@@ -351,7 +351,7 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 							Name: "VAE",
 							Value: func() string {
 								vae, ok := data["sd_vae_name"]
-								if ok {
+								if ok && vae != nil {
 									return vae.(string)
 								} else {
 									return "Automatic"
