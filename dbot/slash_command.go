@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:10:00
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-20 12:12:28
+ * @LastEditTime: 2023-09-21 17:11:00
  * @Description: file content
  */
 package dbot
@@ -25,6 +25,7 @@ func (dbot *DiscordBot) GenerateSlashMap() error {
 		commandName := v.Name
 		// 如果name中有_则用下划线分割后每个首字母专大写，如果没有_则直接首字母转大写
 		commandName = utils.FormatCommand(commandName) + "CommandHandler"
+		log.Println("commandName:", commandName)
 		// 通过反射找到对应的方法赋值给map
 		pkgValue := reflect.ValueOf(slash_handler.SlashHandler{})
 		methodValue := pkgValue.MethodByName(commandName)
@@ -50,6 +51,7 @@ func (dbot *DiscordBot) GenerateCommandList() {
 	if global.Config.UserCenter.Enable {
 		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.RegisterOptions())
 		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.SettingOptions())
+		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.SettingUiOptions())
 	}
 }
 

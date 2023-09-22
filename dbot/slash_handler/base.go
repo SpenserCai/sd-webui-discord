@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-11 14:46:25
+ * @LastEditTime: 2023-09-22 12:16:15
  * @Description: file content
  */
 package slash_handler
@@ -52,6 +52,16 @@ func (shdl SlashHandler) ReportCommandInfo(s *discordgo.Session, i *discordgo.In
 	})
 }
 
+func (shdl SlashHandler) ReportCommandInfoWithFlag(s *discordgo.Session, i *discordgo.InteractionCreate, flags discordgo.MessageFlags) {
+	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: shdl.GetCommandStr(i.Interaction),
+			Flags:   flags,
+		},
+	})
+}
+
 func (shdl SlashHandler) GenerateTaskID(i *discordgo.InteractionCreate) string {
 	// 判断是群消息还是私聊消息
 	if i.GuildID == "" {
@@ -64,6 +74,21 @@ func (shdl SlashHandler) GenerateTaskID(i *discordgo.InteractionCreate) string {
 func (shdl SlashHandler) SendStateMessage(state string, s *discordgo.Session, i *discordgo.InteractionCreate) (*discordgo.Message, error) {
 	msg, err := s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
 		Content: fmt.Sprintf("%s...", state),
+		Files:   []*discordgo.File{},
+	})
+	if err != nil {
+		s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
+			Content: "Something went wrong",
+		})
+		return nil, err
+	}
+	return msg, nil
+}
+
+func (shdl SlashHandler) SendStateMessageWithFlag(state string, s *discordgo.Session, i *discordgo.InteractionCreate, flags discordgo.MessageFlags) (*discordgo.Message, error) {
+	msg, err := s.FollowupMessageCreate(i.Interaction, true, &discordgo.WebhookParams{
+		Content: fmt.Sprintf("%s...", state),
+		Flags:   flags,
 		Files:   []*discordgo.File{},
 	})
 	if err != nil {
@@ -144,6 +169,25 @@ func (shdl SlashHandler) FilterChoice(choices []*discordgo.ApplicationCommandOpt
 		}
 		return newChoices
 	}
+}
+
+func (shdl SlashHandler) ConvertCommandOptionChoiceToMenuOption(choices []*discordgo.ApplicationCommandOptionChoice, default_v string) []discordgo.SelectMenuOption {
+	menuOption := []discordgo.SelectMenuOption{}
+	for _, choice := range choices {
+		selectMenueOption := discordgo.SelectMenuOption{
+			Label: choice.Name,
+			Value: choice.Value.(string),
+		}
+		if choice.Value.(string) == default_v {
+			selectMenueOption.Default = true
+		}
+		menuOption = append(menuOption, selectMenueOption)
+	}
+	// 如果超过25个，就只取前25个
+	if len(menuOption) > 25 {
+		menuOption = menuOption[:25]
+	}
+	return menuOption
 }
 
 func (shdl SlashHandler) GetUserInfoWithInteraction(i *discordgo.InteractionCreate) (*user.UserInfo, error) {
