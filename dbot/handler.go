@@ -27,37 +27,7 @@ func (dbot *DiscordBot) InteractionCreate(s *discordgo.Session, i *discordgo.Int
 
 }
 
-func (dbot *DiscordBot) AddCommand() {
-	log.Println("Adding commands...")
-	dbot.AddedCommand = make([]*discordgo.ApplicationCommand, len(dbot.AppCommand))
-	for i, v := range dbot.AppCommand {
-		// check if command options are the same
-		if dbot.OptionsUnchanged(v) {
-			log.Printf("'%v' command options are unchanged, skipping...", v.Name)
-			continue
-		}
-		for _, r := range dbot.RegisteredCommands {
-			if r.Name == v.Name {
-				err := dbot.Session.ApplicationCommandDelete(dbot.Session.State.User.ID, dbot.ServerID, r.ID)
-				if err != nil {
-					log.Panicf("Cannot remove '%v' command: %v", v.Name, err)
-					continue
-				}
-			}
-		}
-
-
-		log.Printf("Adding '%v' command...", v.Name)
-		cmd, err := dbot.Session.ApplicationCommandCreate(dbot.Session.State.User.ID, dbot.ServerID, v)
-		if err != nil {
-			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
-			continue
-		}
-		dbot.AddedCommand[i] = cmd
-	}
-}
-
-func (dbot *DiscordBot) ClearCommand() {
+func (dbot *DiscordBot) SyncCommands() {
 	commands, err := dbot.Session.ApplicationCommands(dbot.Session.State.User.ID, dbot.ServerID)
 	dbot.RegisteredCommands = commands
 	if err != nil {
@@ -81,10 +51,34 @@ func (dbot *DiscordBot) ClearCommand() {
 		}
 	}
 
+	log.Println("Adding commands...")
+	for _, v := range dbot.AppCommands {
+		// check if command options are the same
+		if dbot.OptionsUnchanged(v) {
+			log.Printf("'%v' command options are unchanged, skipping...", v.Name)
+			continue
+		}
+		for _, r := range dbot.RegisteredCommands {
+			if r.Name == v.Name {
+				err := dbot.Session.ApplicationCommandDelete(dbot.Session.State.User.ID, dbot.ServerID, r.ID)
+				if err != nil {
+					log.Panicf("Cannot remove '%v' command: %v", v.Name, err)
+					continue
+				}
+			}
+		}
+		log.Printf("Adding '%v' command...", v.Name)
+		_, err := dbot.Session.ApplicationCommandCreate(dbot.Session.State.User.ID, dbot.ServerID, v)
+		if err != nil {
+			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
+			continue
+		}
+	}
+
 }
 
 func (dbot *DiscordBot) CheckCommandInList(name string) bool {
-	for _, v := range dbot.AppCommand {
+	for _, v := range dbot.AppCommands {
 		if v.Name == name {
 			return true
 		}

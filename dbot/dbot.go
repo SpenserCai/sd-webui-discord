@@ -18,8 +18,7 @@ import (
 )
 
 type DiscordBot struct {
-	AppCommand      []*discordgo.ApplicationCommand
-	AddedCommand    []*discordgo.ApplicationCommand
+	AppCommands      []*discordgo.ApplicationCommand
 	RegisteredCommands    []*discordgo.ApplicationCommand
 	Session         *discordgo.Session
 	ServerID        string
@@ -36,9 +35,7 @@ func NewDiscordBot(token string, serverID string) (*DiscordBot, error) {
 		Session:         session,
 		ServerID:        serverID,
 		SlashHandlerMap: make(map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate)),
-		AppCommand:      make([]*discordgo.ApplicationCommand, 0),
-		AddedCommand:    make([]*discordgo.ApplicationCommand, 0),
-		RegisteredCommands:    make([]*discordgo.ApplicationCommand, 0),
+		AppCommands:      make([]*discordgo.ApplicationCommand, 0),
 	}
 
 	// 预存长选项
@@ -63,8 +60,7 @@ func (d *DiscordBot) Run() {
 		log.Println(err)
 		return
 	}
-	d.ClearCommand()
-	d.AddCommand()
+	d.SyncCommands()
 	defer d.Session.Close()
 
 	stop := make(chan os.Signal, 1)

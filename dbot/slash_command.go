@@ -21,7 +21,7 @@ import (
 
 func (dbot *DiscordBot) GenerateSlashMap() error {
 	// 遍历AppCommands，取name
-	for _, v := range dbot.AppCommand {
+	for _, v := range dbot.AppCommands {
 		commandName := v.Name
 		// 如果name中有_则用下划线分割后每个首字母专大写，如果没有_则直接首字母转大写
 		commandName = utils.FormatCommand(commandName) + "CommandHandler"
@@ -38,18 +38,18 @@ func (dbot *DiscordBot) GenerateSlashMap() error {
 }
 
 func (dbot *DiscordBot) GenerateCommandList() {
-	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.DeoldifyOptions())
-	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.SamOptions())
-	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.RembgOptions())
-	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.ExtraSingleOptions())
-	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.PngInfoOptions())
-	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.ControlnetDetectOptions())
-	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.RoopImageOptions())
-	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.Txt2imgOptions())
-	dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.Img2imgOptions())
+	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.DeoldifyOptions())
+	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.SamOptions())
+	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.RembgOptions())
+	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.ExtraSingleOptions())
+	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.PngInfoOptions())
+	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.ControlnetDetectOptions())
+	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.RoopImageOptions())
+	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.Txt2imgOptions())
+	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.Img2imgOptions())
 	if global.Config.UserCenter.Enable {
-		dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.RegisterOptions())
-		dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.SettingOptions())
+		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.RegisterOptions())
+		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.SettingOptions())
 	}
 }
 
