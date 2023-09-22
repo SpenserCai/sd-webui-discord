@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 12:25:33
+ * @LastEditTime: 2023-09-22 14:05:45
  * @Description: file content
  */
 package slash_handler
@@ -133,9 +133,189 @@ func (shdl SlashHandler) SettingUiAction(s *discordgo.Session, i *discordgo.Inte
 
 }
 
+func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *discordgo.InteractionCreate, userInfo *user.UserInfo) {
+	switch i.MessageComponentData().CustomID {
+	case "setting_ui|sd_model_checkpoint":
+		userInfo.StableConfig.Model = i.MessageComponentData().Values[0]
+	case "setting_ui|sd_vae":
+		userInfo.StableConfig.Vae = i.MessageComponentData().Values[0]
+	case "setting_ui|sampler":
+		userInfo.StableConfig.Sampler = i.MessageComponentData().Values[0]
+	// 显示图片大小设置窗口
+	case "setting_ui|set_size":
+		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseModal,
+			Data: &discordgo.InteractionResponseData{
+				CustomID: "setting_ui|set_size_modal",
+				Title:    "Set Image Size",
+				Components: []discordgo.MessageComponent{
+					discordgo.ActionsRow{
+						Components: []discordgo.MessageComponent{
+							discordgo.TextInput{
+								CustomID:    "setting_ui|height",
+								Label:       "Height",
+								Style:       discordgo.TextInputShort,
+								Placeholder: "Set image height",
+								Value:       fmt.Sprintf("%d", userInfo.StableConfig.Height),
+							},
+						},
+					},
+					discordgo.ActionsRow{
+						Components: []discordgo.MessageComponent{
+							discordgo.TextInput{
+								CustomID:    "setting_ui|width",
+								Label:       "Width",
+								Style:       discordgo.TextInputShort,
+								Placeholder: "Set image width",
+								Value:       fmt.Sprintf("%d", userInfo.StableConfig.Width),
+							},
+						},
+					},
+				},
+			},
+		})
+		if err != nil {
+			log.Println(err)
+		}
+		return
+	case "setting_ui|set_steps":
+		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseModal,
+			Data: &discordgo.InteractionResponseData{
+				CustomID: "setting_ui|set_steps_modal",
+				Title:    "Set Steps",
+				Components: []discordgo.MessageComponent{
+					discordgo.ActionsRow{
+						Components: []discordgo.MessageComponent{
+							discordgo.TextInput{
+								CustomID:    "setting_ui|steps",
+								Label:       "Steps",
+								Style:       discordgo.TextInputShort,
+								Placeholder: "Set steps",
+								Value:       fmt.Sprintf("%d", userInfo.StableConfig.Steps),
+							},
+						},
+					},
+				},
+			},
+		})
+		if err != nil {
+			log.Println(err)
+		}
+		return
+	case "setting_ui|set_cfg_scale":
+		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseModal,
+			Data: &discordgo.InteractionResponseData{
+				CustomID: "setting_ui|set_cfg_scale_modal",
+				Title:    "Set Cfg Scale",
+				Components: []discordgo.MessageComponent{
+					discordgo.ActionsRow{
+						Components: []discordgo.MessageComponent{
+							discordgo.TextInput{
+								CustomID:    "setting_ui|cfg_scale",
+								Label:       "Cfg Scale",
+								Style:       discordgo.TextInputShort,
+								Placeholder: "Set cfg scale",
+								// 小数点后保留两位
+								Value: fmt.Sprintf("%.2f", userInfo.StableConfig.CfgScale),
+							},
+						},
+					},
+				},
+			},
+		})
+		if err != nil {
+			log.Println(err)
+		}
+		return
+	case "setting_ui|set_negative_prompt":
+		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseModal,
+			Data: &discordgo.InteractionResponseData{
+				CustomID: "setting_ui|set_negative_prompt_modal",
+				Title:    "Set Negative Prompt",
+				Components: []discordgo.MessageComponent{
+					discordgo.ActionsRow{
+						Components: []discordgo.MessageComponent{
+							discordgo.TextInput{
+								CustomID:    "setting_ui|negative_prompt",
+								Label:       "Negative Prompt",
+								Style:       discordgo.TextInputParagraph,
+								Placeholder: "Set negative prompt",
+								MinLength:   0,
+								MaxLength:   200,
+								Value:       userInfo.StableConfig.NegativePrompt,
+							},
+						},
+					},
+				},
+			},
+		})
+		if err != nil {
+			log.Println(err)
+		}
+		return
+	}
+}
+
+func (shdl SlashHandler) SettingUiModalSubmitHander(s *discordgo.Session, i *discordgo.InteractionCreate, userInfo *user.UserInfo) (isSuccess bool) {
+	switch i.ModalSubmitData().CustomID {
+	case "setting_ui|set_size_modal":
+		modal_data := i.ModalSubmitData()
+		tmpHeight, formathErr := strconv.ParseInt(modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value, 10, 64)
+		tmpWidth, formatwErr := strconv.ParseInt(modal_data.Components[1].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value, 10, 64)
+		if formathErr != nil || formatwErr != nil {
+			shdl.SendTextInteractionRespondWithFlag("Format Error", s, i, discordgo.MessageFlagsEphemeral)
+			return false
+		}
+		// 判断Height和Width是否都>=64,<=2048
+		if tmpHeight < 64 || tmpHeight > 2048 || tmpWidth < 64 || tmpWidth > 2048 {
+			shdl.SendTextInteractionRespondWithFlag("Height and Width must be >=64 and <=2048", s, i, discordgo.MessageFlagsEphemeral)
+			return false
+		}
+		userInfo.StableConfig.Height = tmpHeight
+		userInfo.StableConfig.Width = tmpWidth
+	case "setting_ui|set_steps_modal":
+		modal_data := i.ModalSubmitData()
+		tmpSteps, formatErr := strconv.ParseInt(modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value, 10, 64)
+		if formatErr != nil {
+			shdl.SendTextInteractionRespondWithFlag("Format Error", s, i, discordgo.MessageFlagsEphemeral)
+			return false
+		}
+		// 判断Steps是否>=15,<=100
+		if tmpSteps < 15 || tmpSteps > 100 {
+			shdl.SendTextInteractionRespondWithFlag("Steps must be >=15 and <=100", s, i, discordgo.MessageFlagsEphemeral)
+			return false
+		}
+		userInfo.StableConfig.Steps = tmpSteps
+	case "setting_ui|set_cfg_scale_modal":
+		modal_data := i.ModalSubmitData()
+		tmpCfgScale, formatErr := strconv.ParseFloat(modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value, 64)
+		if formatErr != nil {
+			shdl.SendTextInteractionRespondWithFlag("Format Error", s, i, discordgo.MessageFlagsEphemeral)
+			return false
+		}
+		// 判断CfgScale是否>=0.1,<=1.0
+		if tmpCfgScale < 1.0 || tmpCfgScale > 30.0 {
+			shdl.SendTextInteractionRespondWithFlag("CfgScale must be >=1.0 and <=30.0", s, i, discordgo.MessageFlagsEphemeral)
+			return false
+		}
+		userInfo.StableConfig.CfgScale = tmpCfgScale
+	case "setting_ui|set_negative_prompt_modal":
+		modal_data := i.ModalSubmitData()
+		userInfo.StableConfig.NegativePrompt = modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value
+	}
+	return true
+}
+
 func (shdl SlashHandler) SettingUiCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	node := global.ClusterManager.GetNodeAuto()
 	userInfo, err := shdl.GetUserInfoWithInteraction(i)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
 		shdl.ReportCommandInfoWithFlag(s, i, discordgo.MessageFlagsEphemeral)
@@ -148,234 +328,19 @@ func (shdl SlashHandler) SettingUiCommandHandler(s *discordgo.Session, i *discor
 		node.ActionQueue.AddTask(shdl.GenerateTaskID(i), action, callback)
 		return
 	case discordgo.InteractionMessageComponent:
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		switch i.MessageComponentData().CustomID {
-		case "setting_ui|sd_model_checkpoint":
-			userInfo.StableConfig.Model = i.MessageComponentData().Values[0]
-		case "setting_ui|sd_vae":
-			userInfo.StableConfig.Vae = i.MessageComponentData().Values[0]
-		case "setting_ui|sampler":
-			userInfo.StableConfig.Sampler = i.MessageComponentData().Values[0]
-		// 显示图片大小设置窗口
-		case "setting_ui|set_size":
-			err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseModal,
-				Data: &discordgo.InteractionResponseData{
-					CustomID: "setting_ui|set_size_modal",
-					Title:    "Set Image Size",
-					Components: []discordgo.MessageComponent{
-						discordgo.ActionsRow{
-							Components: []discordgo.MessageComponent{
-								discordgo.TextInput{
-									CustomID:    "setting_ui|height",
-									Label:       "Height",
-									Style:       discordgo.TextInputShort,
-									Placeholder: "Set image height",
-									Value:       fmt.Sprintf("%d", userInfo.StableConfig.Height),
-								},
-							},
-						},
-						discordgo.ActionsRow{
-							Components: []discordgo.MessageComponent{
-								discordgo.TextInput{
-									CustomID:    "setting_ui|width",
-									Label:       "Width",
-									Style:       discordgo.TextInputShort,
-									Placeholder: "Set image width",
-									Value:       fmt.Sprintf("%d", userInfo.StableConfig.Width),
-								},
-							},
-						},
-					},
-				},
-			})
-			if err != nil {
-				log.Println(err)
-			}
-			return
-		case "setting_ui|set_steps":
-			err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseModal,
-				Data: &discordgo.InteractionResponseData{
-					CustomID: "setting_ui|set_steps_modal",
-					Title:    "Set Steps",
-					Components: []discordgo.MessageComponent{
-						discordgo.ActionsRow{
-							Components: []discordgo.MessageComponent{
-								discordgo.TextInput{
-									CustomID:    "setting_ui|steps",
-									Label:       "Steps",
-									Style:       discordgo.TextInputShort,
-									Placeholder: "Set steps",
-									Value:       fmt.Sprintf("%d", userInfo.StableConfig.Steps),
-								},
-							},
-						},
-					},
-				},
-			})
-			if err != nil {
-				log.Println(err)
-			}
-			return
-		case "setting_ui|set_cfg_scale":
-			err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseModal,
-				Data: &discordgo.InteractionResponseData{
-					CustomID: "setting_ui|set_cfg_scale_modal",
-					Title:    "Set Cfg Scale",
-					Components: []discordgo.MessageComponent{
-						discordgo.ActionsRow{
-							Components: []discordgo.MessageComponent{
-								discordgo.TextInput{
-									CustomID:    "setting_ui|cfg_scale",
-									Label:       "Cfg Scale",
-									Style:       discordgo.TextInputShort,
-									Placeholder: "Set cfg scale",
-									// 小数点后保留两位
-									Value: fmt.Sprintf("%.2f", userInfo.StableConfig.CfgScale),
-								},
-							},
-						},
-					},
-				},
-			})
-			if err != nil {
-				log.Println(err)
-			}
-			return
-		case "setting_ui|set_negative_prompt":
-			err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseModal,
-				Data: &discordgo.InteractionResponseData{
-					CustomID: "setting_ui|set_negative_prompt_modal",
-					Title:    "Set Negative Prompt",
-					Components: []discordgo.MessageComponent{
-						discordgo.ActionsRow{
-							Components: []discordgo.MessageComponent{
-								discordgo.TextInput{
-									CustomID:    "setting_ui|negative_prompt",
-									Label:       "Negative Prompt",
-									Style:       discordgo.TextInputParagraph,
-									Placeholder: "Set negative prompt",
-									MinLength:   0,
-									MaxLength:   200,
-									Value:       userInfo.StableConfig.NegativePrompt,
-								},
-							},
-						},
-					},
-				},
-			})
-			if err != nil {
-				log.Println(err)
-			}
-			return
-		}
+		shdl.SettingUiComponentHandler(s, i, userInfo)
+		return
 	case discordgo.InteractionModalSubmit:
-		switch i.ModalSubmitData().CustomID {
-		case "setting_ui|set_size_modal":
-			modal_data := i.ModalSubmitData()
-			tmpHeight, formathErr := strconv.ParseInt(modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value, 10, 64)
-			tmpWidth, formatwErr := strconv.ParseInt(modal_data.Components[1].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value, 10, 64)
-			if formathErr != nil || formatwErr != nil {
-				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData{
-						Content: "Format Error",
-						Flags:   discordgo.MessageFlagsEphemeral,
-					},
-				})
-				return
-			}
-			// 判断Height和Width是否都>=64,<=2048
-			if tmpHeight < 64 || tmpHeight > 2048 || tmpWidth < 64 || tmpWidth > 2048 {
-				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData{
-						Content: "Height and Width must be >=64 and <=2048",
-						Flags:   discordgo.MessageFlagsEphemeral,
-					},
-				})
-				return
-			}
-			userInfo.StableConfig.Height = tmpHeight
-			userInfo.StableConfig.Width = tmpWidth
-		case "setting_ui|set_steps_modal":
-			modal_data := i.ModalSubmitData()
-			tmpSteps, formatErr := strconv.ParseInt(modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value, 10, 64)
-			if formatErr != nil {
-				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData{
-						Content: "Format Error",
-						Flags:   discordgo.MessageFlagsEphemeral,
-					},
-				})
-				return
-			}
-			// 判断Steps是否>=15,<=100
-			if tmpSteps < 15 || tmpSteps > 100 {
-				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData{
-						Content: "Steps must be >=15 and <=100",
-						Flags:   discordgo.MessageFlagsEphemeral,
-					},
-				})
-				return
-			}
-			userInfo.StableConfig.Steps = tmpSteps
-		case "setting_ui|set_cfg_scale_modal":
-			modal_data := i.ModalSubmitData()
-			tmpCfgScale, formatErr := strconv.ParseFloat(modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value, 64)
-			if formatErr != nil {
-				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData{
-						Content: "Format Error",
-						Flags:   discordgo.MessageFlagsEphemeral,
-					},
-				})
-				return
-			}
-			// 判断CfgScale是否>=0.1,<=1.0
-			if tmpCfgScale < 1.0 || tmpCfgScale > 30.0 {
-				s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-					Type: discordgo.InteractionResponseChannelMessageWithSource,
-					Data: &discordgo.InteractionResponseData{
-						Content: "CfgScale must be >=1 and <=30",
-						Flags:   discordgo.MessageFlagsEphemeral,
-					},
-				})
-				return
-			}
-			userInfo.StableConfig.CfgScale = tmpCfgScale
-		case "setting_ui|set_negative_prompt_modal":
-			modal_data := i.ModalSubmitData()
-			userInfo.StableConfig.NegativePrompt = modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value
+		isSuccess := shdl.SettingUiModalSubmitHander(s, i, userInfo)
+		if !isSuccess {
+			return
 		}
 	}
 	err = global.UserCenterSvc.UpdateStableConfig(userInfo)
 	if err == nil {
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: "",
-				Flags:   discordgo.MessageFlagsEphemeral,
-			},
-		})
+		shdl.SendTextInteractionRespondWithFlag("", s, i, discordgo.MessageFlagsEphemeral)
 	} else {
-		sendErr := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: "Setting Error: " + err.Error(),
-				Flags:   discordgo.MessageFlagsEphemeral,
-			},
-		})
+		sendErr := shdl.SendTextInteractionRespondWithFlag("Setting Error: "+err.Error(), s, i, discordgo.MessageFlagsEphemeral)
 		if sendErr != nil {
 			log.Println(sendErr)
 		}
