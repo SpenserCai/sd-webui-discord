@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:10:00
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-20 12:12:28
+ * @LastEditTime: 2023-09-21 17:11:00
  * @Description: file content
  */
 package dbot
@@ -50,6 +50,7 @@ func (dbot *DiscordBot) GenerateCommandList() {
 	if global.Config.UserCenter.Enable {
 		dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.RegisterOptions())
 		dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.SettingOptions())
+		dbot.AppCommand = append(dbot.AppCommand, slash_handler.SlashHandler{}.SettingUiOptions())
 	}
 }
 

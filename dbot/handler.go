@@ -3,13 +3,14 @@
  * @Date: 2023-08-16 22:02:04
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-20 13:58:02
+ * @LastEditTime: 2023-09-22 12:17:40
  * @Description: file content
  */
 package dbot
 
 import (
 	"log"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -19,9 +20,26 @@ func (dbot *DiscordBot) Ready(s *discordgo.Session, event *discordgo.Ready) {
 }
 
 func (dbot *DiscordBot) InteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	if h, ok := dbot.SlashHandlerMap[i.ApplicationCommandData().Name]; ok {
-		if dbot.CheckPermission(i.ApplicationCommandData().Name, s, i) {
-			h(s, i)
+	switch i.Type {
+	case discordgo.InteractionApplicationCommand:
+		if h, ok := dbot.SlashHandlerMap[i.ApplicationCommandData().Name]; ok {
+			if dbot.CheckPermission(i.ApplicationCommandData().Name, s, i) {
+				h(s, i)
+			}
+		}
+	case discordgo.InteractionMessageComponent:
+		component_command := strings.Split(i.MessageComponentData().CustomID, "|")
+		if h, ok := dbot.SlashHandlerMap[component_command[0]]; ok {
+			if dbot.CheckPermission(component_command[0], s, i) {
+				h(s, i)
+			}
+		}
+	case discordgo.InteractionModalSubmit:
+		modal_command := strings.Split(i.ModalSubmitData().CustomID, "|")
+		if h, ok := dbot.SlashHandlerMap[modal_command[0]]; ok {
+			if dbot.CheckPermission(modal_command[0], s, i) {
+				h(s, i)
+			}
 		}
 	}
 
@@ -32,11 +50,13 @@ func (dbot *DiscordBot) AddCommand() {
 	log.Println("Adding commands...")
 	dbot.AddedCommand = make([]*discordgo.ApplicationCommand, len(dbot.AppCommand))
 	for i, v := range dbot.AppCommand {
+		log.Printf("Adding '%v' command...", v.Name)
 		cmd, err := dbot.Session.ApplicationCommandCreate(dbot.Session.State.User.ID, dbot.ServerID, v)
 		if err != nil {
 			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
 			continue
 		}
+		log.Printf("Added '%v' command", v.Name)
 		dbot.AddedCommand[i] = cmd
 	}
 }
