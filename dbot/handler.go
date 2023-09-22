@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:02:04
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 12:17:40
+ * @LastEditTime: 2023-09-22 14:20:44
  * @Description: file content
  */
 package dbot
@@ -21,7 +21,7 @@ func (dbot *DiscordBot) Ready(s *discordgo.Session, event *discordgo.Ready) {
 
 func (dbot *DiscordBot) InteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	switch i.Type {
-	case discordgo.InteractionApplicationCommand:
+	case discordgo.InteractionApplicationCommand, discordgo.InteractionApplicationCommandAutocomplete:
 		if h, ok := dbot.SlashHandlerMap[i.ApplicationCommandData().Name]; ok {
 			if dbot.CheckPermission(i.ApplicationCommandData().Name, s, i) {
 				h(s, i)
