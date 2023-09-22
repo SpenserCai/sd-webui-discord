@@ -3,3 +3,4 @@ data/*
 output/*
 config.json
 tmp/*
+.air.toml
