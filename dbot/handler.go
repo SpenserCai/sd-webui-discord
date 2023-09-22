@@ -45,30 +45,22 @@ func (dbot *DiscordBot) InteractionCreate(s *discordgo.Session, i *discordgo.Int
 
 }
 
-func (dbot *DiscordBot) AddCommand() {
-	dbot.ClearCommand()
-	log.Println("Adding commands...")
-	dbot.AddedCommand = make([]*discordgo.ApplicationCommand, len(dbot.AppCommand))
-	for i, v := range dbot.AppCommand {
-		log.Printf("Adding '%v' command...", v.Name)
-		cmd, err := dbot.Session.ApplicationCommandCreate(dbot.Session.State.User.ID, dbot.ServerID, v)
-		if err != nil {
-			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
-			continue
-		}
-		log.Printf("Added '%v' command", v.Name)
-		dbot.AddedCommand[i] = cmd
-	}
-}
-
-func (dbot *DiscordBot) ClearCommand() {
+func (dbot *DiscordBot) SyncCommands() {
 	commands, err := dbot.Session.ApplicationCommands(dbot.Session.State.User.ID, dbot.ServerID)
+	dbot.RegisteredCommands = commands
 	if err != nil {
 		log.Panicf("Cannot get commands: %v", err)
 	}
-	if len(commands) > 0 {
-		log.Println("Clearing commands...")
-		for _, v := range commands {
+	if len(dbot.RegisteredCommands) > 0 {
+		log.Println("Clearing other bots commands...")
+		for _, v := range dbot.RegisteredCommands {
+			
+			// if command is not in the command list, remove it
+			if dbot.CheckCommandInList(v.Name) {
+				log.Printf("'%v' command is in the command list, skip...", v.Name)
+				continue
+			}
+			log.Printf("Removing '%v' command...", v.Name)
 			err := dbot.Session.ApplicationCommandDelete(dbot.Session.State.User.ID, dbot.ServerID, v.ID)
 			if err != nil {
 				log.Panicf("Cannot remove '%v' command: %v", v.Name, err)
@@ -77,15 +69,94 @@ func (dbot *DiscordBot) ClearCommand() {
 		}
 	}
 
-}
+	log.Println("Adding/Updating commands...")
+	for _, v := range dbot.AppCommands {
 
-func (dbot *DiscordBot) RemoveCommand() {
-	log.Println("Removing commands...")
-	for _, v := range dbot.AddedCommand {
-		err := dbot.Session.ApplicationCommandDelete(dbot.Session.State.User.ID, dbot.ServerID, v.ID)
+		// check if command needs update
+		if !dbot.CommandNeedsUpdate(v) {
+			log.Printf("'%v' command options are unchanged, skipping...", v.Name)
+			continue
+		}
+		// delete old version of command
+		for _, r := range dbot.RegisteredCommands {
+			if r.Name == v.Name {
+				err := dbot.Session.ApplicationCommandDelete(dbot.Session.State.User.ID, dbot.ServerID, r.ID)
+				if err != nil {
+					log.Panicf("Cannot remove '%v' command: %v", v.Name, err)
+					continue
+				}
+			}
+		}
+
+		// add new version of command
+		log.Printf("Adding '%v' command...", v.Name)
+		_, err := dbot.Session.ApplicationCommandCreate(dbot.Session.State.User.ID, dbot.ServerID, v)
 		if err != nil {
-			log.Panicf("Cannot remove '%v' command: %v", v.Name, err)
+			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
 			continue
 		}
 	}
+
+}
+
+func (dbot *DiscordBot) CheckCommandInList(name string) bool {
+	for _, v := range dbot.AppCommands {
+		if v.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
+func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand) bool {
+	for _, registeredCommand := range dbot.RegisteredCommands {
+		if registeredCommand.Name == command.Name {
+
+			// new description
+			if registeredCommand.Description != command.Description { return true }
+
+			// new options
+			if len(registeredCommand.Options) != len(command.Options) { return true }
+
+			
+			for i, option := range command.Options {
+				// new option description
+				if option.Description != registeredCommand.Options[i].Description {
+					log.Println("Registered description '", registeredCommand.Options[i].Description, "' is different from command description '", option.Description, "' for command", command.Name)
+					return true
+				}
+
+				if option.Autocomplete {return true}
+
+				// new choices
+				for k, choice := range option.Choices {
+
+					if len(registeredCommand.Options[i].Choices) != len(option.Choices) {
+						log.Println("Length of choices is different for command", command.Name)
+						log.Println("Registered command:", registeredCommand.Options[i].Choices)
+						// print all the choices names and their description
+						for _, v := range command.Options[i].Choices {
+							log.Println("Command", v.Name, v.Value)
+						}
+						for _, v := range registeredCommand.Options[i].Choices {
+							log.Println("RegisteredCommand", v.Name, v.Value)
+						}
+						return true
+					}
+					if choice.Name == registeredCommand.Options[i].Choices[k].Name {
+						if choice.Value != registeredCommand.Options[i].Choices[k].Value {
+							continue
+						}
+					} else {
+						return false
+					}
+
+				}
+				// no new choices
+			}
+			// no new options or no options
+			return false
+		}
+	}
+	return true
 }

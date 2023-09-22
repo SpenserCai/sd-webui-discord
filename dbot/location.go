@@ -88,7 +88,7 @@ func (dbot *DiscordBot) SetLocation() error {
 		fmt.Println(err)
 		return err
 	}
-	for _, cmd := range dbot.AppCommand {
+	for _, cmd := range dbot.AppCommands {
 		AddLocationDescriptionMap(cmd)
 		for k, localCmdItemList := range locationMap {
 			locale := GetLocation(k)

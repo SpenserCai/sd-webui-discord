@@ -85,7 +85,7 @@ func (shdl SlashHandler) SdVaeChoice() []*discordgo.ApplicationCommandOptionChoi
 func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "txt2img",
-		Description: "Text generate image",
+		Description: "Generate an img from text.",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
@@ -125,13 +125,13 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			{
 				Type:        discordgo.ApplicationCommandOptionInteger,
 				Name:        "steps",
-				Description: "Steps of the generated image. Default: 20",
+				Description: "Steps of the generated image. Default: 30",
 				Required:    false,
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionNumber,
 				Name:        "cfg_scale",
-				Description: "Cfg scale of the generated image. Default:7",
+				Description: "Cfg scale of the generated image. Default: 7",
 				MinValue:    func() *float64 { v := 1.0; return &v }(),
 				MaxValue:    30.0,
 				Required:    false,
@@ -142,22 +142,23 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				Description: "Seed of the generated image. Default: -1",
 				Required:    false,
 			},
+			
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "styles",
-				Description: "Style of the generated image,splite with | . Default: None",
+				Description: "Style of the generated image, split with | . Default: None",
 				Required:    false,
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "controlnet_args",
-				Description: "Controlnet args of the generated image. Default: {}",
+				Description: "Controlnet args of the generated image.",
 				Required:    false,
 			},
 			{
 				Type:         discordgo.ApplicationCommandOptionString,
-				Name:         "checkpoints",
-				Description:  "Sd model checkpoints. Default: SDXL 1.0",
+				Name:         "checkpoint",
+				Description:  "Sd model checkpoint. Default: SDXL 1.0",
 				Required:     false,
 				Autocomplete: true,
 			},
@@ -239,7 +240,7 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 				tmpAScript["controlnet"] = script
 				opt.AlwaysonScripts = tmpAScript
 			}
-		case "checkpoints":
+		case "checkpoint":
 			tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
 			tmpOverrideSettings["sd_model_checkpoint"] = v.StringValue()
 			opt.OverrideSettings = tmpOverrideSettings
@@ -272,6 +273,9 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 
 func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.SdapiV1Txt2imgRequest, node *cluster.ClusterNode) {
 	msg, err := shdl.SendStateMessage("Running", s, i)
+	// s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+	// 	Content: "Running...",
+	// })
 	if err != nil {
 		log.Println(err)
 		return
@@ -285,6 +289,14 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 	} else {
 		files := make([]*discordgo.File, 0)
 		outinfo := txt2img.GetResponse().Info
+		// parse outinfo from json
+		var data map[string]interface{}
+		if err := json.Unmarshal([]byte(*outinfo), &data); err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+
+
 		context := ""
 		if !global.Config.DisableReturnGenInfo {
 			// 如果outinfo长度大于2000则context为：Success！，并创建info.json文件
@@ -302,6 +314,7 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 				context = fmt.Sprintf("```json\n%v```\n", fOutput.String())
 			}
 		}
+		seed := fmt.Sprintf("%.0f", data["seed"])
 		for j, v := range txt2img.GetResponse().Images {
 			imageReader, err := utils.GetImageReaderByBase64(v)
 			if err != nil {
@@ -319,8 +332,51 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		if len(files) >= 4 {
 			files = files[0:4]
 		}
+		
 		_, err := s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
 			Content: &context,
+			Embeds: &[]*discordgo.MessageEmbed{
+				{
+					Title: data["prompt"].(string),
+					Image: &discordgo.MessageEmbedImage{
+				
+							URL: fmt.Sprintf("attachment://image_0.png"),
+							Width: 512,
+							Height: 512,
+
+					},
+					Fields: []*discordgo.MessageEmbedField{
+						{
+							Name:   "Model",
+							Value:  data["sd_model_name"].(string),
+						},
+						{
+							Name:   "VAE",
+							Value:  data["sd_vae_name"].(string),
+						},
+						{
+							Name:   "Sampler",
+							Value:  data["sampler_name"].(string),
+
+						},
+						{
+							Name:   "Steps",
+							Value:  fmt.Sprintf("%v", data["steps"]),
+							Inline: true,
+						},
+						{
+							Name:   "Cfg Scale",
+							Value:  fmt.Sprintf("%v", data["cfg_scale"]),
+							Inline: true,
+						},
+						{
+							Name:   "Seed",
+							Value:  seed,
+							Inline: true,
+						},
+					},
+				},
+			},
 			Files:   files,
 		})
 		if err != nil {
@@ -348,7 +404,7 @@ func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordg
 		data := i.ApplicationCommandData()
 
 		for _, opt := range data.Options {
-			if opt.Name == "checkpoints" && opt.Focused {
+			if opt.Name == "checkpoint" && opt.Focused {
 				repChoices = shdl.FilterChoice(global.LongDBotChoice["sd_model_checkpoint"], opt)
 				continue
 			}

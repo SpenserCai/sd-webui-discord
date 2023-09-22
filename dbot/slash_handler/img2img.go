@@ -18,11 +18,11 @@ import (
 func (shdl SlashHandler) Img2imgOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "img2img",
-		Description: "Remove background from image",
+		Description: "Modify an image.",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
 				Name:        "init_image",
-				Description: "Initial image, a file upload. ",
+				Description: "Initial image, a file upload.",
 				Type:        discordgo.ApplicationCommandOptionAttachment,
 				Required:    true,
 			},
@@ -36,7 +36,7 @@ func (shdl SlashHandler) Img2imgOptions() *discordgo.ApplicationCommand {
 			},
 			{
 				Name:        "mask",
-				Description: "Mask image, a file upload. ",
+				Description: "Mask image, a file upload.",
 				Type:        discordgo.ApplicationCommandOptionAttachment,
 				Required:    false,
 			},
@@ -160,16 +160,7 @@ func (shdl SlashHandler) Img2imgOptions() *discordgo.ApplicationCommand {
 				Name:        "inpaint_mask_only", //  重绘区域, False: whole picture True：only masked
 				Description: "Inpaint Area. Default: Whole picture",
 				Required:    false,
-				Choices: []*discordgo.ApplicationCommandOptionChoice{
-					{
-						Name:  "Whole picture",
-						Value: false,
-					},
-					{
-						Name:  "Only masked",
-						Value: true,
-					},
-				},
+				
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionInteger,
@@ -208,13 +199,13 @@ func (shdl SlashHandler) Img2imgOptions() *discordgo.ApplicationCommand {
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "controlnet_args",
-				Description: "Controlnet args of the generated image. Default: {}",
+				Description: "Controlnet args of the generated image.",
 				Required:    false,
 			},
 			{
 				Type:         discordgo.ApplicationCommandOptionString,
-				Name:         "checkpoints",
-				Description:  "Sd model checkpoints. Default: SDXL 1.0",
+				Name:         "checkpoint",
+				Description:  "Sd model checkpoint. Default: SDXL 1.0",
 				Required:     false,
 				Autocomplete: true,
 			},
@@ -300,7 +291,7 @@ func (shdl SlashHandler) Img2imgSetOptions(cmd discordgo.ApplicationCommandInter
 				tmpAScript["controlnet"] = script
 				opt.AlwaysonScripts = tmpAScript
 			}
-		case "checkpoints":
+		case "checkpoint":
 			tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
 			tmpOverrideSettings["sd_model_checkpoint"] = v.StringValue()
 			opt.OverrideSettings = tmpOverrideSettings
@@ -420,7 +411,7 @@ func (shdl SlashHandler) Img2imgCommandHandler(s *discordgo.Session, i *discordg
 		data := i.ApplicationCommandData()
 
 		for _, opt := range data.Options {
-			if opt.Name == "checkpoints" && opt.Focused {
+			if opt.Name == "checkpoint" && opt.Focused {
 				repChoices = shdl.FilterChoice(global.LongDBotChoice["sd_model_checkpoint"], opt)
 				continue
 			}
