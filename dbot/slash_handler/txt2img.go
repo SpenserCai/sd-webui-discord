@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-20 14:51:20
+ * @LastEditTime: 2023-09-22 15:59:30
  * @Description: file content
  */
 package slash_handler
@@ -142,7 +142,7 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				Description: "Seed of the generated image. Default: -1",
 				Required:    false,
 			},
-			
+
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "styles",
@@ -296,7 +296,6 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 			return
 		}
 
-
 		context := ""
 		if !global.Config.DisableReturnGenInfo {
 			// 如果outinfo长度大于2000则context为：Success！，并创建info.json文件
@@ -332,32 +331,36 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		if len(files) >= 4 {
 			files = files[0:4]
 		}
-		
+
 		_, err := s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
 			Content: &context,
 			Embeds: &[]*discordgo.MessageEmbed{
 				{
 					Title: data["prompt"].(string),
 					Image: &discordgo.MessageEmbedImage{
-				
-							URL: fmt.Sprintf("attachment://image_0.png"),
-							Width: 512,
-							Height: 512,
-
+						URL:    fmt.Sprintf("attachment://%s", files[0].Name),
+						Width:  512,
+						Height: 512,
 					},
 					Fields: []*discordgo.MessageEmbedField{
 						{
-							Name:   "Model",
-							Value:  data["sd_model_name"].(string),
+							Name:  "Model",
+							Value: data["sd_model_name"].(string),
 						},
 						{
-							Name:   "VAE",
-							Value:  data["sd_vae_name"].(string),
+							Name: "VAE",
+							Value: func() string {
+								vae, ok := data["sd_vae_name"]
+								if ok {
+									return vae.(string)
+								} else {
+									return "Automatic"
+								}
+							}(),
 						},
 						{
-							Name:   "Sampler",
-							Value:  data["sampler_name"].(string),
-
+							Name:  "Sampler",
+							Value: data["sampler_name"].(string),
 						},
 						{
 							Name:   "Steps",
@@ -377,7 +380,7 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 					},
 				},
 			},
-			Files:   files,
+			Files: files,
 		})
 		if err != nil {
 			log.Println(err)

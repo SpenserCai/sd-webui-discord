@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 14:05:45
+ * @LastEditTime: 2023-09-22 15:46:59
  * @Description: file content
  */
 package slash_handler
@@ -133,14 +133,17 @@ func (shdl SlashHandler) SettingUiAction(s *discordgo.Session, i *discordgo.Inte
 
 }
 
-func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *discordgo.InteractionCreate, userInfo *user.UserInfo) {
+func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *discordgo.InteractionCreate, userInfo *user.UserInfo) (isFinish bool) {
 	switch i.MessageComponentData().CustomID {
 	case "setting_ui|sd_model_checkpoint":
 		userInfo.StableConfig.Model = i.MessageComponentData().Values[0]
+		return false
 	case "setting_ui|sd_vae":
 		userInfo.StableConfig.Vae = i.MessageComponentData().Values[0]
+		return false
 	case "setting_ui|sampler":
 		userInfo.StableConfig.Sampler = i.MessageComponentData().Values[0]
+		return false
 	// 显示图片大小设置窗口
 	case "setting_ui|set_size":
 		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
@@ -177,7 +180,6 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 		if err != nil {
 			log.Println(err)
 		}
-		return
 	case "setting_ui|set_steps":
 		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseModal,
@@ -202,7 +204,6 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 		if err != nil {
 			log.Println(err)
 		}
-		return
 	case "setting_ui|set_cfg_scale":
 		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseModal,
@@ -228,7 +229,6 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 		if err != nil {
 			log.Println(err)
 		}
-		return
 	case "setting_ui|set_negative_prompt":
 		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseModal,
@@ -255,8 +255,8 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 		if err != nil {
 			log.Println(err)
 		}
-		return
 	}
+	return true
 }
 
 func (shdl SlashHandler) SettingUiModalSubmitHander(s *discordgo.Session, i *discordgo.InteractionCreate, userInfo *user.UserInfo) (isSuccess bool) {
@@ -328,8 +328,10 @@ func (shdl SlashHandler) SettingUiCommandHandler(s *discordgo.Session, i *discor
 		node.ActionQueue.AddTask(shdl.GenerateTaskID(i), action, callback)
 		return
 	case discordgo.InteractionMessageComponent:
-		shdl.SettingUiComponentHandler(s, i, userInfo)
-		return
+		isFinish := shdl.SettingUiComponentHandler(s, i, userInfo)
+		if isFinish {
+			return
+		}
 	case discordgo.InteractionModalSubmit:
 		isSuccess := shdl.SettingUiModalSubmitHander(s, i, userInfo)
 		if !isSuccess {
