@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 12:16:15
+ * @LastEditTime: 2023-09-22 13:53:23
  * @Description: file content
  */
 package slash_handler
@@ -98,6 +98,16 @@ func (shdl SlashHandler) SendStateMessageWithFlag(state string, s *discordgo.Ses
 		return nil, err
 	}
 	return msg, nil
+}
+
+func (shdl SlashHandler) SendTextInteractionRespondWithFlag(msg string, s *discordgo.Session, i *discordgo.InteractionCreate, flags discordgo.MessageFlags) error {
+	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: msg,
+			Flags:   flags,
+		},
+	})
 }
 
 func (shdl SlashHandler) GetControlNetScript(jsonStr string) (*intersvc.ControlnetPredictScript, error) {
