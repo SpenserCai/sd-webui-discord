@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 22:21:31
+ * @LastEditTime: 2023-09-22 22:59:37
  * @Description: file content
  */
 package slash_handler
@@ -367,8 +367,9 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 							Value: data["sampler_name"].(string),
 						},
 						{
-							Name:  "Size",
-							Value: fmt.Sprintf("%dx%d", *opt.Height, *opt.Width),
+							Name:   "Size",
+							Value:  fmt.Sprintf("%dx%d", *opt.Height, *opt.Width),
+							Inline: true,
 						},
 						{
 							Name:   "Steps",
@@ -383,6 +384,11 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 						{
 							Name:   "Seed",
 							Value:  seed,
+							Inline: true,
+						},
+						{
+							Name:   "User",
+							Value:  fmt.Sprintf("<@%s>", shdl.GetDiscordUserId(i)),
 							Inline: true,
 						},
 					},
