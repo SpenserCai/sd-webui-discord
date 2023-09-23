@@ -3,14 +3,13 @@
  * @Date: 2023-08-19 18:27:34
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 23:43:10
+ * @LastEditTime: 2023-09-23 17:14:45
  * @Description: file content
  */
 package slash_handler
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/SpenserCai/sd-webui-discord/utils"
 
@@ -49,22 +48,17 @@ func (shdl SlashHandler) PngInfoSetOptions(cmd discordgo.ApplicationCommandInter
 }
 
 func (shdl SlashHandler) PngInfoAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.SdapiV1PngInfoRequest, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Running", s, i)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	png_info := &intersvc.SdapiV1PngInfo{RequestItem: opt}
 	png_info.Action(node.StableClient)
 	if png_info.Error != nil {
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := png_info.Error.Error(); return &v }(),
 		})
 	} else {
 		items, _ := json.MarshalIndent(png_info.GetResponse().Items, "", "    ")
 		outString := "items:\n```json\n" + string(items) + "\n```"
 		outString += "info:\n" + *png_info.GetResponse().Info
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: &outString,
 		})
 	}
@@ -72,7 +66,7 @@ func (shdl SlashHandler) PngInfoAction(s *discordgo.Session, i *discordgo.Intera
 
 func (shdl SlashHandler) PngInfoCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.SdapiV1PngInfoRequest{}
-	shdl.ReportCommandInfo(s, i)
+	shdl.RespondStateMessage("Running", s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
 		shdl.PngInfoSetOptions(i.ApplicationCommandData(), option)

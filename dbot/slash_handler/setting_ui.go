@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 15:46:59
+ * @LastEditTime: 2023-09-23 16:18:50
  * @Description: file content
  */
 package slash_handler
@@ -99,22 +99,17 @@ func (shdl SlashHandler) BuildSettingUiComponent(opt *user.StableConfig) *[]disc
 }
 
 func (shdl SlashHandler) SettingUiAction(s *discordgo.Session, i *discordgo.InteractionCreate, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessageWithFlag("Running", s, i, discordgo.MessageFlagsEphemeral)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	userInfo, err := shdl.GetUserInfoWithInteraction(i)
 	if err == nil {
 		// 判断userInfo是否为nil，如果为nil则说明用户没有注册
 		if userInfo == nil {
-			s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Please register first!"; return &v }(),
 			})
 			return
 		}
 		component := shdl.BuildSettingUiComponent(&userInfo.StableConfig)
-		_, err := s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		_, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string {
 				v := "**Setting GUI**\nIf you need more options, please use the `/setting` command"
 				return &v
@@ -126,7 +121,7 @@ func (shdl SlashHandler) SettingUiAction(s *discordgo.Session, i *discordgo.Inte
 		}
 	} else {
 		log.Println(err)
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := "SETTING ERROR!"; return &v }(),
 		})
 	}
@@ -318,7 +313,7 @@ func (shdl SlashHandler) SettingUiCommandHandler(s *discordgo.Session, i *discor
 	}
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
-		shdl.ReportCommandInfoWithFlag(s, i, discordgo.MessageFlagsEphemeral)
+		shdl.RespondStateMessageWithFlag("Running", s, i, discordgo.MessageFlagsEphemeral)
 		action := func() (map[string]interface{}, error) {
 			// shdl.SettingUiSetOptions(i.ApplicationCommandData().Options, option)
 			shdl.SettingUiAction(s, i, node)

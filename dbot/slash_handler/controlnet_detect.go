@@ -3,7 +3,7 @@
  * @Date: 2023-08-20 12:45:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-06 23:59:27
+ * @LastEditTime: 2023-09-23 17:19:16
  * @Description: file content
  */
 
@@ -250,13 +250,8 @@ func (shdl SlashHandler) ControlnetArgJsonGen(dsOpt []*discordgo.ApplicationComm
 }
 
 func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.ControlnetDetectRequest, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Running", s, i)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	if len(opt.ControlnetInputImages) > 4 {
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := "Too many images, please input less than 4 images"; return &v }(),
 		})
 		return
@@ -264,7 +259,7 @@ func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discord
 	controlnet_detect := &intersvc.ControlnetDetect{RequestItem: opt}
 	controlnet_detect.Action(node.StableClient)
 	if controlnet_detect.Error != nil {
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := controlnet_detect.Error.Error(); return &v }(),
 		})
 	} else {
@@ -292,7 +287,7 @@ func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discord
 				imageReader, err = utils.GetImageReaderByBase64(img)
 			}
 			if err != nil {
-				s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+				s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 					Content: func() *string { v := err.Error(); return &v }(),
 				})
 				return
@@ -304,7 +299,7 @@ func (shdl SlashHandler) ControlnetDetectAction(s *discordgo.Session, i *discord
 			})
 		}
 
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: &context,
 			Files:   files,
 		})
@@ -315,7 +310,7 @@ func (shdl SlashHandler) ControlnetDetectCommandHandler(s *discordgo.Session, i 
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
 		option := &intersvc.ControlnetDetectRequest{}
-		shdl.ReportCommandInfo(s, i)
+		shdl.RespondStateMessage("Running", s, i)
 		node := global.ClusterManager.GetNodeAuto()
 		action := func() (map[string]interface{}, error) {
 			shdl.ControlnetDetectSetOptions(i.ApplicationCommandData().Options, option)

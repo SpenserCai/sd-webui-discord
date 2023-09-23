@@ -3,14 +3,12 @@
  * @Date: 2023-08-16 22:27:15
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 22:15:27
+ * @LastEditTime: 2023-09-23 17:18:24
  * @Description: file content
  */
 package slash_handler
 
 import (
-	"log"
-
 	"github.com/SpenserCai/sd-webui-discord/cluster"
 	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/utils"
@@ -69,25 +67,20 @@ func (shdl SlashHandler) DeoldifySetOptions(cmd discordgo.ApplicationCommandInte
 }
 
 func (shdl SlashHandler) DeoldifyAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.DeoldifyImageRequest, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Running", s, i)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	deoldify := &intersvc.DeoldifyImage{RequestItem: opt}
 	deoldify.Action(node.StableClient)
 	if deoldify.Error != nil {
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := deoldify.Error.Error(); return &v }(),
 		})
 	} else {
 		image, err := utils.GetImageReaderByBase64(deoldify.GetResponse().Image)
 		if err != nil {
-			s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := err.Error(); return &v }(),
 			})
 		} else {
-			s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Success"; return &v }(),
 				Files: []*discordgo.File{
 					{
@@ -103,7 +96,7 @@ func (shdl SlashHandler) DeoldifyAction(s *discordgo.Session, i *discordgo.Inter
 
 func (shdl SlashHandler) DeoldifyCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.DeoldifyImageRequest{}
-	shdl.ReportCommandInfo(s, i)
+	shdl.RespondStateMessage("Running", s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
 		shdl.DeoldifySetOptions(i.ApplicationCommandData(), option)

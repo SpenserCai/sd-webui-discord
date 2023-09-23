@@ -3,14 +3,12 @@
  * @Date: 2023-08-18 11:11:48
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 23:42:19
+ * @LastEditTime: 2023-09-23 17:11:39
  * @Description: file content
  */
 package slash_handler
 
 import (
-	"log"
-
 	"github.com/SpenserCai/sd-webui-discord/utils"
 
 	"github.com/SpenserCai/sd-webui-discord/cluster"
@@ -83,25 +81,21 @@ func (shdl SlashHandler) RembgSetOptions(cmd discordgo.ApplicationCommandInterac
 }
 
 func (shdl SlashHandler) RembgAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.RembgRequest, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Running", s, i)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+
 	rembg := &intersvc.Rembg{RequestItem: opt}
 	rembg.Action(node.StableClient)
 	if rembg.Error != nil {
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := rembg.Error.Error(); return &v }(),
 		})
 	} else {
 		image, err := utils.GetImageReaderByBase64(rembg.GetResponse().Image)
 		if err != nil {
-			s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := err.Error(); return &v }(),
 			})
 		} else {
-			s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Success"; return &v }(),
 				Files: []*discordgo.File{
 					{
@@ -117,7 +111,7 @@ func (shdl SlashHandler) RembgAction(s *discordgo.Session, i *discordgo.Interact
 
 func (shdl SlashHandler) RembgCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.RembgRequest{}
-	shdl.ReportCommandInfo(s, i)
+	shdl.RespondStateMessage("Running", s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
 		shdl.RembgSetOptions(i.ApplicationCommandData(), option)

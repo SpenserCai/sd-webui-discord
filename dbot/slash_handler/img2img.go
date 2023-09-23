@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/SpenserCai/sd-webui-discord/cluster"
@@ -160,7 +159,6 @@ func (shdl SlashHandler) Img2imgOptions() *discordgo.ApplicationCommand {
 				Name:        "inpaint_mask_only", //  重绘区域, False: whole picture True：only masked
 				Description: "Inpaint Area. Default: Whole picture",
 				Required:    false,
-				
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionInteger,
@@ -338,15 +336,11 @@ func (shdl SlashHandler) Img2imgSetOptions(cmd discordgo.ApplicationCommandInter
 }
 
 func (shdl SlashHandler) Img2imgAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.SdapiV1Img2imgRequest, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Running", s, i)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+
 	img2img := &intersvc.SdapiV1Img2img{RequestItem: opt}
 	img2img.Action(node.StableClient)
 	if img2img.Error != nil {
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := img2img.Error.Error(); return &v }(),
 		})
 	} else {
@@ -372,7 +366,7 @@ func (shdl SlashHandler) Img2imgAction(s *discordgo.Session, i *discordgo.Intera
 		for j, v := range img2img.GetResponse().Images {
 			imageReader, err := utils.GetImageReaderByBase64(v)
 			if err != nil {
-				s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+				s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 					Content: func() *string { v := err.Error(); return &v }(),
 				})
 				return
@@ -386,7 +380,7 @@ func (shdl SlashHandler) Img2imgAction(s *discordgo.Session, i *discordgo.Intera
 		if len(files) >= 4 {
 			files = files[0:4]
 		}
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: &context,
 			Files:   files,
 		})
@@ -397,7 +391,7 @@ func (shdl SlashHandler) Img2imgCommandHandler(s *discordgo.Session, i *discordg
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
 		option := &intersvc.SdapiV1Img2imgRequest{}
-		shdl.ReportCommandInfo(s, i)
+		shdl.RespondStateMessage("Running", s, i)
 		node := global.ClusterManager.GetNodeAuto()
 		action := func() (map[string]interface{}, error) {
 			shdl.Img2imgSetOptions(i.ApplicationCommandData(), option, i)

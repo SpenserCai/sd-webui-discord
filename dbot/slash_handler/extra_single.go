@@ -3,7 +3,7 @@
  * @Date: 2023-08-19 16:21:45
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-30 09:47:26
+ * @LastEditTime: 2023-09-23 17:17:29
  * @Description: file content
  */
 package slash_handler
@@ -191,25 +191,20 @@ func (shdl SlashHandler) ExtraSingleSetOptions(cmd discordgo.ApplicationCommandI
 }
 
 func (shdl SlashHandler) ExtraSingleAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.SdapiV1ExtraSingleImageRequest, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Running", s, i)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	extra_single := &intersvc.SdapiV1ExtraSingleImage{RequestItem: opt}
 	extra_single.Action(node.StableClient)
 	if extra_single.Error != nil {
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := extra_single.Error.Error(); return &v }(),
 		})
 	} else {
 		image, err := utils.GetImageReaderByBase64(extra_single.GetResponse().Image)
 		if err != nil {
-			s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := err.Error(); return &v }(),
 			})
 		} else {
-			s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Success"; return &v }(),
 				Files: []*discordgo.File{
 					{
@@ -225,7 +220,7 @@ func (shdl SlashHandler) ExtraSingleAction(s *discordgo.Session, i *discordgo.In
 
 func (shdl SlashHandler) ExtraSingleCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.SdapiV1ExtraSingleImageRequest{}
-	shdl.ReportCommandInfo(s, i)
+	shdl.RespondStateMessage("Running", s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
 		shdl.ExtraSingleSetOptions(i.ApplicationCommandData(), option)

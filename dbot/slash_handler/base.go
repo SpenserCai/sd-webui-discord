@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 13:53:23
+ * @LastEditTime: 2023-09-23 16:18:16
  * @Description: file content
  */
 package slash_handler
@@ -11,6 +11,7 @@ package slash_handler
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"reflect"
 	"strings"
 
@@ -44,12 +45,14 @@ func (shdl SlashHandler) GetCommandStr(i *discordgo.Interaction) string {
 }
 
 func (shdl SlashHandler) ReportCommandInfo(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	log.Println(i.Interaction.ID, i.Interaction.Token)
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: shdl.GetCommandStr(i.Interaction),
 		},
 	})
+	log.Println(i.Interaction.ID, i.Interaction.Token)
 }
 
 func (shdl SlashHandler) ReportCommandInfoWithFlag(s *discordgo.Session, i *discordgo.InteractionCreate, flags discordgo.MessageFlags) {
@@ -83,6 +86,25 @@ func (shdl SlashHandler) SendStateMessage(state string, s *discordgo.Session, i 
 		return nil, err
 	}
 	return msg, nil
+}
+
+func (shdl SlashHandler) RespondStateMessage(state string, s *discordgo.Session, i *discordgo.InteractionCreate) error {
+	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: fmt.Sprintf("%s...", state),
+		},
+	})
+}
+
+func (shdl SlashHandler) RespondStateMessageWithFlag(state string, s *discordgo.Session, i *discordgo.InteractionCreate, flags discordgo.MessageFlags) error {
+	return s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: fmt.Sprintf("%s...", state),
+			Flags:   flags,
+		},
+	})
 }
 
 func (shdl SlashHandler) SendStateMessageWithFlag(state string, s *discordgo.Session, i *discordgo.InteractionCreate, flags discordgo.MessageFlags) (*discordgo.Message, error) {

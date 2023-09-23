@@ -3,14 +3,12 @@
  * @Date: 2023-08-22 12:58:13
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 22:23:27
+ * @LastEditTime: 2023-09-23 17:10:39
  * @Description: file content
  */
 package slash_handler
 
 import (
-	"log"
-
 	"github.com/SpenserCai/sd-webui-discord/cluster"
 	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/utils"
@@ -74,25 +72,20 @@ func (shdl SlashHandler) RoopImageSetOptions(cmd discordgo.ApplicationCommandInt
 }
 
 func (shdl SlashHandler) RoopImageAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.RoopImageRequest, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Running", s, i)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	roop_image := &intersvc.RoopImage{RequestItem: opt}
 	roop_image.Action(node.StableClient)
 	if roop_image.Error != nil {
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := roop_image.Error.Error(); return &v }(),
 		})
 	} else {
 		image, err := utils.GetImageReaderByBase64(roop_image.GetResponse().Image)
 		if err != nil {
-			s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := err.Error(); return &v }(),
 			})
 		} else {
-			s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Success"; return &v }(),
 				Files: []*discordgo.File{
 					{
@@ -109,7 +102,7 @@ func (shdl SlashHandler) RoopImageAction(s *discordgo.Session, i *discordgo.Inte
 
 func (shdl SlashHandler) RoopImageCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.RoopImageRequest{}
-	shdl.ReportCommandInfo(s, i)
+	shdl.RespondStateMessage("Running", s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
 		shdl.RoopImageSetOptions(i.ApplicationCommandData(), option)

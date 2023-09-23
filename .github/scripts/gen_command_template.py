@@ -3,7 +3,7 @@ Author: SpenserCai
 Date: 2023-08-19 15:41:07
 version: 
 LastEditors: SpenserCai
-LastEditTime: 2023-08-19 20:55:25
+LastEditTime: 2023-09-23 16:25:42
 Description: file content
 '''
 
@@ -46,15 +46,10 @@ func (shdl SlashHandler) {Cmd}SetOptions(dsOpt []*discordgo.ApplicationCommandIn
 }}
 
 func (shdl SlashHandler) {Cmd}Action(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.{RequestName}Request, node *cluster.ClusterNode) {{
-	msg, err := shdl.SendStateMessage("Running", s, i)
-	if err != nil {{
-		log.Println(err)
-		return
-	}}
 	{cmd} := &intersvc.{RequestName}{{RequestItem: opt}}
 	{cmd}.Action(node.StableClient)
 	if {cmd}.Error != nil {{
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{{
 			Content: func() *string {{ v := {cmd}.Error.Error(); return &v }}(),
 		}})
 	}}
@@ -62,7 +57,7 @@ func (shdl SlashHandler) {Cmd}Action(s *discordgo.Session, i *discordgo.Interact
 
 func (shdl SlashHandler) {Cmd}CommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {{
 	option := &intersvc.{RequestName}Request{{}}
-	shdl.ReportCommandInfo(s, i)
+	shdl.RespondStateMessage("Running", s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{{}}, error) {{
 		shdl.{Cmd}SetOptions(i.ApplicationCommandData().Options, option)

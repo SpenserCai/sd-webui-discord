@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 14:59:27
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-20 15:20:31
+ * @LastEditTime: 2023-09-23 16:27:06
  * @Description: file content
  */
 package slash_handler
@@ -107,17 +107,12 @@ func (shdl SlashHandler) SettingSetOptions(dsOpt []*discordgo.ApplicationCommand
 }
 
 func (shdl SlashHandler) SettingAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *user.StableConfig, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Setting", s, i)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	userInfo, err := shdl.GetUserInfoWithInteraction(i)
 	isEmptyOpt := true
 	if err == nil {
 		// 判断userInfo是否为nil，如果为nil则说明用户没有注册
 		if userInfo == nil {
-			s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Please register first!"; return &v }(),
 			})
 			return
@@ -135,7 +130,7 @@ func (shdl SlashHandler) SettingAction(s *discordgo.Session, i *discordgo.Intera
 	}
 	if err != nil {
 		log.Println(err)
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := "SETTING ERROR!"; return &v }(),
 		})
 	} else {
@@ -145,7 +140,7 @@ func (shdl SlashHandler) SettingAction(s *discordgo.Session, i *discordgo.Intera
 			stableConfigJson, _ := json.MarshalIndent(userInfo.StableConfig, "", "    ")
 			content = "```json\n" + string(stableConfigJson) + "```\n"
 		}
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: &content,
 		})
 	}
@@ -155,7 +150,7 @@ func (shdl SlashHandler) SettingCommandHandler(s *discordgo.Session, i *discordg
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
 		option := &user.StableConfig{}
-		shdl.ReportCommandInfo(s, i)
+		shdl.RespondStateMessage("Running", s, i)
 		node := global.ClusterManager.GetNodeAuto()
 		action := func() (map[string]interface{}, error) {
 			shdl.SettingSetOptions(i.ApplicationCommandData().Options, option)

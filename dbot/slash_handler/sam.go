@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:27:32
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-27 23:52:24
+ * @LastEditTime: 2023-09-23 17:09:25
  * @Description: file content
  */
 package slash_handler
@@ -118,16 +118,11 @@ func (shdl SlashHandler) SamSetOptions(cmd discordgo.ApplicationCommandInteracti
 }
 
 func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.SamSamPredictRequest, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Running", s, i)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	sam := &intersvc.SamSamPredict{RequestItem: opt}
 	sam.Action(node.StableClient)
 	if sam.Error != nil {
 		fmt.Println(sam.Error)
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := sam.Error.Error(); return &v }(),
 		})
 	} else {
@@ -140,7 +135,7 @@ func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.Interactio
 		for j := 0; j < len(images); j++ {
 			imageReader, err := utils.GetImageReaderByBase64(images[j])
 			if err != nil {
-				s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+				s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 					Content: func() *string { v := err.Error(); return &v }(),
 				})
 				return
@@ -154,7 +149,7 @@ func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.Interactio
 		if len(files) >= 3 {
 			files = files[0:3]
 		}
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := "Success!"; return &v }(),
 			Files:   files,
 		})
@@ -164,7 +159,7 @@ func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.Interactio
 
 func (shdl SlashHandler) SamCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.SamSamPredictRequest{}
-	shdl.ReportCommandInfo(s, i)
+	shdl.RespondStateMessage("Running", s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
 		shdl.SamSetOptions(i.ApplicationCommandData(), option)

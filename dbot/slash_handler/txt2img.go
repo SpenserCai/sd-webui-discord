@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 22:59:37
+ * @LastEditTime: 2023-09-23 17:21:23
  * @Description: file content
  */
 package slash_handler
@@ -184,6 +184,28 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				MinValue:    func() *float64 { v := 0.0; return &v }(),
 				MaxValue:    1.0,
 			},
+			// {
+			// 	Type:        discordgo.ApplicationCommandOptionInteger,
+			// 	Name:        "n_iter",
+			// 	Description: "Number of iterations. Default: 1",
+			// 	Required:    false,
+			// 	MinValue:    func() *float64 { v := 1.0; return &v }(),
+			// 	MaxValue:    4.0,
+			// 	Choices: []*discordgo.ApplicationCommandOptionChoice{
+			// 		{
+			// 			Name:  "1",
+			// 			Value: 1,
+			// 		},
+			// 		{
+			// 			Name:  "2",
+			// 			Value: 2,
+			// 		},
+			// 		{
+			// 			Name:  "4",
+			// 			Value: 4,
+			// 		},
+			// 	},
+			// },
 		},
 	}
 }
@@ -254,6 +276,8 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 			opt.RefinerCheckpoint = v.StringValue()
 		case "refiner_switch_at":
 			opt.RefinerSwitchAt = v.FloatValue()
+		case "n_iter":
+			opt.NIter = func() *int64 { v := v.IntValue(); return &v }()
 		}
 	}
 	if !isSetCheckpoints && defaultCheckpoints != "" {
@@ -272,18 +296,10 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 }
 
 func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.SdapiV1Txt2imgRequest, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Running", s, i)
-	// s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
-	// 	Content: "Running...",
-	// })
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	txt2img := &intersvc.SdapiV1Txt2img{RequestItem: opt}
 	txt2img.Action(node.StableClient)
 	if txt2img.Error != nil {
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := txt2img.Error.Error(); return &v }(),
 		})
 	} else {
@@ -314,10 +330,17 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 			}
 		}
 		seed := fmt.Sprintf("%.0f", data["seed"])
+
+		if len(txt2img.GetResponse().Images) > 1 {
+			mergeImageBase64, _ := utils.MergeImageFromBase64(txt2img.GetResponse().Images)
+			// 把mergeImageBase64放在第一位
+			txt2img.GetResponse().Images = append([]string{mergeImageBase64}, txt2img.GetResponse().Images...)
+		}
+
 		for j, v := range txt2img.GetResponse().Images {
 			imageReader, err := utils.GetImageReaderByBase64(v)
 			if err != nil {
-				s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+				s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 					Content: func() *string { v := err.Error(); return &v }(),
 				})
 				return
@@ -328,19 +351,19 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 				ContentType: "image/png",
 			})
 		}
-		if len(files) >= 4 {
-			files = files[0:4]
+		if len(files) >= 5 {
+			files = files[0:5]
 		}
 
-		_, err := s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		_, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: &context,
 			Embeds: &[]*discordgo.MessageEmbed{
 				{
 					Title: "SD-WEBUI-DISCORD",
 					Image: &discordgo.MessageEmbedImage{
-						URL:    fmt.Sprintf("attachment://%s", files[0].Name),
-						Width:  512,
-						Height: 512,
+						URL: fmt.Sprintf("attachment://%s", files[0].Name),
+						// Width:  512,
+						// Height: 512,
 					},
 					Fields: []*discordgo.MessageEmbedField{
 						{
@@ -407,7 +430,7 @@ func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordg
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
 		option := &intersvc.SdapiV1Txt2imgRequest{}
-		shdl.ReportCommandInfo(s, i)
+		shdl.RespondStateMessage("Running", s, i)
 		node := global.ClusterManager.GetNodeAuto()
 		action := func() (map[string]interface{}, error) {
 			shdl.Txt2imgSetOptions(i.ApplicationCommandData().Options, option, i)

@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 13:51:37
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 14:06:50
+ * @LastEditTime: 2023-09-23 17:13:01
  * @Description: file content
  */
 package slash_handler
@@ -26,26 +26,21 @@ func (shdl SlashHandler) RegisterOptions() *discordgo.ApplicationCommand {
 }
 
 func (shdl SlashHandler) RegisterAction(s *discordgo.Session, i *discordgo.InteractionCreate, node *cluster.ClusterNode) {
-	msg, err := shdl.SendStateMessage("Registering", s, i)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	reg_msg, err := global.UserCenterSvc.RegisterUser(shdl.ConvertInteractionToUserInfo(i))
 	if err != nil {
 		log.Println(err)
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := "REGISTER ERROR"; return &v }(),
 		})
 	} else {
-		s.FollowupMessageEdit(i.Interaction, msg.ID, &discordgo.WebhookEdit{
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := reg_msg; return &v }(),
 		})
 	}
 }
 
 func (shdl SlashHandler) RegisterCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	shdl.ReportCommandInfo(s, i)
+	shdl.RespondStateMessage("Registering", s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
 		shdl.RegisterAction(s, i, node)
