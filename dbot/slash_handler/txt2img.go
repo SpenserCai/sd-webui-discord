@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 01:45:54
+ * @LastEditTime: 2023-09-24 01:48:13
  * @Description: file content
  */
 package slash_handler
@@ -295,7 +295,7 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 
 func (shdl SlashHandler) BuildTxt2imgComponent() *[]discordgo.MessageComponent {
 	components := []discordgo.MessageComponent{
-		discordgo.ActionsRow{
+		&discordgo.ActionsRow{
 			Components: []discordgo.MessageComponent{
 				&discordgo.Button{
 					CustomID: "txt2img|retry",
@@ -314,7 +314,7 @@ func (shdl SlashHandler) BuildTxt2imgComponent() *[]discordgo.MessageComponent {
 	}
 	if !global.Config.UserCenter.Enable {
 		// 重生成按钮，需要数据库才能使用
-		components[0].(discordgo.ActionsRow).Components[0].(*discordgo.Button).Disabled = true
+		components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.Button).Disabled = true
 	}
 	return &components
 }
