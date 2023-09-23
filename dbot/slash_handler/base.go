@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 16:18:16
+ * @LastEditTime: 2023-09-23 19:14:30
  * @Description: file content
  */
 package slash_handler
@@ -11,7 +11,6 @@ package slash_handler
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"reflect"
 	"strings"
 
@@ -42,27 +41,6 @@ func (shdl SlashHandler) GetCommandStr(i *discordgo.Interaction) string {
 		cmd += fmt.Sprintf("%v: %v\n", utils.FormatCommand(v.Name), v.Value)
 	}
 	return cmd
-}
-
-func (shdl SlashHandler) ReportCommandInfo(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	log.Println(i.Interaction.ID, i.Interaction.Token)
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: shdl.GetCommandStr(i.Interaction),
-		},
-	})
-	log.Println(i.Interaction.ID, i.Interaction.Token)
-}
-
-func (shdl SlashHandler) ReportCommandInfoWithFlag(s *discordgo.Session, i *discordgo.InteractionCreate, flags discordgo.MessageFlags) {
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: shdl.GetCommandStr(i.Interaction),
-			Flags:   flags,
-		},
-	})
 }
 
 func (shdl SlashHandler) GenerateTaskID(i *discordgo.InteractionCreate) string {
@@ -253,4 +231,41 @@ func (shdl SlashHandler) ConvertInteractionToUserInfo(i *discordgo.InteractionCr
 			Name: i.Interaction.Member.User.Username,
 		}
 	}
+}
+
+// MessageEmbed模板
+func (shdl SlashHandler) MessageEmbedTemplate() *discordgo.MessageEmbed {
+	bName := func() string {
+		if global.Config.Discord.BotName == "" {
+			return "SD-WEBUI-BOT"
+		} else {
+			return global.Config.Discord.BotName
+		}
+	}()
+	bAvatar := func() string {
+		if global.Config.Discord.BotAvatar == "" {
+			return "https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/logo.png"
+		} else {
+			return global.Config.Discord.BotAvatar
+		}
+	}()
+	bUrl := func() string {
+		if global.Config.Discord.BotUrl == "" {
+			return "https://github.com/SpenserCai/sd-webui-discord"
+		} else {
+			return global.Config.Discord.BotUrl
+		}
+	}()
+	embed := &discordgo.MessageEmbed{
+		Author: &discordgo.MessageEmbedAuthor{
+			Name:    bName,
+			IconURL: bAvatar,
+			URL:     bUrl,
+		},
+		Footer: &discordgo.MessageEmbedFooter{
+			Text:    "Powered by sd-webui-discord",
+			IconURL: "https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/logo.png",
+		},
+	}
+	return embed
 }

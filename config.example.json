@@ -13,7 +13,10 @@
     },
     "discord":{
         "token":"<your token here>",
-        "server_id":"<your servers id here if empty all servers>"
+        "server_id":"<your servers id here if empty all servers>",
+        "bot_name":"SD-WEBUI-BOT",
+        "bot_avatar":"https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/logo.png",
+        "bot_url":"https://github.com/SpenserCai/sd-webui-discord"
     },
     "user_center":{
         "enable":false,

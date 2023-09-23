@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-20 14:39:07
+ * @LastEditTime: 2023-09-23 19:10:56
  * @Description: file content
  */
 package config
@@ -43,8 +43,11 @@ type Config struct {
 		DefaultSetting DefaultSetting `json:"default_setting"`
 	} `json:"sd_webui"`
 	Discord struct {
-		Token    string `json:"token"`
-		ServerId string `json:"server_id"`
+		Token     string `json:"token"`
+		ServerId  string `json:"server_id"`
+		BotName   string `json:"bot_name"`
+		BotAvatar string `json:"bot_avatar"`
+		BotUrl    string `json:"bot_url"`
 	} `json:"discord"`
 	UserCenter           UserCenter `json:"user_center"`
 	DisableReturnGenInfo bool       `json:"disable_return_gen_info"`

@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 17:21:23
+ * @LastEditTime: 2023-09-23 19:06:08
  * @Description: file content
  */
 package slash_handler
@@ -355,67 +355,66 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 			files = files[0:5]
 		}
 
+		// 生成主要Embed
+		mainEmbed := shdl.MessageEmbedTemplate()
+		mainEmbed.Image = &discordgo.MessageEmbedImage{
+			URL: fmt.Sprintf("attachment://%s", files[0].Name),
+		}
+		mainEmbed.Fields = []*discordgo.MessageEmbedField{
+			{
+				Name:  "Prompt",
+				Value: opt.Prompt,
+			},
+			{
+				Name:  "Model",
+				Value: data["sd_model_name"].(string),
+			},
+			{
+				Name: "VAE",
+				Value: func() string {
+					vae, ok := data["sd_vae_name"]
+					if ok && vae != nil {
+						return vae.(string)
+					} else {
+						return "Automatic"
+					}
+				}(),
+			},
+			{
+				Name:  "Sampler",
+				Value: data["sampler_name"].(string),
+			},
+			{
+				Name:   "Size",
+				Value:  fmt.Sprintf("%dx%d", *opt.Height, *opt.Width),
+				Inline: true,
+			},
+			{
+				Name:   "Steps",
+				Value:  fmt.Sprintf("%v", data["steps"]),
+				Inline: true,
+			},
+			{
+				Name:   "Cfg Scale",
+				Value:  fmt.Sprintf("%v", data["cfg_scale"]),
+				Inline: true,
+			},
+			{
+				Name:   "Seed",
+				Value:  seed,
+				Inline: true,
+			},
+			{
+				Name:   "User",
+				Value:  fmt.Sprintf("<@%s>", shdl.GetDiscordUserId(i)),
+				Inline: true,
+			},
+		}
+
 		_, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: &context,
 			Embeds: &[]*discordgo.MessageEmbed{
-				{
-					Title: "SD-WEBUI-DISCORD",
-					Image: &discordgo.MessageEmbedImage{
-						URL: fmt.Sprintf("attachment://%s", files[0].Name),
-						// Width:  512,
-						// Height: 512,
-					},
-					Fields: []*discordgo.MessageEmbedField{
-						{
-							Name:  "Prompt",
-							Value: opt.Prompt,
-						},
-						{
-							Name:  "Model",
-							Value: data["sd_model_name"].(string),
-						},
-						{
-							Name: "VAE",
-							Value: func() string {
-								vae, ok := data["sd_vae_name"]
-								if ok && vae != nil {
-									return vae.(string)
-								} else {
-									return "Automatic"
-								}
-							}(),
-						},
-						{
-							Name:  "Sampler",
-							Value: data["sampler_name"].(string),
-						},
-						{
-							Name:   "Size",
-							Value:  fmt.Sprintf("%dx%d", *opt.Height, *opt.Width),
-							Inline: true,
-						},
-						{
-							Name:   "Steps",
-							Value:  fmt.Sprintf("%v", data["steps"]),
-							Inline: true,
-						},
-						{
-							Name:   "Cfg Scale",
-							Value:  fmt.Sprintf("%v", data["cfg_scale"]),
-							Inline: true,
-						},
-						{
-							Name:   "Seed",
-							Value:  seed,
-							Inline: true,
-						},
-						{
-							Name:   "User",
-							Value:  fmt.Sprintf("<@%s>", shdl.GetDiscordUserId(i)),
-							Inline: true,
-						},
-					},
-				},
+				mainEmbed,
 			},
 			Files: files,
 		})
