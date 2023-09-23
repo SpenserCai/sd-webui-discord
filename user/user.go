@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-20 14:37:50
+ * @LastEditTime: 2023-09-24 01:02:20
  * @Description: file content
  */
 package user
@@ -203,4 +203,27 @@ func (ucs *UserCenterService) GetUserStableConfigItem(id string, key string, def
 
 	return defaultValue, nil
 
+}
+
+// 写入用户历史记录
+func (ucs *UserCenterService) WriteUserHistory(messageId string, userId string, commandName string, optionJson string) error {
+	history := &db_backend.History{
+		MessageID:   messageId,
+		UserID:      userId,
+		CommandName: commandName,
+		OptionJson:  optionJson,
+		Created:     time.Now().Format("2006-01-02 15:04:05"),
+	}
+	err := ucs.Db.Db.Create(history).Error
+	return err
+}
+
+// 获取用户历史记录
+func (ucs *UserCenterService) GetUserHistoryOptWithMessageId(messageId string, commandName string) (string, error) {
+	history := &db_backend.History{}
+	err := ucs.Db.Db.Where("message_id = ? AND command_name = ?", messageId, commandName).First(history).Error
+	if err != nil {
+		return "", err
+	}
+	return history.OptionJson, nil
 }

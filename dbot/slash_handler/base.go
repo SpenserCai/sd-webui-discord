@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 21:29:12
+ * @LastEditTime: 2023-09-24 01:02:12
  * @Description: file content
  */
 package slash_handler
@@ -202,11 +202,7 @@ func (shdl SlashHandler) ConvertCommandOptionChoiceToMenuOption(choices []*disco
 
 func (shdl SlashHandler) GetUserInfoWithInteraction(i *discordgo.InteractionCreate) (*user.UserInfo, error) {
 	// 判断是群消息还是私聊消息
-	if i.GuildID == "" {
-		return global.UserCenterSvc.GetUserInfo(i.Interaction.User.ID)
-	} else {
-		return global.UserCenterSvc.GetUserInfo(i.Interaction.Member.User.ID)
-	}
+	return global.UserCenterSvc.GetUserInfo(shdl.GetDiscordUserId(i))
 }
 
 func (shdl SlashHandler) GetDiscordUserId(i *discordgo.InteractionCreate) string {
@@ -268,4 +264,26 @@ func (shdl SlashHandler) MessageEmbedTemplate() *discordgo.MessageEmbed {
 		},
 	}
 	return embed
+}
+
+func (shdl SlashHandler) SetHistory(command string, messageId string, i *discordgo.InteractionCreate, opt any) {
+	if global.Config.UserCenter.Enable {
+		optJson, _ := json.Marshal(opt)
+		userId := shdl.GetDiscordUserId(i)
+		global.UserCenterSvc.WriteUserHistory(messageId, userId, command, string(optJson))
+	}
+}
+
+func (shdl SlashHandler) GetHistory(command string, messageId string, opt any) error {
+	if global.Config.UserCenter.Enable {
+		history, err := global.UserCenterSvc.GetUserHistoryOptWithMessageId(messageId, command)
+		if err != nil {
+			return err
+		}
+		err = json.Unmarshal([]byte(history), opt)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

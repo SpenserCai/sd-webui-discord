@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 21:21:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 12:03:39
+ * @LastEditTime: 2023-09-24 00:07:49
  * @Description: file content
  */
 package db
@@ -33,7 +33,14 @@ func (botDb *BotDb) Close() error {
 
 func (botDb *BotDb) CreateOrUpdateDb() error {
 	err := botDb.Db.AutoMigrate(&db_backend.UserInfo{})
-	return err
+	if err != nil {
+		return err
+	}
+	err = botDb.Db.AutoMigrate(&db_backend.History{})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func NewBotDb(dbCfg *config.DbConfig) (*BotDb, error) {

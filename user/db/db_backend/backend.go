@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 00:44:10
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 16:17:28
+ * @LastEditTime: 2023-09-24 00:09:57
  * @Description: file content
  */
 package db_backend
@@ -19,6 +19,18 @@ type UserInfo struct {
 	StableConfig string `gorm:"column:stable_config;size:0"`
 }
 
+type History struct {
+	MessageID   string `gorm:"column:message_id;size:100"`
+	UserID      string `gorm:"column:user_id;size:100"`
+	CommandName string `gorm:"column:command_name;size:50"`
+	OptionJson  string `gorm:"column:option_json;size:0"`
+	Created     string `gorm:"column:created;size:50"`
+}
+
 func (UserInfo) TableName() string {
 	return "user_info"
+}
+
+func (History) TableName() string {
+	return "history"
 }

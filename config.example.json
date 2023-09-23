@@ -19,7 +19,7 @@
         "bot_url":"https://github.com/SpenserCai/sd-webui-discord"
     },
     "user_center":{
-        "enable":false,
+        "enable":true,
         "db_config":{
             "type":"sqlite",
             "dsn":"./user_center.db"

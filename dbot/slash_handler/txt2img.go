@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 21:49:47
+ * @LastEditTime: 2023-09-24 01:17:31
  * @Description: file content
  */
 package slash_handler
@@ -291,8 +291,32 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 		opt.OverrideSettings = tmpOverrideSettings
 	}
 
-	// optJson, _ := json.Marshal(opt)
-	// log.Println(string(optJson))
+}
+
+func (shdl SlashHandler) BuildTxt2imgComponent() *[]discordgo.MessageComponent {
+	components := []discordgo.MessageComponent{
+		discordgo.ActionsRow{
+			Components: []discordgo.MessageComponent{
+				discordgo.Button{
+					CustomID: "txt2img|retry",
+					Label:    "Retry",
+					Style:    discordgo.SecondaryButton,
+					Emoji:    discordgo.ComponentEmoji{Name: "🔄"},
+				},
+				discordgo.Button{
+					CustomID: "txt2img|delete",
+					Label:    "Delete",
+					Style:    discordgo.SecondaryButton,
+					Emoji:    discordgo.ComponentEmoji{Name: "🗑️"},
+				},
+			},
+		},
+	}
+	if !global.Config.UserCenter.Enable {
+		// 重生成按钮，需要数据库才能使用
+		components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.Button).Disabled = true
+	}
+	return &components
 }
 
 func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.SdapiV1Txt2imgRequest, node *cluster.ClusterNode) {
@@ -410,61 +434,56 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 				Inline: true,
 			},
 		}
-		_, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+		msg, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: &context,
 			Embeds: &[]*discordgo.MessageEmbed{
 				mainEmbed,
 			},
-			Files: files,
-			Components: &[]discordgo.MessageComponent{
-				discordgo.ActionsRow{
-					Components: []discordgo.MessageComponent{
-						discordgo.Button{
-							CustomID: "txt2img|delete",
-							Label:    "Delete",
-							Style:    discordgo.SecondaryButton,
-							Emoji:    discordgo.ComponentEmoji{Name: "🗑️"},
-						},
-					},
-				},
-			},
+			Files:      files,
+			Components: shdl.BuildTxt2imgComponent(),
 		})
 		if err != nil {
 			log.Println(err)
 		}
+		shdl.SetHistory("txt2img", msg.ID, i, opt)
+
 	}
 
+}
+
+func (shdl SlashHandler) Txt2imgAppHandler(s *discordgo.Session, i *discordgo.InteractionCreate, skipSetOption bool) {
+	option := &intersvc.SdapiV1Txt2imgRequest{}
+	shdl.RespondStateMessage("Running", s, i)
+	node := global.ClusterManager.GetNodeAuto()
+	action := func() (map[string]interface{}, error) {
+		if !skipSetOption {
+			shdl.Txt2imgSetOptions(i.ApplicationCommandData().Options, option, i)
+		} else {
+			shdl.GetHistory("txt2img", i.Interaction.Message.ID, option)
+		}
+		shdl.Txt2imgAction(s, i, option, node)
+		return nil, nil
+	}
+	callback := func() {}
+	node.ActionQueue.AddTask(shdl.GenerateTaskID(i), action, callback)
 }
 
 func (shdl SlashHandler) Txt2imgComponentHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	switch i.MessageComponentData().CustomID {
 	case "txt2img|delete":
-		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseDeferredMessageUpdate,
 		})
-		if err != nil {
-			log.Println("R:", err)
-		}
-		err = s.ChannelMessageDelete(i.ChannelID, i.Interaction.Message.ID)
-		if err != nil {
-			log.Println("D:", err)
-		}
+		s.ChannelMessageDelete(i.ChannelID, i.Interaction.Message.ID)
+	case "txt2img|retry":
+		shdl.Txt2imgAppHandler(s, i, true)
 	}
 }
 
 func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
-		option := &intersvc.SdapiV1Txt2imgRequest{}
-		shdl.RespondStateMessage("Running", s, i)
-		node := global.ClusterManager.GetNodeAuto()
-		action := func() (map[string]interface{}, error) {
-			shdl.Txt2imgSetOptions(i.ApplicationCommandData().Options, option, i)
-			shdl.Txt2imgAction(s, i, option, node)
-			return nil, nil
-		}
-		callback := func() {}
-		node.ActionQueue.AddTask(shdl.GenerateTaskID(i), action, callback)
+		shdl.Txt2imgAppHandler(s, i, false)
 	case discordgo.InteractionApplicationCommandAutocomplete:
 		repChoices := []*discordgo.ApplicationCommandOptionChoice{}
 		data := i.ApplicationCommandData()
