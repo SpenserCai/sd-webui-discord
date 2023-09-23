@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 19:06:08
+ * @LastEditTime: 2023-09-23 21:49:47
  * @Description: file content
  */
 package slash_handler
@@ -410,19 +410,46 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 				Inline: true,
 			},
 		}
-
 		_, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: &context,
 			Embeds: &[]*discordgo.MessageEmbed{
 				mainEmbed,
 			},
 			Files: files,
+			Components: &[]discordgo.MessageComponent{
+				discordgo.ActionsRow{
+					Components: []discordgo.MessageComponent{
+						discordgo.Button{
+							CustomID: "txt2img|delete",
+							Label:    "Delete",
+							Style:    discordgo.SecondaryButton,
+							Emoji:    discordgo.ComponentEmoji{Name: "🗑️"},
+						},
+					},
+				},
+			},
 		})
 		if err != nil {
 			log.Println(err)
 		}
 	}
 
+}
+
+func (shdl SlashHandler) Txt2imgComponentHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	switch i.MessageComponentData().CustomID {
+	case "txt2img|delete":
+		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseDeferredMessageUpdate,
+		})
+		if err != nil {
+			log.Println("R:", err)
+		}
+		err = s.ChannelMessageDelete(i.ChannelID, i.Interaction.Message.ID)
+		if err != nil {
+			log.Println("D:", err)
+		}
+	}
 }
 
 func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -466,5 +493,7 @@ func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordg
 				Choices: repChoices,
 			},
 		})
+	case discordgo.InteractionMessageComponent:
+		shdl.Txt2imgComponentHandler(s, i)
 	}
 }
