@@ -33,6 +33,10 @@
             "description": "自定義默認選項,包括模型、採樣器,圖片大小等等"
         },
         {
+            "command": "setting_ui",
+            "description": "視覺化自定義默認選項"
+        },
+        {
             "command": "img2img",
             "description": "圖片生成圖片"
         },
