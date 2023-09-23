@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 01:48:13
+ * @LastEditTime: 2023-09-24 03:02:49
  * @Description: file content
  */
 package slash_handler
@@ -293,7 +293,7 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 
 }
 
-func (shdl SlashHandler) BuildTxt2imgComponent() *[]discordgo.MessageComponent {
+func (shdl SlashHandler) BuildTxt2imgComponent(i *discordgo.InteractionCreate) *[]discordgo.MessageComponent {
 	components := []discordgo.MessageComponent{
 		&discordgo.ActionsRow{
 			Components: []discordgo.MessageComponent{
@@ -304,7 +304,7 @@ func (shdl SlashHandler) BuildTxt2imgComponent() *[]discordgo.MessageComponent {
 					Emoji:    discordgo.ComponentEmoji{Name: "🔄"},
 				},
 				&discordgo.Button{
-					CustomID: "txt2img|delete",
+					CustomID: "txt2img|delete|" + shdl.GetDiscordUserId(i),
 					Label:    "Delete",
 					Style:    discordgo.SecondaryButton,
 					Emoji:    discordgo.ComponentEmoji{Name: "🗑️"},
@@ -440,7 +440,7 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 				mainEmbed,
 			},
 			Files:      files,
-			Components: shdl.BuildTxt2imgComponent(),
+			Components: shdl.BuildTxt2imgComponent(i),
 		})
 		if err != nil {
 			log.Println(err)
@@ -469,12 +469,29 @@ func (shdl SlashHandler) Txt2imgAppHandler(s *discordgo.Session, i *discordgo.In
 }
 
 func (shdl SlashHandler) Txt2imgComponentHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	switch i.MessageComponentData().CustomID {
+	// 将CustomID分割为数组
+	customIDList := strings.Split(i.MessageComponentData().CustomID, "|")
+	cmd := fmt.Sprintf("%s|%s", customIDList[0], customIDList[1])
+	switch cmd {
 	case "txt2img|delete":
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseDeferredMessageUpdate,
-		})
-		s.ChannelMessageDelete(i.ChannelID, i.Interaction.Message.ID)
+		ownerId := shdl.GetDiscordUserId(i)
+		if len(customIDList) == 3 {
+			ownerId = customIDList[2]
+		}
+		if shdl.GetDiscordUserId(i) == ownerId {
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseDeferredMessageUpdate,
+			})
+			s.ChannelMessageDelete(i.ChannelID, i.Interaction.Message.ID)
+		} else {
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "You are not the author of this!",
+					Flags:   discordgo.MessageFlagsEphemeral,
+				},
+			})
+		}
 	case "txt2img|retry":
 		shdl.Txt2imgAppHandler(s, i, true)
 	}
