@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 03:02:49
+ * @LastEditTime: 2023-09-24 15:05:55
  * @Description: file content
  */
 package slash_handler
@@ -13,6 +13,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/SpenserCai/sd-webui-discord/cluster"
@@ -184,28 +185,28 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				MinValue:    func() *float64 { v := 0.0; return &v }(),
 				MaxValue:    1.0,
 			},
-			// {
-			// 	Type:        discordgo.ApplicationCommandOptionInteger,
-			// 	Name:        "n_iter",
-			// 	Description: "Number of iterations. Default: 1",
-			// 	Required:    false,
-			// 	MinValue:    func() *float64 { v := 1.0; return &v }(),
-			// 	MaxValue:    4.0,
-			// 	Choices: []*discordgo.ApplicationCommandOptionChoice{
-			// 		{
-			// 			Name:  "1",
-			// 			Value: 1,
-			// 		},
-			// 		{
-			// 			Name:  "2",
-			// 			Value: 2,
-			// 		},
-			// 		{
-			// 			Name:  "4",
-			// 			Value: 4,
-			// 		},
-			// 	},
-			// },
+			{
+				Type:        discordgo.ApplicationCommandOptionInteger,
+				Name:        "n_iter",
+				Description: "Number of iterations. Default: 1",
+				Required:    false,
+				MinValue:    func() *float64 { v := 1.0; return &v }(),
+				MaxValue:    4.0,
+				Choices: []*discordgo.ApplicationCommandOptionChoice{
+					{
+						Name:  "1",
+						Value: 1,
+					},
+					{
+						Name:  "2",
+						Value: 2,
+					},
+					{
+						Name:  "4",
+						Value: 4,
+					},
+				},
+			},
 		},
 	}
 }
@@ -293,7 +294,8 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 
 }
 
-func (shdl SlashHandler) BuildTxt2imgComponent(i *discordgo.InteractionCreate) *[]discordgo.MessageComponent {
+func (shdl SlashHandler) BuildTxt2imgComponent(i *discordgo.InteractionCreate, imgCount int64) *[]discordgo.MessageComponent {
+
 	components := []discordgo.MessageComponent{
 		&discordgo.ActionsRow{
 			Components: []discordgo.MessageComponent{
@@ -302,6 +304,9 @@ func (shdl SlashHandler) BuildTxt2imgComponent(i *discordgo.InteractionCreate) *
 					Label:    "Retry",
 					Style:    discordgo.SecondaryButton,
 					Emoji:    discordgo.ComponentEmoji{Name: "🔄"},
+					Disabled: func() bool {
+						return !global.Config.UserCenter.Enable
+					}(),
 				},
 				&discordgo.Button{
 					CustomID: "txt2img|delete|" + shdl.GetDiscordUserId(i),
@@ -312,9 +317,24 @@ func (shdl SlashHandler) BuildTxt2imgComponent(i *discordgo.InteractionCreate) *
 			},
 		},
 	}
-	if !global.Config.UserCenter.Enable {
-		// 重生成按钮，需要数据库才能使用
-		components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.Button).Disabled = true
+
+	// 图片数量大于1时，添加多图片按钮
+	multiImageButton := []discordgo.MessageComponent{}
+	if imgCount > 1 {
+		for j := int64(0); j < imgCount; j++ {
+			multiImageButton = append(multiImageButton, &discordgo.Button{
+				CustomID: fmt.Sprintf("txt2img|multi_image|%d", j),
+				Label:    fmt.Sprintf("%d", j+1),
+				Style:    discordgo.SecondaryButton,
+				Emoji:    discordgo.ComponentEmoji{Name: "🖼️"},
+				Disabled: func() bool {
+					return !global.Config.UserCenter.Enable
+				}(),
+			})
+		}
+		components = append(components, &discordgo.ActionsRow{
+			Components: multiImageButton,
+		})
 	}
 	return &components
 }
@@ -356,7 +376,8 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		seed := fmt.Sprintf("%.0f", data["seed"])
 
 		if len(txt2img.GetResponse().Images) > 1 {
-			mergeImageBase64, _ := utils.MergeImageFromBase64(txt2img.GetResponse().Images)
+			// 根据opt.NIter数量拼接
+			mergeImageBase64, _ := utils.MergeImageFromBase64(txt2img.GetResponse().Images[:*opt.NIter])
 			// 把mergeImageBase64放在第一位
 			txt2img.GetResponse().Images = append([]string{mergeImageBase64}, txt2img.GetResponse().Images...)
 		}
@@ -377,6 +398,11 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		}
 		if len(files) >= 5 {
 			files = files[0:5]
+		}
+
+		if *opt.NIter > 1 {
+			// files的内容为第一张+跳开*opt.NIter的图片接上后面的
+			files = append(files[0:1], files[*opt.NIter+1:]...)
 		}
 
 		// 生成主要Embed
@@ -440,26 +466,27 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 				mainEmbed,
 			},
 			Files:      files,
-			Components: shdl.BuildTxt2imgComponent(i),
+			Components: shdl.BuildTxt2imgComponent(i, *opt.NIter),
 		})
 		if err != nil {
 			log.Println(err)
 		}
+		opt.Seed = func() *int64 { v, _ := strconv.ParseInt(seed, 10, 64); return &v }()
 		shdl.SetHistory("txt2img", msg.ID, i, opt)
 
 	}
 
 }
 
-func (shdl SlashHandler) Txt2imgAppHandler(s *discordgo.Session, i *discordgo.InteractionCreate, skipSetOption bool) {
+func (shdl SlashHandler) Txt2imgAppHandler(s *discordgo.Session, i *discordgo.InteractionCreate, otherOption *intersvc.SdapiV1Txt2imgRequest, useOtherOption bool) {
 	option := &intersvc.SdapiV1Txt2imgRequest{}
 	shdl.RespondStateMessage("Running", s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
-		if !skipSetOption {
+		if !useOtherOption {
 			shdl.Txt2imgSetOptions(i.ApplicationCommandData().Options, option, i)
 		} else {
-			shdl.GetHistory("txt2img", i.Interaction.Message.ID, option)
+			option = otherOption
 		}
 		shdl.Txt2imgAction(s, i, option, node)
 		return nil, nil
@@ -493,14 +520,47 @@ func (shdl SlashHandler) Txt2imgComponentHandler(s *discordgo.Session, i *discor
 			})
 		}
 	case "txt2img|retry":
-		shdl.Txt2imgAppHandler(s, i, true)
+		option := &intersvc.SdapiV1Txt2imgRequest{}
+		err := shdl.GetHistory("txt2img", i.Interaction.Message.ID, option)
+		if err != nil {
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "Original data has been cleared",
+					Flags:   discordgo.MessageFlagsEphemeral,
+				},
+			})
+			return
+		}
+		option.Seed = func() *int64 { v := int64(-1); return &v }()
+		shdl.Txt2imgAppHandler(s, i, option, true)
+	case "txt2img|multi_image":
+		option := &intersvc.SdapiV1Txt2imgRequest{}
+		err := shdl.GetHistory("txt2img", i.Interaction.Message.ID, option)
+		if err != nil {
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "Original data has been cleared",
+					Flags:   discordgo.MessageFlagsEphemeral,
+				},
+			})
+			return
+		}
+		if len(customIDList) == 3 {
+			index, _ := strconv.ParseInt(customIDList[2], 10, 64)
+			option.NIter = func() *int64 { v := int64(1); return &v }()
+			option.Seed = func() *int64 { v := *option.Seed + index; return &v }()
+			shdl.Txt2imgAppHandler(s, i, option, true)
+		}
+
 	}
 }
 
 func (shdl SlashHandler) Txt2imgCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
-		shdl.Txt2imgAppHandler(s, i, false)
+		shdl.Txt2imgAppHandler(s, i, nil, false)
 	case discordgo.InteractionApplicationCommandAutocomplete:
 		repChoices := []*discordgo.ApplicationCommandOptionChoice{}
 		data := i.ApplicationCommandData()
