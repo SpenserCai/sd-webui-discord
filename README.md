@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 23:35:44
+ * @LastEditTime: 2023-09-24 23:39:48
  * @Description: file content
 -->
 <div align="center">
@@ -40,7 +40,7 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 
 ## Screenshots
 
-![First](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/first_page.png)
+![First](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/first_page_new.png)
 
 ## News
 
