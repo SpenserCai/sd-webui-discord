@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 16:49:26
+ * @LastEditTime: 2023-09-24 23:35:44
  * @Description: file content
 -->
 <div align="center">
@@ -44,6 +44,9 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 
 ## News
 
+### **2023-09-24: Support multi image generate in `txt2img` command**
+### **2023-09-23:**
+ - Support `Retry` and `Delete` in `txt2img` command
 ### **2023-09-22:** 
  - Support `setting_ui` command
  - Better `txt2img` response ui,thanks for [venetanji](https://github.com/venetanji) support that! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
