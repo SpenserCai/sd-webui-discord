@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 01:02:20
+ * @LastEditTime: 2023-09-24 18:08:05
  * @Description: file content
  */
 package user
@@ -22,7 +22,7 @@ import (
 
 // 权限表,如果命令出现再某个role中，则代表只有这个role的用户才能使用这个命令，key是role，value是命令
 var PermissionTable = map[string][]string{
-	"admin": {"ban", "unban"},
+	"admin": {"user_info", "cluster_status"},
 }
 
 type StableConfig struct {

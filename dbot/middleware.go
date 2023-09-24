@@ -3,7 +3,7 @@
  * @Date: 2023-09-11 13:43:11
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-13 09:23:54
+ * @LastEditTime: 2023-09-24 19:11:19
  * @Description: file content
  */
 package dbot
@@ -29,6 +29,7 @@ func (dbot *DiscordBot) CheckPermission(cmd string, s *discordgo.Session, i *dis
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Content: "You don't have permission to access this command",
+				Flags:   discordgo.MessageFlagsEphemeral,
 			},
 		})
 		return false
