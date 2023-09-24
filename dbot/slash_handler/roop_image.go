@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 12:58:13
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 17:10:39
+ * @LastEditTime: 2023-09-24 21:32:49
  * @Description: file content
  */
 package slash_handler
@@ -60,9 +60,11 @@ func (shdl SlashHandler) RoopImageSetOptions(cmd discordgo.ApplicationCommandInt
 	for _, v := range cmd.Options {
 		switch v.Name {
 		case "source_image":
-			opt.SourceImage, _ = utils.GetImageBase64(cmd.Resolved.Attachments[v.Value.(string)].URL)
+			// opt.SourceImage, _ = utils.GetImageBase64(cmd.Resolved.Attachments[v.Value.(string)].URL)
+			opt.SourceImage = cmd.Resolved.Attachments[v.Value.(string)].URL
 		case "target_image":
-			opt.TargetImage, _ = utils.GetImageBase64(cmd.Resolved.Attachments[v.Value.(string)].URL)
+			// opt.TargetImage, _ = utils.GetImageBase64(cmd.Resolved.Attachments[v.Value.(string)].URL)
+			opt.TargetImage = cmd.Resolved.Attachments[v.Value.(string)].URL
 		case "face_restorer":
 			opt.FaceRestorer = func() *string { v := v.StringValue(); return &v }()
 		case "restorer_visibility":
@@ -85,7 +87,7 @@ func (shdl SlashHandler) RoopImageAction(s *discordgo.Session, i *discordgo.Inte
 				Content: func() *string { v := err.Error(); return &v }(),
 			})
 		} else {
-			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+			msg, _ := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Success"; return &v }(),
 				Files: []*discordgo.File{
 					{
@@ -95,6 +97,7 @@ func (shdl SlashHandler) RoopImageAction(s *discordgo.Session, i *discordgo.Inte
 					},
 				},
 			})
+			shdl.SetHistory("roop_image", msg.ID, i, opt)
 		}
 
 	}

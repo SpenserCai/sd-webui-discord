@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:27:15
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 17:18:24
+ * @LastEditTime: 2023-09-24 22:24:00
  * @Description: file content
  */
 package slash_handler
@@ -80,7 +80,7 @@ func (shdl SlashHandler) DeoldifyAction(s *discordgo.Session, i *discordgo.Inter
 				Content: func() *string { v := err.Error(); return &v }(),
 			})
 		} else {
-			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+			msg, _ := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Success"; return &v }(),
 				Files: []*discordgo.File{
 					{
@@ -90,6 +90,7 @@ func (shdl SlashHandler) DeoldifyAction(s *discordgo.Session, i *discordgo.Inter
 					},
 				},
 			})
+			shdl.SetHistory("deoldify", msg.ID, i, opt)
 		}
 	}
 }
