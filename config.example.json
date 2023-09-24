@@ -25,5 +25,5 @@
             "dsn":"./user_center.db"
         }
     },
-    "disable_return_gen_info":false
+    "disable_return_gen_info":true
 }
