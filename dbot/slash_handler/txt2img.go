@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-25 12:36:20
+ * @LastEditTime: 2023-09-25 15:28:40
  * @Description: file content
  */
 package slash_handler
@@ -153,7 +153,7 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "controlnet_args",
-				Description: "Controlnet args of the generated image.",
+				Description: "Controlnet args of the generated image.multi args split with `,` .",
 				Required:    false,
 			},
 			{

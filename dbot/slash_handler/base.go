@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 02:55:54
+ * @LastEditTime: 2023-09-25 15:18:32
  * @Description: file content
  */
 package slash_handler
@@ -111,15 +111,16 @@ func (shdl SlashHandler) SendTextInteractionRespondWithFlag(msg string, s *disco
 }
 
 func (shdl SlashHandler) GetControlNetScript(jsonStr string) (*intersvc.ControlnetPredictScript, error) {
+	jsonStr = fmt.Sprintf(`{"args": [%s]}`, jsonStr)
 	script := &intersvc.ControlnetPredictScript{}
 	// 把jsonStr转成intersvc.ControlnetScriptArgsItem
-	arg := &intersvc.ControlnetPredictArgsItem{}
-	err := json.Unmarshal([]byte(jsonStr), arg)
+	// arg := &intersvc.ControlnetPredictArgsItem{}
+	err := json.Unmarshal([]byte(jsonStr), script)
 	if err != nil {
 		return nil, err
 	}
-	arg.Image, _ = utils.GetImageBase64(arg.Image)
-	script.Args = append(script.Args, *arg)
+	// arg.Image, _ = utils.GetImageBase64(arg.Image)
+	// script.Args = append(script.Args, *arg)
 	return script, nil
 
 }
