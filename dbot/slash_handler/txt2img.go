@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-25 15:28:40
+ * @LastEditTime: 2023-09-25 21:17:07
  * @Description: file content
  */
 package slash_handler
@@ -348,6 +348,7 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		})
 	} else {
 		files := make([]*discordgo.File, 0)
+		var mergeAdditionalFile *discordgo.File
 		outinfo := txt2img.GetResponse().Info
 		// parse outinfo from json
 		var data map[string]interface{}
@@ -378,8 +379,18 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		if len(txt2img.GetResponse().Images) > 1 {
 			// 根据opt.NIter数量拼接
 			mergeImageBase64, _ := utils.MergeImageFromBase64(txt2img.GetResponse().Images[:*opt.NIter])
+			// 如果图片总数大于opt.NIter，则说明有附加图片，把附加图片单独拼接
+			if int64(len(txt2img.GetResponse().Images)) > *opt.NIter {
+				mergeAdditionalImageBase64, _ := utils.MergeImageFromBase64(txt2img.GetResponse().Images[*opt.NIter:])
+				imageReader, _ := utils.GetImageReaderByBase64(mergeAdditionalImageBase64)
+				mergeAdditionalFile = &discordgo.File{
+					Name:        "merge_additional.png",
+					ContentType: "image/png",
+					Reader:      imageReader,
+				}
+			}
 			// 把mergeImageBase64放在第一位
-			txt2img.GetResponse().Images = append([]string{mergeImageBase64}, txt2img.GetResponse().Images...)
+			txt2img.GetResponse().Images = []string{mergeImageBase64}
 		}
 
 		for j, v := range txt2img.GetResponse().Images {
@@ -399,11 +410,10 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		// if len(files) >= 5 {
 		// 	files = files[0:5]
 		// }
-
-		if *opt.NIter > 1 || (*opt.NIter == 1 && len(files) > 1) {
-			// files的内容为第一张+跳开*opt.NIter的图片接上后面的
-			files = append(files[0:1], files[*opt.NIter+1:]...)
-		}
+		// if *opt.NIter > 1 || (*opt.NIter == 1 && len(files) > 1) {
+		// 	// files的内容为第一张+跳开*opt.NIter的图片接上后面的
+		// 	files = append(files[0:1], files[*opt.NIter+1:]...)
+		// }
 
 		// 生成主要Embed
 		mainEmbed := shdl.MessageEmbedTemplate()
@@ -460,11 +470,20 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 				Inline: true,
 			},
 		}
+		allEmbeds := []*discordgo.MessageEmbed{mainEmbed}
+		// 如果合并的附加图片不为空，则添加附加图片的Embed
+		if mergeAdditionalFile != nil {
+			additionalEmbed := shdl.MessageEmbedTemplate()
+			additionalEmbed.Title = "Additional"
+			additionalEmbed.Image = &discordgo.MessageEmbedImage{
+				URL: fmt.Sprintf("attachment://%s", mergeAdditionalFile.Name),
+			}
+			allEmbeds = append(allEmbeds, additionalEmbed)
+			files = append(files, mergeAdditionalFile)
+		}
 		msg, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
-			Content: &context,
-			Embeds: &[]*discordgo.MessageEmbed{
-				mainEmbed,
-			},
+			Content:    &context,
+			Embeds:     &allEmbeds,
 			Files:      files,
 			Components: shdl.BuildTxt2imgComponent(i, *opt.NIter),
 		})

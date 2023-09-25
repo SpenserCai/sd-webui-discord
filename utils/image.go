@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 00:30:18
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-25 12:24:45
+ * @LastEditTime: 2023-09-25 20:57:31
  * @Description: file content
  */
 package utils
@@ -141,9 +141,7 @@ func MergeImageFromBase64(base64List []string) (string, error) {
 		}
 		// 缩放到原来的75%
 		completeImage, resizeErr = ResizeImage(completeImage, 75)
-	}
-	// 如果是4张图片，2x2合并
-	if len(base64List) == 4 {
+	} else if len(base64List) == 4 { // 如果是4张图片，2x2合并
 		var upPartImage image.Image
 		var downPartImage image.Image
 		for i, base64Str := range base64List {
@@ -194,6 +192,66 @@ func MergeImageFromBase64(base64List []string) (string, error) {
 		draw.Draw(newImage, image.Rect(0, 0, newWidth, upPartImage.Bounds().Dy()), upPartImage, image.Point{0, 0}, draw.Src)
 		draw.Draw(newImage, image.Rect(0, upPartImage.Bounds().Dy(), newWidth, newHeight), downPartImage, image.Point{0, 0}, draw.Src)
 		completeImage = newImage
+		// 缩放到原来的50%
+		completeImage, resizeErr = ResizeImage(completeImage, 50)
+	} else { // 其他情况，三张图一行，多行合并，空白部分用白色填充
+		var upPartImage image.Image
+		var downPartImage image.Image
+		var completeImageList []image.Image
+		for i, base64Str := range base64List {
+			// 去除图片标识
+			trimmedStr := strings.TrimPrefix(base64Str, "data:image/jpeg;base64,")
+			trimmedStr = strings.TrimPrefix(trimmedStr, "data:image/png;base64,")
+			// 从Base64字符串解码图片数据
+			data, err := base64.StdEncoding.DecodeString(trimmedStr)
+			if err != nil {
+				return "", fmt.Errorf("can't decode base64: %s", err)
+			}
+			reader := strings.NewReader(string(data))
+			// 解码图片
+			img, _, err := image.Decode(reader)
+			if err != nil {
+				return "", fmt.Errorf("can't decode image: %s", err)
+			}
+			// 把图片水平拼接到completeImage上，直接实现算法
+			if upPartImage == nil {
+				upPartImage = img
+			} else {
+				newWidth := upPartImage.Bounds().Dx() + img.Bounds().Dx()
+				newHeight := upPartImage.Bounds().Dy()
+				newImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
+				draw.Draw(newImage, image.Rect(0, 0, upPartImage.Bounds().Dx(), newHeight), upPartImage, image.Point{0, 0}, draw.Src)
+				draw.Draw(newImage, image.Rect(upPartImage.Bounds().Dx(), 0, newWidth, newHeight), img, image.Point{0, 0}, draw.Src)
+				upPartImage = newImage
+			}
+			if i%3 == 2 {
+				completeImageList = append(completeImageList, upPartImage)
+				upPartImage = nil
+			}
+		}
+		if upPartImage != nil {
+			completeImageList = append(completeImageList, upPartImage)
+		}
+		// 把图片垂直拼接到completeImage上，直接实现算法
+		for i, img := range completeImageList {
+			if downPartImage == nil {
+				downPartImage = img
+			} else {
+				newWidth := downPartImage.Bounds().Dx()
+				newHeight := downPartImage.Bounds().Dy() + img.Bounds().Dy()
+				newImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
+				draw.Draw(newImage, image.Rect(0, 0, newWidth, downPartImage.Bounds().Dy()), downPartImage, image.Point{0, 0}, draw.Src)
+				draw.Draw(newImage, image.Rect(0, downPartImage.Bounds().Dy(), newWidth, newHeight), img, image.Point{0, 0}, draw.Src)
+				downPartImage = newImage
+			}
+			if i%3 == 2 {
+				completeImage = downPartImage
+				downPartImage = nil
+			}
+		}
+		if downPartImage != nil {
+			completeImage = downPartImage
+		}
 		// 缩放到原来的50%
 		completeImage, resizeErr = ResizeImage(completeImage, 50)
 	}
