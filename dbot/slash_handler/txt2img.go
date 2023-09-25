@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-25 11:45:33
+ * @LastEditTime: 2023-09-25 12:36:20
  * @Description: file content
  */
 package slash_handler
@@ -396,9 +396,9 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 				ContentType: "image/png",
 			})
 		}
-		if len(files) >= 5 {
-			files = files[0:5]
-		}
+		// if len(files) >= 5 {
+		// 	files = files[0:5]
+		// }
 
 		if *opt.NIter > 1 || (*opt.NIter == 1 && len(files) > 1) {
 			// files的内容为第一张+跳开*opt.NIter的图片接上后面的

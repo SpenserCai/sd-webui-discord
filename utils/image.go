@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 00:30:18
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 02:29:37
+ * @LastEditTime: 2023-09-25 12:24:45
  * @Description: file content
  */
 package utils
@@ -13,9 +13,10 @@ import (
 	"encoding/base64"
 	"fmt"
 	"image"
-	"image/draw"
 	"image/jpeg"
 	"strings"
+
+	"golang.org/x/image/draw"
 )
 
 func GetImageBase64(url string) (string, error) {
@@ -65,6 +66,38 @@ func GetImageSizeFromBase64(base64Str string) (int, int, error) {
 	return width, height, nil
 }
 
+func ResizeImage(inputImage image.Image, scalePercent float64) (image.Image, error) {
+	// 获取原始图像的尺寸
+	originalBounds := inputImage.Bounds()
+	originalWidth := originalBounds.Dx()
+	originalHeight := originalBounds.Dy()
+
+	// 计算缩放后的尺寸
+	newWidth := int(float64(originalWidth) * scalePercent / 100)
+	newHeight := int(float64(originalHeight) * scalePercent / 100)
+
+	// 创建缩放后的图像
+	resizedImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
+
+	// 使用双线性插值算法进行图像缩放
+	draw.CatmullRom.Scale(resizedImage, resizedImage.Bounds(), inputImage, originalBounds, draw.Over, nil)
+
+	// 将缩放后的图像编码为 JPEG 格式
+	var outputBuffer bytes.Buffer
+	err := jpeg.Encode(&outputBuffer, resizedImage, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// 解码 JPEG 图像数据，生成最终的缩放后图像
+	finalImage, err := jpeg.Decode(&outputBuffer)
+	if err != nil {
+		return nil, err
+	}
+
+	return finalImage, nil
+}
+
 // 图片合并
 func MergeImageFromBase64(base64List []string) (string, error) {
 	// 如果是单张图片，直接返回
@@ -72,6 +105,7 @@ func MergeImageFromBase64(base64List []string) (string, error) {
 		return base64List[0], nil
 	}
 	var completeImage image.Image
+	var resizeErr error
 	// 如果是两张图片，水平合并
 	if len(base64List) == 2 {
 		for _, base64Str := range base64List {
@@ -104,8 +138,9 @@ func MergeImageFromBase64(base64List []string) (string, error) {
 				draw.Draw(newImage, image.Rect(completeImage.Bounds().Dx(), 0, newWidth, newHeight), img, image.Point{0, 0}, draw.Src)
 				completeImage = newImage
 			}
-
 		}
+		// 缩放到原来的75%
+		completeImage, resizeErr = ResizeImage(completeImage, 75)
 	}
 	// 如果是4张图片，2x2合并
 	if len(base64List) == 4 {
@@ -159,6 +194,11 @@ func MergeImageFromBase64(base64List []string) (string, error) {
 		draw.Draw(newImage, image.Rect(0, 0, newWidth, upPartImage.Bounds().Dy()), upPartImage, image.Point{0, 0}, draw.Src)
 		draw.Draw(newImage, image.Rect(0, upPartImage.Bounds().Dy(), newWidth, newHeight), downPartImage, image.Point{0, 0}, draw.Src)
 		completeImage = newImage
+		// 缩放到原来的50%
+		completeImage, resizeErr = ResizeImage(completeImage, 50)
+	}
+	if resizeErr != nil {
+		return "", resizeErr
 	}
 	// completeImage 转 base64
 	buf := new(bytes.Buffer)

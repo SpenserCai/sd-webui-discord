@@ -5,7 +5,8 @@ go 1.19
 require (
 	github.com/SpenserCai/sd-webui-go v0.4.3
 	github.com/bwmarrin/discordgo v0.27.1
-	golang.org/x/text v0.7.0
+	golang.org/x/image v0.12.0
+	golang.org/x/text v0.13.0
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/driver/sqlite v1.5.3
 	gorm.io/gorm v1.25.4
