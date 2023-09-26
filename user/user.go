@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-26 21:53:05
+ * @LastEditTime: 2023-09-26 23:42:19
  * @Description: file content
  */
 package user
@@ -240,4 +240,67 @@ func (ucs *UserCenterService) GetUserCount() (int64, error) {
 	var count int64
 	err := ucs.Db.Db.Model(&db_backend.UserInfo{}).Count(&count).Error
 	return count, err
+}
+
+// 判断当前用户是否为管理员
+func (ucs *UserCenterService) IsAdmin(id string) (bool, error) {
+	userInfo, err := ucs.GetUserInfo(id)
+	if err != nil {
+		return false, err
+	}
+	if userInfo == nil {
+		return false, nil
+	}
+	roles := strings.Split(userInfo.Roles, ",")
+	for _, role := range roles {
+		if role == "admin" {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
+// 获取用户列表 判断当前用户是否为管理员，如果是管理员则返回所有用户，如果不是管理员则返回当前用户
+func (ucs *UserCenterService) GetUserList(id string) ([]*UserInfo, error) {
+	isAdmin, err := ucs.IsAdmin(id)
+	if err != nil {
+		return nil, err
+	}
+	if isAdmin {
+		dbUserInfos := []*db_backend.UserInfo{}
+		err := ucs.Db.Db.Find(&dbUserInfos).Error
+		if err != nil {
+			return nil, err
+		}
+		return func() []*UserInfo {
+			var userInfos []*UserInfo
+			for _, v := range dbUserInfos {
+				stableConfig := StableConfig{}
+				if v.StableConfig != "{}" {
+					err := json.NewDecoder(strings.NewReader(v.StableConfig)).Decode(&stableConfig)
+					if err != nil {
+						return nil
+					}
+				}
+				userInfos = append(userInfos, &UserInfo{
+					Enable:       v.Enable,
+					Name:         v.Name,
+					Id:           v.ID,
+					Roles:        v.Roles,
+					StableConfig: stableConfig,
+				})
+
+			}
+			return userInfos
+		}(), nil
+	} else {
+		userInfo, err := ucs.GetUserInfo(id)
+		if err != nil {
+			return nil, err
+		}
+		if userInfo == nil {
+			return nil, nil
+		}
+		return []*UserInfo{userInfo}, nil
+	}
 }

@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-25 15:18:32
+ * @LastEditTime: 2023-09-26 23:56:17
  * @Description: file content
  */
 package slash_handler
@@ -215,6 +215,15 @@ func (shdl SlashHandler) GetDiscordUserId(i *discordgo.InteractionCreate) string
 	}
 }
 
+func (shdl SlashHandler) SetDiscordUserId(i *discordgo.InteractionCreate, userId string) {
+	// 判断是群消息还是私聊消息
+	if i.GuildID == "" {
+		i.Interaction.User.ID = userId
+	} else {
+		i.Interaction.Member.User.ID = userId
+	}
+}
+
 func (shdl SlashHandler) ConvertInteractionToUserInfo(i *discordgo.InteractionCreate) *user.UserInfo {
 	// 判断是群消息还是私聊消息
 	if i.GuildID == "" {
@@ -287,4 +296,20 @@ func (shdl SlashHandler) GetHistory(command string, messageId string, opt any) e
 		}
 	}
 	return nil
+}
+
+// 获取用户Choice
+func (shdl SlashHandler) GetUserCommandOptionChoice(i *discordgo.InteractionCreate) []*discordgo.ApplicationCommandOptionChoice {
+	choices := []*discordgo.ApplicationCommandOptionChoice{}
+	userList, err := global.UserCenterSvc.GetUserList(shdl.GetDiscordUserId(i))
+	if err != nil {
+		return choices
+	}
+	for _, v := range userList {
+		choices = append(choices, &discordgo.ApplicationCommandOptionChoice{
+			Name:  v.Name,
+			Value: v.Id,
+		})
+	}
+	return choices
 }
