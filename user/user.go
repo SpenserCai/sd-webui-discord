@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 18:08:05
+ * @LastEditTime: 2023-09-26 21:53:05
  * @Description: file content
  */
 package user
@@ -137,11 +137,18 @@ func (ucs *UserCenterService) RegisterUser(user *UserInfo) (string, error) {
 	}
 	// 如果用户不存在则创建用户
 	newUserInfo := &db_backend.UserInfo{
-		ID:           user.Id,
-		Name:         user.Name,
-		Created:      time.Now().Format("2006-01-02 15:04:05"),
-		Enable:       true,
-		Roles:        "user",
+		ID:      user.Id,
+		Name:    user.Name,
+		Created: time.Now().Format("2006-01-02 15:04:05"),
+		Enable:  true,
+		// 如果用户总数为0，则创建的用户为admin，否则为user
+		Roles: func() string {
+			count, err := ucs.GetUserCount()
+			if err == nil && count == 0 {
+				return "user,admin"
+			}
+			return "user"
+		}(),
 		StableConfig: "{}",
 	}
 	err = ucs.Db.Db.Create(newUserInfo).Error
@@ -218,7 +225,7 @@ func (ucs *UserCenterService) WriteUserHistory(messageId string, userId string, 
 	return err
 }
 
-// 获取用户历史记录
+// 获取历史记录
 func (ucs *UserCenterService) GetUserHistoryOptWithMessageId(messageId string, commandName string) (string, error) {
 	history := &db_backend.History{}
 	err := ucs.Db.Db.Where("message_id = ? AND command_name = ?", messageId, commandName).First(history).Error
@@ -226,4 +233,11 @@ func (ucs *UserCenterService) GetUserHistoryOptWithMessageId(messageId string, c
 		return "", err
 	}
 	return history.OptionJson, nil
+}
+
+// 获取用户总数
+func (ucs *UserCenterService) GetUserCount() (int64, error) {
+	var count int64
+	err := ucs.Db.Db.Model(&db_backend.UserInfo{}).Count(&count).Error
+	return count, err
 }
