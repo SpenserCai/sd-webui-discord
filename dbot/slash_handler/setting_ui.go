@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-27 11:03:27
+ * @LastEditTime: 2023-09-27 11:05:45
  * @Description: file content
  */
 package slash_handler
@@ -135,7 +135,7 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 	if len(customIDList) == 3 {
 		tmpUserInfo, err := global.UserCenterSvc.GetUserInfo(customIDList[2])
 		if err == nil {
-			userInfo = tmpUserInfo
+			*userInfo = *tmpUserInfo
 		}
 	}
 	log.Println(cmd)
@@ -272,7 +272,7 @@ func (shdl SlashHandler) SettingUiModalSubmitHander(s *discordgo.Session, i *dis
 	if len(customIDList) == 3 {
 		tmpUserInfo, err := global.UserCenterSvc.GetUserInfo(customIDList[2])
 		if err == nil {
-			userInfo = tmpUserInfo
+			*userInfo = *tmpUserInfo
 		}
 	}
 	switch cmd {
