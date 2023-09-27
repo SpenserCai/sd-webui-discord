@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:10:00
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-27 00:56:42
+ * @LastEditTime: 2023-09-27 10:42:51
  * @Description: file content
  */
 package dbot
@@ -52,7 +52,7 @@ func (dbot *DiscordBot) GenerateCommandList() {
 		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.SettingOptions())
 		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.SettingUiOptions())
 		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.ClusterStatusOptions())
-		// dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.UserInfoOptions())
+		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.UserInfoOptions())
 	}
 }
 
