@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-27 11:22:20
+ * @LastEditTime: 2023-09-27 11:28:51
  * @Description: file content
  */
 package slash_handler
@@ -112,7 +112,7 @@ func (shdl SlashHandler) SettingUiAction(s *discordgo.Session, i *discordgo.Inte
 		component := shdl.BuildSettingUiComponent(&userInfo.StableConfig, i)
 		_, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string {
-				v := fmt.Sprintf("**Setting GUI [%s]**\nIf you need more options, please use the `/setting` command", userInfo.Name)
+				v := fmt.Sprintf("**Setting GUI - [%s]**\nIf you need more options, please use the `/setting` command", userInfo.Name)
 				return &v
 			}(),
 			Components: component,
