@@ -112,7 +112,7 @@ func (shdl SlashHandler) SettingUiAction(s *discordgo.Session, i *discordgo.Inte
 		component := shdl.BuildSettingUiComponent(&userInfo.StableConfig, i)
 		_, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string {
-				v := fmt.Sprintf("**Setting GUI[%s]**\nIf you need more options, please use the `/setting` command", userInfo.Name)
+				v := fmt.Sprintf("**Setting GUI [%s]**\nIf you need more options, please use the `/setting` command", userInfo.Name)
 				return &v
 			}(),
 			Components: component,
