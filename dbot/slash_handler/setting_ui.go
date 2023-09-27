@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-27 10:56:40
+ * @LastEditTime: 2023-09-27 11:03:27
  * @Description: file content
  */
 package slash_handler
@@ -142,6 +142,7 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 	log.Println(userInfo.Name)
 	switch cmd {
 	case "setting_ui|sd_model_checkpoint":
+		log.Println(userInfo.Name, "sd_model_checkpoint", i.MessageComponentData().Values[0])
 		userInfo.StableConfig.Model = i.MessageComponentData().Values[0]
 		return false
 	case "setting_ui|sd_vae":
@@ -352,6 +353,7 @@ func (shdl SlashHandler) SettingUiCommandHandler(s *discordgo.Session, i *discor
 			return
 		}
 	}
+	log.Println(userInfo.Name, userInfo.StableConfig.Model)
 	err = global.UserCenterSvc.UpdateStableConfig(userInfo)
 	if err == nil {
 		shdl.SendTextInteractionRespondWithFlag("", s, i, discordgo.MessageFlagsEphemeral)
