@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-26 23:56:17
+ * @LastEditTime: 2023-09-27 10:24:59
  * @Description: file content
  */
 package slash_handler
@@ -312,4 +312,13 @@ func (shdl SlashHandler) GetUserCommandOptionChoice(i *discordgo.InteractionCrea
 		})
 	}
 	return choices
+}
+
+// 获取带有cmmd和用户ID的CustomID
+func (shdl SlashHandler) GetDiscordUserCustomId(command string, customId string, i *discordgo.InteractionCreate) string {
+	return shdl.GetDiscordUserCustomIdWithUserId(command, customId, shdl.GetDiscordUserId(i))
+}
+
+func (shdl SlashHandler) GetDiscordUserCustomIdWithUserId(command string, customId string, userId string) string {
+	return fmt.Sprintf("%s|%s|%s", command, customId, userId)
 }

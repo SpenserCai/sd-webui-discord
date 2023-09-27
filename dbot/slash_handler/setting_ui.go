@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 16:18:50
+ * @LastEditTime: 2023-09-27 10:29:11
  * @Description: file content
  */
 package slash_handler
@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/SpenserCai/sd-webui-discord/cluster"
 	"github.com/SpenserCai/sd-webui-discord/global"
@@ -37,12 +38,12 @@ func (shdl SlashHandler) SettingUiSetOptions(dsOpt []*discordgo.ApplicationComma
 	}
 }
 
-func (shdl SlashHandler) BuildSettingUiComponent(opt *user.StableConfig) *[]discordgo.MessageComponent {
+func (shdl SlashHandler) BuildSettingUiComponent(opt *user.StableConfig, i *discordgo.InteractionCreate) *[]discordgo.MessageComponent {
 	component := []discordgo.MessageComponent{
 		discordgo.ActionsRow{
 			Components: []discordgo.MessageComponent{
 				discordgo.SelectMenu{
-					CustomID:    "setting_ui|sd_model_checkpoint",
+					CustomID:    shdl.GetDiscordUserCustomId("setting_ui", "sd_model_checkpoint", i),
 					Placeholder: "Choose a model checkpoint",
 					Options:     shdl.ConvertCommandOptionChoiceToMenuOption(global.LongDBotChoice["sd_model_checkpoint"], opt.Model),
 				},
@@ -51,7 +52,7 @@ func (shdl SlashHandler) BuildSettingUiComponent(opt *user.StableConfig) *[]disc
 		discordgo.ActionsRow{
 			Components: []discordgo.MessageComponent{
 				discordgo.SelectMenu{
-					CustomID:    "setting_ui|sd_vae",
+					CustomID:    shdl.GetDiscordUserCustomId("setting_ui", "sd_vae", i),
 					Placeholder: "Choose a vae model",
 					Options:     shdl.ConvertCommandOptionChoiceToMenuOption(global.LongDBotChoice["sd_vae"], opt.Vae),
 				},
@@ -60,7 +61,7 @@ func (shdl SlashHandler) BuildSettingUiComponent(opt *user.StableConfig) *[]disc
 		discordgo.ActionsRow{
 			Components: []discordgo.MessageComponent{
 				discordgo.SelectMenu{
-					CustomID:    "setting_ui|sampler",
+					CustomID:    shdl.GetDiscordUserCustomId("setting_ui", "sampler", i),
 					Placeholder: "Choose a sampler",
 					Options:     shdl.ConvertCommandOptionChoiceToMenuOption(global.LongDBotChoice["sampler"], opt.Sampler),
 				},
@@ -69,25 +70,25 @@ func (shdl SlashHandler) BuildSettingUiComponent(opt *user.StableConfig) *[]disc
 		discordgo.ActionsRow{
 			Components: []discordgo.MessageComponent{
 				discordgo.Button{
-					CustomID: "setting_ui|set_size",
+					CustomID: shdl.GetDiscordUserCustomId("setting_ui", "set_size", i),
 					Label:    "Set Image size",
 					Style:    discordgo.PrimaryButton,
 					Emoji:    discordgo.ComponentEmoji{Name: "📐"},
 				},
 				discordgo.Button{
-					CustomID: "setting_ui|set_steps",
+					CustomID: shdl.GetDiscordUserCustomId("setting_ui", "set_steps", i),
 					Label:    "Set Steps",
 					Style:    discordgo.PrimaryButton,
 					Emoji:    discordgo.ComponentEmoji{Name: "🔢"},
 				},
 				discordgo.Button{
-					CustomID: "setting_ui|set_cfg_scale",
+					CustomID: shdl.GetDiscordUserCustomId("setting_ui", "set_cfg_scale", i),
 					Label:    "Set Cfg Scale",
 					Style:    discordgo.PrimaryButton,
 					Emoji:    discordgo.ComponentEmoji{Name: "📏"},
 				},
 				discordgo.Button{
-					CustomID: "setting_ui|set_negative_prompt",
+					CustomID: shdl.GetDiscordUserCustomId("setting_ui", "set_negative_prompt", i),
 					Label:    "Set Negative Prompt",
 					Style:    discordgo.PrimaryButton,
 					Emoji:    discordgo.ComponentEmoji{Name: "🚫"},
@@ -108,7 +109,7 @@ func (shdl SlashHandler) SettingUiAction(s *discordgo.Session, i *discordgo.Inte
 			})
 			return
 		}
-		component := shdl.BuildSettingUiComponent(&userInfo.StableConfig)
+		component := shdl.BuildSettingUiComponent(&userInfo.StableConfig, i)
 		_, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string {
 				v := "**Setting GUI**\nIf you need more options, please use the `/setting` command"
@@ -129,7 +130,15 @@ func (shdl SlashHandler) SettingUiAction(s *discordgo.Session, i *discordgo.Inte
 }
 
 func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *discordgo.InteractionCreate, userInfo *user.UserInfo) (isFinish bool) {
-	switch i.MessageComponentData().CustomID {
+	customIDList := strings.Split(i.MessageComponentData().CustomID, "|")
+	cmd := fmt.Sprintf("%s|%s", customIDList[0], customIDList[1])
+	if len(customIDList) == 3 {
+		tmpUserInfo, err := global.UserCenterSvc.GetUserInfo(customIDList[2])
+		if err == nil {
+			userInfo = tmpUserInfo
+		}
+	}
+	switch cmd {
 	case "setting_ui|sd_model_checkpoint":
 		userInfo.StableConfig.Model = i.MessageComponentData().Values[0]
 		return false
@@ -144,7 +153,7 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseModal,
 			Data: &discordgo.InteractionResponseData{
-				CustomID: "setting_ui|set_size_modal",
+				CustomID: shdl.GetDiscordUserCustomIdWithUserId("setting_ui", "set_size_modal", userInfo.Id),
 				Title:    "Set Image Size",
 				Components: []discordgo.MessageComponent{
 					discordgo.ActionsRow{
@@ -179,7 +188,7 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseModal,
 			Data: &discordgo.InteractionResponseData{
-				CustomID: "setting_ui|set_steps_modal",
+				CustomID: shdl.GetDiscordUserCustomIdWithUserId("setting_ui", "set_steps_modal", userInfo.Id),
 				Title:    "Set Steps",
 				Components: []discordgo.MessageComponent{
 					discordgo.ActionsRow{
@@ -203,7 +212,7 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseModal,
 			Data: &discordgo.InteractionResponseData{
-				CustomID: "setting_ui|set_cfg_scale_modal",
+				CustomID: shdl.GetDiscordUserCustomIdWithUserId("setting_ui", "set_cfg_scale_modal", userInfo.Id),
 				Title:    "Set Cfg Scale",
 				Components: []discordgo.MessageComponent{
 					discordgo.ActionsRow{
@@ -228,7 +237,7 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseModal,
 			Data: &discordgo.InteractionResponseData{
-				CustomID: "setting_ui|set_negative_prompt_modal",
+				CustomID: shdl.GetDiscordUserCustomIdWithUserId("setting_ui", "set_negative_prompt_modal", userInfo.Id),
 				Title:    "Set Negative Prompt",
 				Components: []discordgo.MessageComponent{
 					discordgo.ActionsRow{
@@ -255,7 +264,15 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 }
 
 func (shdl SlashHandler) SettingUiModalSubmitHander(s *discordgo.Session, i *discordgo.InteractionCreate, userInfo *user.UserInfo) (isSuccess bool) {
-	switch i.ModalSubmitData().CustomID {
+	customIDList := strings.Split(i.ModalSubmitData().CustomID, "|")
+	cmd := fmt.Sprintf("%s|%s", customIDList[0], customIDList[1])
+	if len(customIDList) == 3 {
+		tmpUserInfo, err := global.UserCenterSvc.GetUserInfo(customIDList[2])
+		if err == nil {
+			userInfo = tmpUserInfo
+		}
+	}
+	switch cmd {
 	case "setting_ui|set_size_modal":
 		modal_data := i.ModalSubmitData()
 		tmpHeight, formathErr := strconv.ParseInt(modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value, 10, 64)
