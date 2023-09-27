@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:27:32
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 17:09:25
+ * @LastEditTime: 2023-09-27 22:59:10
  * @Description: file content
  */
 package slash_handler
@@ -83,11 +83,17 @@ func (shdl SlashHandler) SamOptions() *discordgo.ApplicationCommand {
 				Required:    false,
 				Choices:     shdl.dinoModelChoice(),
 			},
+			{
+				Type:        discordgo.ApplicationCommandOptionBoolean,
+				Name:        "return_mask",
+				Description: "Return mask image,default is false",
+				Required:    false,
+			},
 		},
 	}
 }
 
-func (shdl SlashHandler) SamSetOptions(cmd discordgo.ApplicationCommandInteractionData, opt *intersvc.SamSamPredictRequest) {
+func (shdl SlashHandler) SamSetOptions(cmd discordgo.ApplicationCommandInteractionData, opt *intersvc.SamSamPredictRequest, isReturnMask *bool) {
 	opt.DinoEnabled = func() *bool { v := true; return &v }()
 	opt.DinoBoxThreshold = func() *float64 { v := 0.3; return &v }()
 	opt.DinoPreviewCheckbox = func() *bool { v := false; return &v }()
@@ -107,6 +113,8 @@ func (shdl SlashHandler) SamSetOptions(cmd discordgo.ApplicationCommandInteracti
 			opt.SamModelName = func() *string { v := v.StringValue(); return &v }()
 		case "dion_model":
 			opt.DinoModelName = func() *string { v := v.StringValue(); return &v }()
+		case "return_mask":
+			*isReturnMask = v.BoolValue()
 		}
 	}
 
@@ -117,7 +125,7 @@ func (shdl SlashHandler) SamSetOptions(cmd discordgo.ApplicationCommandInteracti
 
 }
 
-func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.SamSamPredictRequest, node *cluster.ClusterNode) {
+func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *intersvc.SamSamPredictRequest, node *cluster.ClusterNode, isReturnMask *bool) {
 	sam := &intersvc.SamSamPredict{RequestItem: opt}
 	sam.Action(node.StableClient)
 	if sam.Error != nil {
@@ -127,9 +135,13 @@ func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.Interactio
 		})
 	} else {
 		images := make([]string, 0)
-		images = append(images, (sam.GetResponse().MaskedImages)...)
-		images = append(images, (sam.GetResponse().Masks)...)
-		images = append(images, (sam.GetResponse().BlendedImages)...)
+		if *isReturnMask {
+			images = append(images, (sam.GetResponse().Masks)...)
+		} else {
+			images = append(images, (sam.GetResponse().MaskedImages)...)
+		}
+		// images = append(images, (sam.GetResponse().Masks)...)
+		// images = append(images, (sam.GetResponse().BlendedImages)...)
 
 		files := make([]*discordgo.File, 0)
 		for j := 0; j < len(images); j++ {
@@ -159,11 +171,12 @@ func (shdl SlashHandler) SamAction(s *discordgo.Session, i *discordgo.Interactio
 
 func (shdl SlashHandler) SamCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	option := &intersvc.SamSamPredictRequest{}
+	isReturnMask := false
 	shdl.RespondStateMessage("Running", s, i)
 	node := global.ClusterManager.GetNodeAuto()
 	action := func() (map[string]interface{}, error) {
-		shdl.SamSetOptions(i.ApplicationCommandData(), option)
-		shdl.SamAction(s, i, option, node)
+		shdl.SamSetOptions(i.ApplicationCommandData(), option, &isReturnMask)
+		shdl.SamAction(s, i, option, node, &isReturnMask)
 		return nil, nil
 	}
 	callback := func() {}
