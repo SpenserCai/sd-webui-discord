@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-27 10:29:11
+ * @LastEditTime: 2023-09-27 10:56:40
  * @Description: file content
  */
 package slash_handler
@@ -138,6 +138,8 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 			userInfo = tmpUserInfo
 		}
 	}
+	log.Println(cmd)
+	log.Println(userInfo.Name)
 	switch cmd {
 	case "setting_ui|sd_model_checkpoint":
 		userInfo.StableConfig.Model = i.MessageComponentData().Values[0]
