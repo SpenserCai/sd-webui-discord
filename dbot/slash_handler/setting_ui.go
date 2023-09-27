@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-27 11:05:45
+ * @LastEditTime: 2023-09-27 11:11:40
  * @Description: file content
  */
 package slash_handler
@@ -112,7 +112,7 @@ func (shdl SlashHandler) SettingUiAction(s *discordgo.Session, i *discordgo.Inte
 		component := shdl.BuildSettingUiComponent(&userInfo.StableConfig, i)
 		_, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string {
-				v := "**Setting GUI**\nIf you need more options, please use the `/setting` command"
+				v := fmt.Sprintf("**Setting GUI**\n**`User Name`**: %s\nIf you need more options, please use the `/setting` command", userInfo.Name)
 				return &v
 			}(),
 			Components: component,
@@ -138,8 +138,6 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 			*userInfo = *tmpUserInfo
 		}
 	}
-	log.Println(cmd)
-	log.Println(userInfo.Name)
 	switch cmd {
 	case "setting_ui|sd_model_checkpoint":
 		log.Println(userInfo.Name, "sd_model_checkpoint", i.MessageComponentData().Values[0])
@@ -353,7 +351,6 @@ func (shdl SlashHandler) SettingUiCommandHandler(s *discordgo.Session, i *discor
 			return
 		}
 	}
-	log.Println(userInfo.Name, userInfo.StableConfig.Model)
 	err = global.UserCenterSvc.UpdateStableConfig(userInfo)
 	if err == nil {
 		shdl.SendTextInteractionRespondWithFlag("", s, i, discordgo.MessageFlagsEphemeral)
