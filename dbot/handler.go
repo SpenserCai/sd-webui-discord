@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:02:04
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 14:20:44
+ * @LastEditTime: 2023-09-28 16:37:46
  * @Description: file content
  */
 package dbot
@@ -54,7 +54,7 @@ func (dbot *DiscordBot) SyncCommands() {
 	if len(dbot.RegisteredCommands) > 0 {
 		log.Println("Clearing other bots commands...")
 		for _, v := range dbot.RegisteredCommands {
-			
+
 			// if command is not in the command list, remove it
 			if dbot.CheckCommandInList(v.Name) {
 				log.Printf("'%v' command is in the command list, skip...", v.Name)
@@ -113,12 +113,24 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 		if registeredCommand.Name == command.Name {
 
 			// new description
-			if registeredCommand.Description != command.Description { return true }
+			if registeredCommand.Description != command.Description {
+				return true
+			}
+
+			// new location
+			if registeredCommand.DescriptionLocalizations != nil {
+				for k, v := range *registeredCommand.DescriptionLocalizations {
+					if v != (*command.DescriptionLocalizations)[k] {
+						return true
+					}
+				}
+			}
 
 			// new options
-			if len(registeredCommand.Options) != len(command.Options) { return true }
+			if len(registeredCommand.Options) != len(command.Options) {
+				return true
+			}
 
-			
 			for i, option := range command.Options {
 				// new option description
 				if option.Description != registeredCommand.Options[i].Description {
@@ -126,7 +138,9 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 					return true
 				}
 
-				if option.Autocomplete {return true}
+				if option.Autocomplete {
+					return true
+				}
 
 				// new choices
 				for k, choice := range option.Choices {
