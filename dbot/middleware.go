@@ -3,7 +3,7 @@
  * @Date: 2023-09-11 13:43:11
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-28 12:04:54
+ * @LastEditTime: 2023-09-28 14:02:47
  * @Description: file content
  */
 package dbot
@@ -20,6 +20,17 @@ func (dbot *DiscordBot) CheckPermission(cmd string, s *discordgo.Session, i *dis
 		return true
 	}
 	userId := shdl.SlashHandler{}.GetDiscordUserId(i)
+	// 判断是否开启必须注册
+	if global.Config.UserCenter.MustRegister && !global.UserCenterSvc.IsRegistered(userId) && cmd != "register" {
+		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "**USER NOT REGISTERED**\nPlease register with `/register` first",
+				Flags:   discordgo.MessageFlagsEphemeral,
+			},
+		})
+		return false
+	}
 	if isAdmin, _ := global.UserCenterSvc.IsAdmin(userId); isAdmin {
 		return true
 	} else {

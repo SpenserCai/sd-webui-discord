@@ -23,7 +23,8 @@
         "db_config":{
             "type":"sqlite",
             "dsn":"./user_center.db"
-        }
+        },
+        "must_register":false
     },
     "disable_return_gen_info":true
 }

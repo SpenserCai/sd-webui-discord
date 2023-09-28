@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-28 12:12:22
+ * @LastEditTime: 2023-09-28 13:48:33
  * @Description: file content
  */
 package user
@@ -191,6 +191,17 @@ func (ucs *UserCenterService) IsBaned(id string) (bool, error) {
 	return !userInfo.Enable, nil
 }
 
+func (ucs *UserCenterService) IsRegistered(id string) bool {
+	userInfo, err := ucs.GetUserInfo(id)
+	if err != nil {
+		return false
+	}
+	if userInfo == nil {
+		return false
+	}
+	return true
+}
+
 func (ucs *UserCenterService) UpdateStableConfig(user *UserInfo) error {
 
 	stableConfig, err := json.Marshal(user.StableConfig)
@@ -275,6 +286,8 @@ func (ucs *UserCenterService) IsAdmin(id string) (bool, error) {
 	}
 	return false, nil
 }
+
+//
 
 // 获取用户列表 判断当前用户是否为管理员，如果是管理员则返回所有用户，如果不是管理员则返回当前用户
 func (ucs *UserCenterService) GetUserList(id string) ([]*UserInfo, error) {

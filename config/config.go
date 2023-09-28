@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 19:10:56
+ * @LastEditTime: 2023-09-28 13:42:55
  * @Description: file content
  */
 package config
@@ -33,8 +33,9 @@ type DbConfig struct {
 }
 
 type UserCenter struct {
-	Enable   bool     `json:"enable"`
-	DbConfig DbConfig `json:"db_config"`
+	Enable       bool     `json:"enable"`
+	DbConfig     DbConfig `json:"db_config"`
+	MustRegister bool     `json:"must_register"`
 }
 
 type Config struct {
