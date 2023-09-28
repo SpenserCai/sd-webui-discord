@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-28 13:48:33
+ * @LastEditTime: 2023-09-28 20:17:36
  * @Description: file content
  */
 package user
@@ -249,6 +249,12 @@ func (ucs *UserCenterService) WriteUserHistory(messageId string, userId string, 
 		Created:     time.Now().Format("2006-01-02 15:04:05"),
 	}
 	err := ucs.Db.Db.Create(history).Error
+	return err
+}
+
+// 写入图片信息
+func (ucs *UserCenterService) WriteUserHistoryImages(messageId string, userId string, images string) error {
+	err := ucs.Db.Db.Model(&db_backend.History{}).Where("message_id = ? AND user_id = ?", messageId, userId).Update("images", images).Error
 	return err
 }
 

@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-27 10:24:59
+ * @LastEditTime: 2023-09-28 20:20:18
  * @Description: file content
  */
 package slash_handler
@@ -281,6 +281,13 @@ func (shdl SlashHandler) SetHistory(command string, messageId string, i *discord
 		optJson, _ := json.Marshal(opt)
 		userId := shdl.GetDiscordUserId(i)
 		global.UserCenterSvc.WriteUserHistory(messageId, userId, command, string(optJson))
+	}
+}
+
+func (shdl SlashHandler) SetHistoryImages(messageId string, i *discordgo.InteractionCreate, images []string) {
+	if global.Config.UserCenter.Enable {
+		userId := shdl.GetDiscordUserId(i)
+		global.UserCenterSvc.WriteUserHistoryImages(messageId, userId, strings.Join(images, ","))
 	}
 }
 

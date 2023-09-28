@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 00:44:10
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-26 17:40:46
+ * @LastEditTime: 2023-09-28 20:10:48
  * @Description: file content
  */
 package db_backend
@@ -25,6 +25,7 @@ type History struct {
 	UserID      string `gorm:"column:user_id;size:100;index:idx_message"`
 	CommandName string `gorm:"column:command_name;size:50"`
 	OptionJson  string `gorm:"column:option_json;size:0"`
+	Images      string `gorm:"column:images;size:0"`
 	Created     string `gorm:"column:created;size:50"`
 }
 
