@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:02:04
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-28 16:37:46
+ * @LastEditTime: 2023-09-28 16:41:38
  * @Description: file content
  */
 package dbot
@@ -119,8 +119,13 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 
 			// new location
 			if registeredCommand.DescriptionLocalizations != nil {
-				for k, v := range *registeredCommand.DescriptionLocalizations {
-					if v != (*command.DescriptionLocalizations)[k] {
+				// 先判断有没有新的location
+				if len(*registeredCommand.DescriptionLocalizations) != len(*command.DescriptionLocalizations) {
+					return true
+				}
+				// 再判断有没有新的location的description
+				for k, v := range *command.DescriptionLocalizations {
+					if (*registeredCommand.DescriptionLocalizations)[k] != v {
 						return true
 					}
 				}
