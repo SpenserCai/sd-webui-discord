@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-27 11:33:49
+ * @LastEditTime: 2023-09-28 11:45:54
  * @Description: file content
  */
 package slash_handler
@@ -39,6 +39,22 @@ func (shdl SlashHandler) SettingUiSetOptions(dsOpt []*discordgo.ApplicationComma
 }
 
 func (shdl SlashHandler) BuildSettingUiComponent(opt *user.StableConfig, i *discordgo.InteractionCreate) *[]discordgo.MessageComponent {
+	adminRow := discordgo.ActionsRow{
+		Components: []discordgo.MessageComponent{
+			discordgo.Button{
+				CustomID: shdl.GetDiscordUserCustomId("setting_ui", "ban", i),
+				Label:    "Ban",
+				Style:    discordgo.DangerButton,
+				Emoji:    discordgo.ComponentEmoji{Name: "🔒"},
+			},
+			discordgo.Button{
+				CustomID: shdl.GetDiscordUserCustomId("setting_ui", "unban", i),
+				Label:    "Unban",
+				Style:    discordgo.SuccessButton,
+				Emoji:    discordgo.ComponentEmoji{Name: "🔓"},
+			},
+		},
+	}
 	component := []discordgo.MessageComponent{
 		discordgo.ActionsRow{
 			Components: []discordgo.MessageComponent{
@@ -96,6 +112,9 @@ func (shdl SlashHandler) BuildSettingUiComponent(opt *user.StableConfig, i *disc
 			},
 		},
 	}
+	if i.ApplicationCommandData().Name == "user_info" {
+		component = append(component, adminRow)
+	}
 	return &component
 }
 
@@ -130,6 +149,7 @@ func (shdl SlashHandler) SettingUiAction(s *discordgo.Session, i *discordgo.Inte
 }
 
 func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *discordgo.InteractionCreate, userInfo *user.UserInfo) (isFinish bool) {
+	isSenderAdmin, _ := global.UserCenterSvc.IsAdmin(shdl.GetDiscordUserId(i))
 	customIDList := strings.Split(i.MessageComponentData().CustomID, "|")
 	cmd := fmt.Sprintf("%s|%s", customIDList[0], customIDList[1])
 	if len(customIDList) == 3 {
@@ -148,6 +168,22 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 	case "setting_ui|sampler":
 		userInfo.StableConfig.Sampler = i.MessageComponentData().Values[0]
 		return false
+	case "setting_ui|ban":
+		if isSenderAdmin {
+			global.UserCenterSvc.BanUser(userInfo.Id)
+			shdl.SendTextInteractionRespondWithFlag(fmt.Sprintf("Ban **`%s`** Success", userInfo.Name), s, i, discordgo.MessageFlagsEphemeral)
+		} else {
+			shdl.SendTextInteractionRespondWithFlag("You are not admin!", s, i, discordgo.MessageFlagsEphemeral)
+		}
+		return true
+	case "setting_ui|unban":
+		if isSenderAdmin {
+			global.UserCenterSvc.UnBanUser(userInfo.Id)
+			shdl.SendTextInteractionRespondWithFlag(fmt.Sprintf("UnBan **`%s`** Success", userInfo.Name), s, i, discordgo.MessageFlagsEphemeral)
+		} else {
+			shdl.SendTextInteractionRespondWithFlag("You are not admin!", s, i, discordgo.MessageFlagsEphemeral)
+		}
+		return true
 	// 显示图片大小设置窗口
 	case "setting_ui|set_size":
 		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{

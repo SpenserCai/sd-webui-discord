@@ -3,7 +3,7 @@
  * @Date: 2023-09-11 13:43:11
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 19:11:19
+ * @LastEditTime: 2023-09-28 12:04:54
  * @Description: file content
  */
 package dbot
@@ -20,7 +20,21 @@ func (dbot *DiscordBot) CheckPermission(cmd string, s *discordgo.Session, i *dis
 		return true
 	}
 	userId := shdl.SlashHandler{}.GetDiscordUserId(i)
-
+	if isAdmin, _ := global.UserCenterSvc.IsAdmin(userId); isAdmin {
+		return true
+	} else {
+		// 检查用户是否被禁用
+		if isDisabled, _ := global.UserCenterSvc.IsBaned(userId); isDisabled {
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "**USER BANED**",
+					Flags:   discordgo.MessageFlagsEphemeral,
+				},
+			})
+			return false
+		}
+	}
 	if global.UserCenterSvc.CheckUserPermission(userId, cmd) {
 		return true
 	} else {
@@ -34,4 +48,5 @@ func (dbot *DiscordBot) CheckPermission(cmd string, s *discordgo.Session, i *dis
 		})
 		return false
 	}
+
 }

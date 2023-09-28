@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-26 23:42:19
+ * @LastEditTime: 2023-09-28 12:12:22
  * @Description: file content
  */
 package user
@@ -173,6 +173,22 @@ func (ucs *UserCenterService) UpdateUserInfo(user *UserInfo) error {
 func (ucs *UserCenterService) BanUser(id string) error {
 	err := ucs.Db.Db.Model(&db_backend.UserInfo{}).Where("id = ?", id).Update("enable", false).Error
 	return err
+}
+
+func (ucs *UserCenterService) UnBanUser(id string) error {
+	err := ucs.Db.Db.Model(&db_backend.UserInfo{}).Where("id = ?", id).Update("enable", true).Error
+	return err
+}
+
+func (ucs *UserCenterService) IsBaned(id string) (bool, error) {
+	userInfo, err := ucs.GetUserInfo(id)
+	if err != nil {
+		return false, err
+	}
+	if userInfo == nil {
+		return false, nil
+	}
+	return !userInfo.Enable, nil
 }
 
 func (ucs *UserCenterService) UpdateStableConfig(user *UserInfo) error {
