@@ -47,6 +47,14 @@
         {
             "command": "png_info",
             "description": "獲取圖片生成參數"
+        },
+        {
+            "command": "cluster_status",
+            "description": "獲取集羣狀態"
+        },
+        {
+            "command": "user_info",
+            "description": "獲取用戶資訊（管理員）"
         }
     ]
 }

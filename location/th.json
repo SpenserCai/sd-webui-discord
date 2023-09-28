@@ -1,0 +1,60 @@
+{
+    "location_list": [
+        {
+            "command": "txt2img",
+            "description": "สร้างภาพจากข้อความ"
+        },
+        {
+            "command": "deoldify",
+            "description": "เปลี่ยนภาพถ่ายเก่าให้เป็นสี"
+        },
+        {
+            "command": "roop_image",
+            "description": "เปลี่ยนใบหน้า"
+        },
+        {
+            "command": "controlnet_detect",
+            "description": "ดูตัวอย่างและรับพารามิเตอร์ของ ControlNet"
+        },
+        {
+            "command": "rembg",
+            "description": "ลบพื้นหลังภาพ"
+        },
+        {
+            "command": "sam",
+            "description": "ตัดเนื้อหาจากรูปภาพโดยใช้ภาษาธรรมชาติ"
+        },
+        {
+            "command": "register",
+            "description": "ลงทะเบียนผู้ใช้ จำเป็นต้องลงทะเบียนก่อนถึงจะใช้ตัวเลือกเริ่มต้นที่กำหนดเอง"
+        },
+        {
+            "command": "setting",
+            "description": "ตั้งค่าตัวเลือกเริ่มต้นที่กำหนดเอง รวมถึงโมเดลเซ็ต, ตัวกลอง, ขนาดรูปภาพ ฯลฯ"
+        },
+        {
+            "command": "setting_ui",
+            "description": "ตัวเลือกเริ่มต้นที่กำหนดเองที่สามารถมองเห็นได้"
+        },
+        {
+            "command": "img2img",
+            "description": "สร้างภาพจากภาพ"
+        },
+        {
+            "command": "extra_single",
+            "description": "ซูเปอร์ความละเอียด, ซ่อมแซมใบหน้า"
+        },
+        {
+            "command": "png_info",
+            "description": "รับพารามิเตอร์การสร้างภาพ"
+        },
+        {
+            "command": "cluster_status",
+            "description": "รับสถานะของกลุ่ม"
+        },
+        {
+            "command": "user_info",
+            "description": "รับข้อมูลผู้ใช้ (ผู้ดูแลระบบ)"
+        }
+    ]
+}

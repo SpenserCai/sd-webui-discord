@@ -1,0 +1,60 @@
+{
+    "location_list": [
+        {
+            "command": "txt2img",
+            "description": "テキストから画像を生成する"
+        },
+        {
+            "command": "deoldify",
+            "description": "古い写真をカラー化する"
+        },
+        {
+            "command": "roop_image",
+            "description": "顔の交換"
+        },
+        {
+            "command": "controlnet_detect",
+            "description": "ControlNetのプレビューとパラメータの取得"
+        },
+        {
+            "command": "rembg",
+            "description": "画像の背景を除去する"
+        },
+        {
+            "command": "sam",
+            "description": "自然言語から画像のコンテンツを分割する"
+        },
+        {
+            "command": "register",
+            "description": "ユーザー登録。カスタムデフォルトオプションを使用するためには、まず登録する必要があります"
+        },
+        {
+            "command": "setting",
+            "description": "カスタムデフォルトオプションの設定。モデル、サンプラー、画像サイズなどが含まれます"
+        },
+        {
+            "command": "setting_ui",
+            "description": "カスタムデフォルトオプションの可視化"
+        },
+        {
+            "command": "img2img",
+            "description": "画像から画像を生成する"
+        },
+        {
+            "command": "extra_single",
+            "description": "超解像度、顔修復"
+        },
+        {
+            "command": "png_info",
+            "description": "画像生成パラメータの取得"
+        },
+        {
+            "command": "cluster_status",
+            "description": "クラスターの状態を取得する"
+        },
+        {
+            "command": "user_info",
+            "description": "ユーザー情報の取得（管理者用）"
+        }
+    ]
+}
