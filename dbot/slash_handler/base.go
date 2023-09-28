@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-28 20:20:18
+ * @LastEditTime: 2023-09-28 20:45:00
  * @Description: file content
  */
 package slash_handler
@@ -191,8 +191,11 @@ func (shdl SlashHandler) ConvertCommandOptionChoiceToMenuOption(choices []*disco
 		}
 		if choice.Value.(string) == default_v {
 			selectMenueOption.Default = true
+			// 把default的值放到第一个
+			menuOption = append([]discordgo.SelectMenuOption{selectMenueOption}, menuOption...)
+		} else {
+			menuOption = append(menuOption, selectMenueOption)
 		}
-		menuOption = append(menuOption, selectMenueOption)
 	}
 	// 如果超过25个，就只取前25个
 	if len(menuOption) > 25 {
