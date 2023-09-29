@@ -1,0 +1,60 @@
+{
+    "location_list": [
+        {
+            "command": "txt2img",
+            "description": "Generar imagen a partir de texto"
+        },
+        {
+            "command": "deoldify",
+            "description": "Colorear fotos antiguas"
+        },
+        {
+            "command": "roop_image",
+            "description": "Intercambio de caras"
+        },
+        {
+            "command": "controlnet_detect",
+            "description": "Vista previa y recuperación de parámetros de ControlNet"
+        },
+        {
+            "command": "rembg",
+            "description": "Eliminar el fondo de una imagen"
+        },
+        {
+            "command": "sam",
+            "description": "Segmentar contenido de imágenes utilizando lenguaje natural"
+        },
+        {
+            "command": "register",
+            "description": "Registro de usuario, necesario para usar opciones predeterminadas personalizadas"
+        },
+        {
+            "command": "setting",
+            "description": "Personalizar las opciones predeterminadas, incluyendo modelos, muestreadores, tamaño de imagen, etc."
+        },
+        {
+            "command": "setting_ui",
+            "description": "Visualizar las opciones predeterminadas personalizadas"
+        },
+        {
+            "command": "img2img",
+            "description": "Generar imagen a partir de imagen"
+        },
+        {
+            "command": "extra_single",
+            "description": "Superresolución, reparación facial"
+        },
+        {
+            "command": "png_info",
+            "description": "Recuperar parámetros de generación de imagen"
+        },
+        {
+            "command": "cluster_status",
+            "description": "Recuperar estado del clúster"
+        },
+        {
+            "command": "user_info",
+            "description": "Recuperar información de usuario (administrador)"
+        }
+    ]
+}
