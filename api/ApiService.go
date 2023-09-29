@@ -36,7 +36,7 @@ func BeforeRun() {
 
 }
 
-func StartWebService() {
+func StartApiService() {
 	BeforeRun()
 	server := restapi.NewServer(global.ApiService)
 	defer server.Shutdown()

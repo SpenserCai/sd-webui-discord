@@ -3,7 +3,7 @@
  * @Date: 2023-08-15 21:55:36
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-08-31 11:48:39
+ * @LastEditTime: 2023-09-30 01:21:25
  * @Description: file content
  */
 package main
@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/SpenserCai/sd-webui-discord/api"
 	"github.com/SpenserCai/sd-webui-discord/cluster"
 	"github.com/SpenserCai/sd-webui-discord/dbot"
 	"github.com/SpenserCai/sd-webui-discord/global"
@@ -96,6 +97,7 @@ func main() {
 		log.Println(err)
 		return
 	}
+	go api.StartApiService()
 	disBot.Run()
 
 }
