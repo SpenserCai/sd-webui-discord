@@ -48,6 +48,9 @@ func NewAPIServiceAPI(spec *loads.Document) *APIServiceAPI {
 		UserAuthHandler: user.AuthHandlerFunc(func(params user.AuthParams) middleware.Responder {
 			return middleware.NotImplemented("operation user.Auth has not yet been implemented")
 		}),
+		UserLoginHandler: user.LoginHandlerFunc(func(params user.LoginParams) middleware.Responder {
+			return middleware.NotImplemented("operation user.Login has not yet been implemented")
+		}),
 		UserUserInfoHandler: user.UserInfoHandlerFunc(func(params user.UserInfoParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation user.UserInfo has not yet been implemented")
 		}),
@@ -106,6 +109,8 @@ type APIServiceAPI struct {
 
 	// UserAuthHandler sets the operation handler for the auth operation
 	UserAuthHandler user.AuthHandler
+	// UserLoginHandler sets the operation handler for the login operation
+	UserLoginHandler user.LoginHandler
 	// UserUserInfoHandler sets the operation handler for the user info operation
 	UserUserInfoHandler user.UserInfoHandler
 	// AdminUserListHandler sets the operation handler for the user list operation
@@ -193,6 +198,9 @@ func (o *APIServiceAPI) Validate() error {
 
 	if o.UserAuthHandler == nil {
 		unregistered = append(unregistered, "user.AuthHandler")
+	}
+	if o.UserLoginHandler == nil {
+		unregistered = append(unregistered, "user.LoginHandler")
 	}
 	if o.UserUserInfoHandler == nil {
 		unregistered = append(unregistered, "user.UserInfoHandler")
@@ -301,6 +309,10 @@ func (o *APIServiceAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/auth"] = user.NewAuth(o.context, o.UserAuthHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/login"] = user.NewLogin(o.context, o.UserLoginHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

@@ -15,6 +15,18 @@ securityDefinitions:
     name: Authorization
     in: header
 paths:
+  /login:
+    get:
+      description: 'Login With Discord'
+      operationId: 'login'
+      tags: [user]
+      responses:
+        302:
+          description: 'Redirect'
+          headers:
+            Location:
+              type: string
+              format: url
   /auth:
     get:
       description: 'Auth With Discord'
@@ -29,6 +41,10 @@ paths:
       responses:
         302:
           description: 'Redirect'
+          headers:
+            Location:
+              type: string
+              format: url
   /user_info:
     get:
       description: 'Get User Info'

@@ -51,7 +51,33 @@ func init() {
         ],
         "responses": {
           "302": {
-            "description": "Redirect"
+            "description": "Redirect",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "url"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "get": {
+        "description": "Login With Discord",
+        "tags": [
+          "user"
+        ],
+        "operationId": "login",
+        "responses": {
+          "302": {
+            "description": "Redirect",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "url"
+              }
+            }
           }
         }
       }
@@ -277,7 +303,33 @@ func init() {
         ],
         "responses": {
           "302": {
-            "description": "Redirect"
+            "description": "Redirect",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "url"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "get": {
+        "description": "Login With Discord",
+        "tags": [
+          "user"
+        ],
+        "operationId": "login",
+        "responses": {
+          "302": {
+            "description": "Redirect",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "url"
+              }
+            }
           }
         }
       }

@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 15:37:14
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-29 20:12:16
+ * @LastEditTime: 2023-09-30 00:40:04
  * @Description: file content
  */
 package api
@@ -12,6 +12,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/SpenserCai/sd-webui-discord/api/business"
 	"github.com/SpenserCai/sd-webui-discord/api/gen/restapi"
 	"github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations"
 	"github.com/SpenserCai/sd-webui-discord/api/middleware"
@@ -31,6 +32,7 @@ func BeforeRun() {
 
 	global.ApiService = operations.NewAPIServiceAPI(swaggerSpec)
 	global.ApiService.BearerAuth = middleware.ValidateJwt
+	business.BusinessBase{}.SetLoginHandler()
 
 }
 

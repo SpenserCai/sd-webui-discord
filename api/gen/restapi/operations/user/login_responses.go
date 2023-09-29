@@ -11,40 +11,40 @@ import (
 	"github.com/go-openapi/runtime"
 )
 
-// AuthFoundCode is the HTTP code returned for type AuthFound
-const AuthFoundCode int = 302
+// LoginFoundCode is the HTTP code returned for type LoginFound
+const LoginFoundCode int = 302
 
 /*
-AuthFound Redirect
+LoginFound Redirect
 
-swagger:response authFound
+swagger:response loginFound
 */
-type AuthFound struct {
+type LoginFound struct {
 	/*
 
 	 */
 	Location string `json:"Location"`
 }
 
-// NewAuthFound creates AuthFound with default headers values
-func NewAuthFound() *AuthFound {
+// NewLoginFound creates LoginFound with default headers values
+func NewLoginFound() *LoginFound {
 
-	return &AuthFound{}
+	return &LoginFound{}
 }
 
-// WithLocation adds the location to the auth found response
-func (o *AuthFound) WithLocation(location string) *AuthFound {
+// WithLocation adds the location to the login found response
+func (o *LoginFound) WithLocation(location string) *LoginFound {
 	o.Location = location
 	return o
 }
 
-// SetLocation sets the location to the auth found response
-func (o *AuthFound) SetLocation(location string) {
+// SetLocation sets the location to the login found response
+func (o *LoginFound) SetLocation(location string) {
 	o.Location = location
 }
 
 // WriteResponse to the client
-func (o *AuthFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+func (o *LoginFound) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
 
 	// response header Location
 

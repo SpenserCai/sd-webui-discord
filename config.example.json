@@ -12,7 +12,10 @@
         "default_setting":{}
     },
     "discord":{
+        "app_id":"<your app id here>",
         "token":"<your token here>",
+        "client_secret":"<your client secret here>",
+        "oauth2_redirect_base_url":"<your oauth2 redirect base url here.example: https://127.0.0.1:18890>",
         "server_id":"<your servers id here if empty all servers>",
         "bot_name":"SD-WEBUI-BOT",
         "bot_avatar":"https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/logo.png",
