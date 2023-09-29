@@ -13,7 +13,7 @@
 # SD-WEBUI-DISCORD
 Support For Clustered Stable Diffusion WebUi Discord Bot
 
-[Mult-Language README](https://github.com/SpenserCai/tree/main/docs)
+[Mult-Language README](https://github.com/SpenserCai/sd-webui-discord/tree/main/docs)
 </div>
 
 <div align="center">
