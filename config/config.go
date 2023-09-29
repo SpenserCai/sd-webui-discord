@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-29 12:10:38
+ * @LastEditTime: 2023-09-29 19:17:11
  * @Description: file content
  */
 package config
@@ -39,6 +39,14 @@ type UserCenter struct {
 	MustRegister bool     `json:"must_register"`
 }
 
+type WebSite struct {
+	Api struct {
+		Host      string `json:"host"`
+		Port      int    `json:"port"`
+		JwtSecret string `json:"jwt_secret"`
+	} `json:"api"`
+}
+
 type Config struct {
 	SDWebUi struct {
 		Servers        []ServerItem   `json:"servers"`
@@ -53,4 +61,5 @@ type Config struct {
 	} `json:"discord"`
 	UserCenter           UserCenter `json:"user_center"`
 	DisableReturnGenInfo bool       `json:"disable_return_gen_info"`
+	WebSite              WebSite    `json:"website"`
 }

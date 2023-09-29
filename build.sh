@@ -3,9 +3,22 @@
  # @Date: 2023-08-17 11:04:55
  # @version: 
  # @LastEditors: SpenserCai
- # @LastEditTime: 2023-09-10 16:53:51
+ # @LastEditTime: 2023-09-29 18:19:20
  # @Description: file content
 ### 
+# Web接口代码生存
+GOPATH=$(go env GOPATH)
+# 判断是否安装go-swagger，如果没有则安装（在GOPATH/bin目录下）
+if [ ! -f "$GOPATH/bin/swagger" ]; then
+    echo "go-swagger not found, install go-swagger"
+    go get -u github.com/go-swagger/go-swagger/cmd/swagger
+fi
+
+API_PATH="./api"
+API_SWAGGER_PATH="./api/swagger.yml"
+
+$GOPATH/bin/swagger generate server -f $API_SWAGGER_PATH --regenerate-configureapi -t $API_PATH/gen/
+
 export GOOS=linux
 go build -o "./release/sd-webui-discord"
 

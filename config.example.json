@@ -26,5 +26,12 @@
         },
         "must_register":false
     },
+    "website":{
+        "api":{
+            "host":"0.0.0.0",
+            "port":18890,
+            "jwt_secret":"<your jwt secret here>"
+        }
+    },
     "disable_return_gen_info":true
 }

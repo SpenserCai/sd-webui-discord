@@ -1,0 +1,147 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: ApiService
+  description: API
+schemes:
+  - "http"
+host: "127.0.0.1:18890"
+basePath: "/api"
+produces:
+  - "application/json"
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /auth:
+    get:
+      description: 'Auth With Discord'
+      operationId: 'auth'
+      tags: [user]
+      parameters:
+        - name: code
+          in: query
+          description: 'Discord Code'
+          required: true
+          type: string
+      responses:
+        302:
+          description: 'Redirect'
+  /user_info:
+    get:
+      description: 'Get User Info'
+      operationId: 'user_info'
+      tags: [user]
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/UserInfo'
+  /user_list:
+    post:
+      description: 'Get User List'
+      operationId: 'user_list'
+      tags: [admin]
+      security:
+        - Bearer: []
+      parameters:
+        - name: body
+          in: body
+          description: 'Page Info'
+          required: true
+          schema:
+            properties:
+              query:
+                $ref: '#/definitions/UserQuery'
+              page_info:
+                $ref: '#/definitions/PageInfoRequest'
+      responses:
+        200:
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/UserList'
+          
+
+definitions:
+  UserItem:
+    type: object
+    properties: 
+      id:
+        type: string
+      username:
+        type: string
+      avatar:
+        type: string
+      enable:
+        type: boolean
+      stable_config:
+        type: object
+  PageInfoRequest:
+    type: object
+    properties: 
+      page:
+        type: integer
+        format: int32
+      page_size:
+        type: integer
+        format: int32
+  PageInfoResponse:
+    type: object
+    properties: 
+      page:
+        type: integer
+        format: int32
+      page_size:
+        type: integer
+        format: int32
+      total:
+        type: integer
+        format: int32
+  UserInfo:
+    type: object
+    properties: 
+      code:
+        type: integer
+        format: int32
+        x-omitempty: false
+      message:
+        type: string
+      data:
+        type: object
+        x-omitempty: false
+        properties:
+          user:
+            $ref: '#/definitions/UserItem'
+  UserList:
+    type: object
+    properties: 
+      code:
+        type: integer
+        format: int32
+        x-omitempty: false
+      message:
+        type: string
+      data:
+        type: object
+        x-omitempty: false
+        properties:
+          users:
+            type: array
+            items:
+              $ref: '#/definitions/UserItem'
+          page_info:
+            $ref: '#/definitions/PageInfoResponse'
+  UserQuery:
+    type: object
+    properties: 
+      id:
+        type: string
+      username:
+        type: string
+      enable:
+        type: boolean
+      
