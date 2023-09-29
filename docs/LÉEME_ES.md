@@ -80,7 +80,7 @@ Asimismo, existe también [sd-webui-discord-ex](https://github.com/SpenserCai/sd
     - Mediante interfaz gráfica, se pueden establecer ajustes personales. 
     - Se puede activar o desactivar el centro del usuarios.
     - Utiliza base de datos personalizable. De momento, cuenta con soporte de MySQL y SQLite.
-    - Los usuarios pueden establecer sus propios ajustes personales. Si no se especifican ajustes al generar imágenes, se utilizarán los ajustes configurados por defecto, como por ejemplo, las dimensiones de imagen, la cantidad de pasos, o el CFG. Para más detalles, consulte la wiki del Centro de usuarios.
+    - Los usuarios pueden establecer sus propios ajustes personales. Si no se especifican ajustes al generar imágenes, se utilizarán los configurados por defecto, como por ejemplo, las dimensiones de imagen, la cantidad de pasos, o el CFG. Para más detalles, consulte la wiki del Centro de usuarios.
     - Soporta registro de usuarios.
 - Vista previa de ControlNet
     - Soporta la selección de módulo y modelo, eliminando así la necesidad de ajuste manual.
@@ -88,7 +88,7 @@ Asimismo, existe también [sd-webui-discord-ex](https://github.com/SpenserCai/sd
 - Text to Image
     - Compatible con el refinador de SDXL!
     - Soporta ajustes por defecto preestablecidos por el usuario en el Centro de Usuarios.
-    - Permite seleccionar modelo, sampler, y otros parámetros opcionales, eliminando la necesidad de ajuste manual.
+    - Permite seleccionar modelo, muestreador, y otros parámetros opcionales, eliminando la necesidad de ajuste manual.
     - Soporta el uso de parámetros desde "Vista previa de ControlNet" directamente.
 - Image to Image
     - Permite subir imágenes mediante archivo adjunto, en lugar de pegar URLs.
@@ -272,5 +272,5 @@ Inicia el bot
 ```
 
 ## Contribución
-Este es un proyecto en constante desarrollo, y si estás interesado en contribuir, puedes unirte nuestro [Servidor de Discord](https://discord.gg/uNJpzEE4sZ). Agradecemos toda reseña o sugerencia, asi que siéntete libre de reportar cualquier problema que tengas.
+Este es un proyecto en constante desarrollo, y si estás interesado en contribuir, puedes unirte a nuestro [Servidor de Discord](https://discord.gg/uNJpzEE4sZ). Agradecemos toda reseña o sugerencia, asi que siéntete libre de reportar cualquier problema que tengas.
 
