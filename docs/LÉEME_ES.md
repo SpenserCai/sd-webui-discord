@@ -46,7 +46,7 @@ Asimismo, existe también [sd-webui-discord-ex](https://github.com/SpenserCai/sd
 
 ### **2023-09-24: Soporte para generación múltiple con el comando `txt2img`**
 ### **2023-09-23:**
- - Soporte para `Retry` (Reintentar) and `Delete` (Eliminar) en el comando `txt2img`
+ - Soporte de `Retry` (Reintentar) y `Delete` (Eliminar) en el comando `txt2img`
 ### **2023-09-22:** 
  - Soporte para el comando `setting_ui`
  - Mejora de la interfaz gráfica de respuesta `txt2img` , gracias a [venetanji](https://github.com/venetanji) por su contribución! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
