@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-29 12:06:33
+ * @LastEditTime: 2023-09-29 12:10:24
  * @Description: file content
  */
 package slash_handler
@@ -230,7 +230,7 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 	isSetVae := false
 	defaultCheckpoints := shdl.GetDefaultSettingFromUser("sd_model_checkpoint", "", i).(string)
 	defaultVae := shdl.GetDefaultSettingFromUser("sd_vae", "", i).(string)
-	clipSkip := shdl.GetDefaultSettingFromUser("CLIP_stop_at_last_layers", int64(1), i).(int64)
+	clipSkip := shdl.GetDefaultSettingFromUser("clip_skip", int64(1), i).(int64)
 
 	for _, v := range dsOpt {
 		switch v.Name {

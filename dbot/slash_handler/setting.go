@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 14:59:27
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 16:27:06
+ * @LastEditTime: 2023-09-29 12:14:11
  * @Description: file content
  */
 package slash_handler
@@ -78,6 +78,14 @@ func (shdl SlashHandler) SettingOptions() *discordgo.ApplicationCommand {
 				Type:        discordgo.ApplicationCommandOptionString,
 				Required:    false,
 			},
+			{
+				Name:        "clip_skip",
+				Description: "Clip skip",
+				Type:        discordgo.ApplicationCommandOptionInteger,
+				Required:    false,
+				MinValue:    func() *float64 { v := 1.0; return &v }(),
+				MaxValue:    12.0,
+			},
 		},
 	}
 }
@@ -102,6 +110,8 @@ func (shdl SlashHandler) SettingSetOptions(dsOpt []*discordgo.ApplicationCommand
 			opt.NegativePrompt = v.StringValue()
 		case "sampler":
 			opt.Sampler = v.StringValue()
+		case "clip_skip":
+			opt.ClipSkip = v.IntValue()
 		}
 	}
 }

@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-29 12:03:12
+ * @LastEditTime: 2023-09-29 12:10:38
  * @Description: file content
  */
 package config
@@ -25,7 +25,7 @@ type DefaultSetting struct {
 	Steps          int64   `json:"steps"`
 	Model          string  `json:"sd_model_checkpoint"`
 	Vae            string  `json:"sd_vae"`
-	ClipSkip       int64   `json:"CLIP_stop_at_last_layers"`
+	ClipSkip       int64   `json:"clip_skip"`
 }
 
 type DbConfig struct {
