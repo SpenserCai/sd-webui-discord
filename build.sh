@@ -3,7 +3,7 @@
  # @Date: 2023-08-17 11:04:55
  # @version: 
  # @LastEditors: SpenserCai
- # @LastEditTime: 2023-09-29 20:24:20
+ # @LastEditTime: 2023-09-29 20:26:57
  # @Description: file content
 ### 
 # Web接口代码生存
@@ -18,7 +18,14 @@ fi
 API_PATH="./api"
 API_SWAGGER_PATH="./api/swagger.yml"
 
-$GOPATH/bin/swagger generate server -f $API_SWAGGER_PATH --regenerate-configureapi -t $API_PATH/gen/
+# 判断是否传入--gen-api参数，如果传入则重新生成api代码
+if [ "$1" = "--gen-api" ]; then
+    echo "generate api code"
+    rm -rf $API_PATH/gen
+    mkdir $API_PATH/gen
+    $GOPATH/bin/swagger generate server -f $API_SWAGGER_PATH --regenerate-configureapi -t $API_PATH/gen/
+fi
+
 
 export GOOS=linux
 go build -o "./release/sd-webui-discord"
