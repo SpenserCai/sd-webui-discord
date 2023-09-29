@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-29 14:21:55
+ * @LastEditTime: 2023-09-29 14:22:55
  * @Description: file content
 -->
 <div align="center">
@@ -13,7 +13,7 @@
 # SD-WEBUI-DISCORD
 Support For Clustered Stable Diffusion WebUi Discord Bot
 
-[Mult-Language README]("https://github.com/SpenserCai/tree/main/docs")
+[Mult-Language README](https://github.com/SpenserCai/tree/main/docs)
 </div>
 
 <div align="center">
