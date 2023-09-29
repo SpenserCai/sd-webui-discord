@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-28 20:17:36
+ * @LastEditTime: 2023-09-29 12:03:00
  * @Description: file content
  */
 package user
@@ -34,6 +34,7 @@ type StableConfig struct {
 	CfgScale       float64 `json:"cfg_scale"`
 	NegativePrompt string  `json:"negative_prompt"`
 	Sampler        string  `json:"sampler"`
+	ClipSkip       int64   `json:"CLIP_stop_at_last_layers"`
 }
 
 type UserInfo struct {

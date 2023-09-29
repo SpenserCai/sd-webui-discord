@@ -3,7 +3,7 @@
  * @Date: 2023-09-21 16:27:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-28 11:45:54
+ * @LastEditTime: 2023-09-29 11:58:06
  * @Description: file content
  */
 package slash_handler
@@ -108,6 +108,12 @@ func (shdl SlashHandler) BuildSettingUiComponent(opt *user.StableConfig, i *disc
 					Label:    "Set Negative Prompt",
 					Style:    discordgo.PrimaryButton,
 					Emoji:    discordgo.ComponentEmoji{Name: "🚫"},
+				},
+				discordgo.Button{
+					CustomID: shdl.GetDiscordUserCustomId("setting_ui", "set_clip_skip", i),
+					Label:    "Clip Skip",
+					Style:    discordgo.PrimaryButton,
+					Emoji:    discordgo.ComponentEmoji{Name: "📌"},
 				},
 			},
 		},
@@ -295,6 +301,30 @@ func (shdl SlashHandler) SettingUiComponentHandler(s *discordgo.Session, i *disc
 		if err != nil {
 			log.Println(err)
 		}
+	case "setting_ui|set_clip_skip":
+		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseModal,
+			Data: &discordgo.InteractionResponseData{
+				CustomID: shdl.GetDiscordUserCustomIdWithUserId("setting_ui", "clip_skip_modal", userInfo.Id),
+				Title:    "Set Clip Skip",
+				Components: []discordgo.MessageComponent{
+					discordgo.ActionsRow{
+						Components: []discordgo.MessageComponent{
+							discordgo.TextInput{
+								CustomID:    "setting_ui|clip_skip",
+								Label:       "Clip Skip",
+								Style:       discordgo.TextInputShort,
+								Placeholder: "Set clip skip",
+								Value:       fmt.Sprintf("%d", userInfo.StableConfig.ClipSkip),
+							},
+						},
+					},
+				},
+			},
+		})
+		if err != nil {
+			log.Println(err)
+		}
 	}
 	return true
 }
@@ -353,6 +383,19 @@ func (shdl SlashHandler) SettingUiModalSubmitHander(s *discordgo.Session, i *dis
 	case "setting_ui|set_negative_prompt_modal":
 		modal_data := i.ModalSubmitData()
 		userInfo.StableConfig.NegativePrompt = modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value
+	case "setting_ui|clip_skip_modal":
+		modal_data := i.ModalSubmitData()
+		tmpClipSkip, formatErr := strconv.ParseInt(modal_data.Components[0].(*discordgo.ActionsRow).Components[0].(*discordgo.TextInput).Value, 10, 64)
+		if formatErr != nil {
+			shdl.SendTextInteractionRespondWithFlag("Format Error", s, i, discordgo.MessageFlagsEphemeral)
+			return false
+		}
+		// 范围1-12
+		if tmpClipSkip < 1 || tmpClipSkip > 12 {
+			shdl.SendTextInteractionRespondWithFlag("ClipSkip must be >=1 and <=12", s, i, discordgo.MessageFlagsEphemeral)
+			return false
+		}
+		userInfo.StableConfig.ClipSkip = tmpClipSkip
 	}
 	return true
 }

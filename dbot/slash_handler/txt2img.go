@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-28 23:55:27
+ * @LastEditTime: 2023-09-29 12:06:33
  * @Description: file content
  */
 package slash_handler
@@ -230,6 +230,7 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 	isSetVae := false
 	defaultCheckpoints := shdl.GetDefaultSettingFromUser("sd_model_checkpoint", "", i).(string)
 	defaultVae := shdl.GetDefaultSettingFromUser("sd_vae", "", i).(string)
+	clipSkip := shdl.GetDefaultSettingFromUser("CLIP_stop_at_last_layers", int64(1), i).(int64)
 
 	for _, v := range dsOpt {
 		switch v.Name {
@@ -289,6 +290,11 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 	if !isSetVae && defaultVae != "" && defaultVae != "Automatic" {
 		tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
 		tmpOverrideSettings["sd_vae"] = defaultVae
+		opt.OverrideSettings = tmpOverrideSettings
+	}
+	if clipSkip != 1 {
+		tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
+		tmpOverrideSettings["CLIP_stop_at_last_layers"] = clipSkip
 		opt.OverrideSettings = tmpOverrideSettings
 	}
 
