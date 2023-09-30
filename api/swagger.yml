@@ -27,6 +27,7 @@ paths:
             Location:
               type: string
               format: url
+
   /auth:
     get:
       description: 'Auth With Discord'
@@ -50,6 +51,7 @@ paths:
             Location:
               type: string
               format: url
+
   /user_info:
     get:
       description: 'Get User Info'
