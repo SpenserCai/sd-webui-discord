@@ -38,6 +38,11 @@ paths:
           description: 'Discord Code'
           required: true
           type: string
+        - name: state
+          in: query
+          description: 'Discord State'
+          required: true
+          type: string
       responses:
         302:
           description: 'Redirect'

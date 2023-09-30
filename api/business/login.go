@@ -3,30 +3,40 @@
  * @Date: 2023-09-29 21:25:55
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-30 00:40:48
+ * @LastEditTime: 2023-09-30 21:57:18
  * @Description: file content
  */
 package business
 
 import (
+	"crypto/md5"
+	"encoding/hex"
+	"time"
+
 	ServiceOperations "github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations/user"
 	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/go-openapi/runtime/middleware"
-	"golang.org/x/oauth2"
 )
 
-func (b BusinessBase) GetDiscordAuthUrl() string {
-	var oauthConfig = oauth2.Config{
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://discord.com/oauth2/authorize",
-			TokenURL: "https://discord.com/api/oauth2/token",
-		},
-		Scopes:       []string{"identify", "email", "guilds.members.read", "guilds.join", "role_connections.write"},
-		ClientID:     global.Config.Discord.AppId,
-		ClientSecret: global.Config.Discord.ClientSecret,
-		RedirectURL:  global.Config.Discord.OAuth2RedirectUrl + "/api/auth",
+func (b BusinessBase) GenRandomState() []string {
+	// 获取当前时间辍精确到秒和上一秒的时间辍精确到秒
+	stateList := []string{
+		time.Now().Format("200601021504"),
+		time.Now().Add(-1 * time.Minute).Format("200601021504"),
 	}
-	return oauthConfig.AuthCodeURL("random-state")
+	// 循环stateList，每个拼接上gloabl.Config.Discord.ClientSecret，然后md5后取前6位
+	for i, state := range stateList {
+		tmpString := state + global.Config.Discord.ClientSecret
+		md5Bytes := md5.Sum([]byte(tmpString))
+		stateList[i] = hex.EncodeToString(md5Bytes[:16])[0:6]
+	}
+	return stateList
+
+}
+
+func (b BusinessBase) GetDiscordAuthUrl() string {
+	var oauthConfig = b.GetDiscordOauth2Config()
+	return oauthConfig.AuthCodeURL(b.GenRandomState()[0])
 }
 
 func (b BusinessBase) SetLoginHandler() {

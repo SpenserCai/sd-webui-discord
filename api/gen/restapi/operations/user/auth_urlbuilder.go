@@ -13,7 +13,8 @@ import (
 
 // AuthURL generates an URL for the auth operation
 type AuthURL struct {
-	Code string
+	Code  string
+	State string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -52,6 +53,11 @@ func (o *AuthURL) Build() (*url.URL, error) {
 	codeQ := o.Code
 	if codeQ != "" {
 		qs.Set("code", codeQ)
+	}
+
+	stateQ := o.State
+	if stateQ != "" {
+		qs.Set("state", stateQ)
 	}
 
 	_result.RawQuery = qs.Encode()

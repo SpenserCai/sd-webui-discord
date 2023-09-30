@@ -37,6 +37,11 @@ type AuthParams struct {
 	  In: query
 	*/
 	Code string
+	/*Discord State
+	  Required: true
+	  In: query
+	*/
+	State string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -52,6 +57,11 @@ func (o *AuthParams) BindRequest(r *http.Request, route *middleware.MatchedRoute
 
 	qCode, qhkCode, _ := qs.GetOK("code")
 	if err := o.bindCode(qCode, qhkCode, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qState, qhkState, _ := qs.GetOK("state")
+	if err := o.bindState(qState, qhkState, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -77,6 +87,27 @@ func (o *AuthParams) bindCode(rawData []string, hasKey bool, formats strfmt.Regi
 		return err
 	}
 	o.Code = raw
+
+	return nil
+}
+
+// bindState binds and validates parameter State from query.
+func (o *AuthParams) bindState(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	if !hasKey {
+		return errors.Required("state", "query", rawData)
+	}
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: true
+	// AllowEmptyValue: false
+
+	if err := validate.RequiredString("state", "query", raw); err != nil {
+		return err
+	}
+	o.State = raw
 
 	return nil
 }

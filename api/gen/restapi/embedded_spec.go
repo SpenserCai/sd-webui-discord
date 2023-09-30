@@ -47,6 +47,13 @@ func init() {
             "name": "code",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "string",
+            "description": "Discord State",
+            "name": "state",
+            "in": "query",
+            "required": true
           }
         ],
         "responses": {
@@ -297,6 +304,13 @@ func init() {
             "type": "string",
             "description": "Discord Code",
             "name": "code",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "string",
+            "description": "Discord State",
+            "name": "state",
             "in": "query",
             "required": true
           }
