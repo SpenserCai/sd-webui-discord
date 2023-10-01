@@ -1,3 +1,11 @@
+<!--
+ * @Author: SpenserCai
+ * @Date: 2023-10-01 10:22:20
+ * @version: 
+ * @LastEditors: SpenserCai
+ * @LastEditTime: 2023-10-01 16:48:37
+ * @Description: file content
+-->
 <script setup>
 import { useRouter } from 'vue-router'
 import { useDarkModeStore } from '@/stores/darkMode.js'
@@ -10,7 +18,7 @@ const styles = ['white', 'basic']
 
 const darkModeStore = useDarkModeStore()
 
-darkModeStore.set(false)
+darkModeStore.set(true)
 
 const router = useRouter()
 

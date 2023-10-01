@@ -1,3 +1,11 @@
+/*
+ * @Author: SpenserCai
+ * @Date: 2023-10-01 10:22:20
+ * @version: 
+ * @LastEditors: SpenserCai
+ * @LastEditTime: 2023-10-01 17:03:28
+ * @Description: file content
+ */
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
@@ -34,7 +42,7 @@ mainStore.fetchSampleHistory()
 // }
 
 // Default title tag
-const defaultDocumentTitle = 'Admin One Vue 3 Tailwind'
+const defaultDocumentTitle = 'SD-WEBUI-DISCORD'
 
 // Set document title from route meta
 router.afterEach((to) => {

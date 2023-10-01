@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-01 13:59:43
+ * @LastEditTime: 2023-10-01 15:30:21
  * @Description: file content
 -->
 <script setup>
@@ -82,10 +82,7 @@ const menuClick = (event, item) => {
       />
       <slot />
       <FooterBar>
-        Powered by
-        <a href="https://github.com/SpenserCai/sd-webui-discord" target="_blank" class="text-blue-600"
-          >sd-webui-discord</a
-        >
+
       </FooterBar>
     </div>
   </div>
