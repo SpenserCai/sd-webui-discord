@@ -1,10 +1,3 @@
-release/*
-data/*
-output/*
-config.json
-tmp/*
-.air.toml
-
 # Logs
 logs
 *.log
@@ -14,10 +7,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-website/node_modules
-website/dist
-website/dist-ssr
-website/coverage
+node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
 *.local
 
 /cypress/videos/
