@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-01 15:30:21
+ * @LastEditTime: 2023-10-01 17:27:29
  * @Description: file content
 -->
 <script setup>
@@ -23,6 +23,7 @@ import FooterBar from '@/components/FooterBar.vue'
 const layoutAsidePadding = 'xl:pl-60'
 
 const darkModeStore = useDarkModeStore()
+darkModeStore.set(true)
 
 const router = useRouter()
 
