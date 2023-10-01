@@ -3,6 +3,7 @@
  * @Date: 2023-08-31 14:59:27
  * @version:
  * @LastEditors: SpenserCai
+ * @translateTH: UIXROV
  * @LastEditTime: 2023-09-29 12:14:11
  * @Description: file content
  */
@@ -25,62 +26,62 @@ import (
 func (shdl SlashHandler) SettingOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "setting",
-		Description: "Setting your custom configuration",
+		Description: "การตั้งค่าการกำหนดค่าที่คุณกำหนดเอง",
 		Options: []*discordgo.ApplicationCommandOption{
 			{
 				Name:         "sd_model_checkpoint",
-				Description:  "Model checkpoint",
+				Description:  "โมเดลเช็คพอยต์",
 				Type:         discordgo.ApplicationCommandOptionString,
 				Required:     false,
 				Autocomplete: true,
 			},
 			{
 				Name:         "sd_vae",
-				Description:  "Vae model(If you don't know what this is, please set it to Automatic)",
+				Description:  "VAE โมเดล (หากคุณไม่รู้ว่านี่คืออะไร โปรดตั้งค่าเป็น Automatic)",
 				Type:         discordgo.ApplicationCommandOptionString,
 				Required:     false,
 				Autocomplete: true,
 			},
 			{
 				Name:         "sampler",
-				Description:  "Sampler",
+				Description:  "ตัวกรองตัวอย่าง",
 				Type:         discordgo.ApplicationCommandOptionString,
 				Required:     false,
 				Autocomplete: true,
 			},
 			{
 				Name:        "height",
-				Description: "Height of the output image",
+				Description: "ความสูงในการสร้างภาพ",
 				Type:        discordgo.ApplicationCommandOptionInteger,
 				Required:    false,
 			},
 			{
 				Name:        "width",
-				Description: "Width of the output image",
+				Description: "ความกว้างในการสร้างภาพ",
 				Type:        discordgo.ApplicationCommandOptionInteger,
 				Required:    false,
 			},
 			{
 				Name:        "steps",
-				Description: "Number of steps to run",
+				Description: "ขั้นตอนในการสร้างภาพ",
 				Type:        discordgo.ApplicationCommandOptionInteger,
 				Required:    false,
 			},
 			{
 				Name:        "cfg_scale",
-				Description: "Scale of the config",
+				Description: "Scale ขนาดของการกำหนดค่า",
 				Type:        discordgo.ApplicationCommandOptionNumber,
 				Required:    false,
 			},
 			{
 				Name:        "negative_prompt",
-				Description: "Negative prompt",
+				Description: "พรอมต์เชิงลบ",
 				Type:        discordgo.ApplicationCommandOptionString,
 				Required:    false,
 			},
 			{
 				Name:        "clip_skip",
-				Description: "Clip skip",
+				Description: "Clip ข้าม",
 				Type:        discordgo.ApplicationCommandOptionInteger,
 				Required:    false,
 				MinValue:    func() *float64 { v := 1.0; return &v }(),
@@ -123,7 +124,7 @@ func (shdl SlashHandler) SettingAction(s *discordgo.Session, i *discordgo.Intera
 		// 判断userInfo是否为nil，如果为nil则说明用户没有注册
 		if userInfo == nil {
 			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
-				Content: func() *string { v := "Please register first!"; return &v }(),
+				Content: func() *string { v := "ได้โปรดสมัครก่อนทำคำสั่งนี้!ั่ั่"; return &v }(),
 			})
 			return
 		}
@@ -141,10 +142,10 @@ func (shdl SlashHandler) SettingAction(s *discordgo.Session, i *discordgo.Intera
 	if err != nil {
 		log.Println(err)
 		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
-			Content: func() *string { v := "SETTING ERROR!"; return &v }(),
+			Content: func() *string { v := "การตั้งค่าผิดพลาดไม่สำเร็จ!"; return &v }(),
 		})
 	} else {
-		content := "SETTING SUCCESS!"
+		content := "การตั้งค่าเสร็จสมบูรณ์!"
 		if isEmptyOpt {
 			// 把userInfo.StableConfig转换成json字符串，并格式化输出
 			stableConfigJson, _ := json.MarshalIndent(userInfo.StableConfig, "", "    ")
@@ -160,7 +161,7 @@ func (shdl SlashHandler) SettingCommandHandler(s *discordgo.Session, i *discordg
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
 		option := &user.StableConfig{}
-		shdl.RespondStateMessage("Running", s, i)
+		shdl.RespondStateMessage("กำลังกำงานโปรดรอสักครู่", s, i)
 		node := global.ClusterManager.GetNodeAuto()
 		action := func() (map[string]interface{}, error) {
 			shdl.SettingSetOptions(i.ApplicationCommandData().Options, option)
