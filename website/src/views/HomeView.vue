@@ -22,7 +22,6 @@ import CardBoxTransaction from '@/components/CardBoxTransaction.vue'
 import CardBoxClient from '@/components/CardBoxClient.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
-import SectionBannerStarOnGitHub from '@/components/SectionBannerStarOnGitHub.vue'
 
 const chartData = ref(null)
 
@@ -109,9 +108,6 @@ const transactionBarItems = computed(() => mainStore.history)
           />
         </div>
       </div>
-
-      <SectionBannerStarOnGitHub class="mt-6 mb-6" />
-
       <SectionTitleLineWithButton :icon="mdiChartPie" title="Trends overview">
         <BaseButton :icon="mdiReload" color="whiteDark" @click="fillChartData" />
       </SectionTitleLineWithButton>

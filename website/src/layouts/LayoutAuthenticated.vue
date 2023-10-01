@@ -1,3 +1,11 @@
+<!--
+ * @Author: SpenserCai
+ * @Date: 2023-10-01 10:22:20
+ * @version: 
+ * @LastEditors: SpenserCai
+ * @LastEditTime: 2023-10-01 13:59:43
+ * @Description: file content
+-->
 <script setup>
 import { mdiForwardburger, mdiBackburger, mdiMenu } from '@mdi/js'
 import { ref } from 'vue'
@@ -74,9 +82,9 @@ const menuClick = (event, item) => {
       />
       <slot />
       <FooterBar>
-        Get more with
-        <a href="https://tailwind-vue.justboil.me/" target="_blank" class="text-blue-600"
-          >Premium version</a
+        Powered by
+        <a href="https://github.com/SpenserCai/sd-webui-discord" target="_blank" class="text-blue-600"
+          >sd-webui-discord</a
         >
       </FooterBar>
     </div>
