@@ -3,21 +3,34 @@
  * @Date: 2023-09-30 12:53:43
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-01 00:13:56
+ * @LastEditTime: 2023-10-01 10:19:55
  * @Description: file content
  */
 package business
 
 import (
 	"log"
+	"net/http"
 
 	ServiceOperations "github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations/user"
 	apiMiddleware "github.com/SpenserCai/sd-webui-discord/api/middleware"
 	"github.com/SpenserCai/sd-webui-discord/global"
 	DbotUser "github.com/SpenserCai/sd-webui-discord/user"
 	"github.com/bwmarrin/discordgo"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 )
+
+type AuthResponse struct {
+	responder middleware.Responder
+	token     string
+}
+
+func (ap AuthResponse) WriteResponse(rw http.ResponseWriter, p runtime.Producer) {
+	cookie := http.Cookie{Name: "token", Value: ap.token}
+	http.SetCookie(rw, &cookie)
+	ap.responder.WriteResponse(rw, p)
+}
 
 func (b BusinessBase) checkRandomState(oauthState string) bool {
 	for _, state := range b.GenRandomState() {
@@ -71,8 +84,12 @@ func (b BusinessBase) SetAuthHandler() {
 			log.Println("BuildJwt error:", err)
 			return ServiceOperations.NewAuthFound().WithLocation("/error?error=login_error")
 		}
-		// 获取用户信息
-		return ServiceOperations.NewAuthFound().WithLocation("/login?token=" + jwt)
+		response := ServiceOperations.NewAuthFound().WithLocation("/account")
+		authResponse := AuthResponse{
+			responder: response,
+			token:     jwt,
+		}
+		return authResponse
 	})
 
 }
