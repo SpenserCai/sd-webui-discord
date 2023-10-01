@@ -161,7 +161,7 @@ func (shdl SlashHandler) SettingCommandHandler(s *discordgo.Session, i *discordg
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
 		option := &user.StableConfig{}
-		shdl.RespondStateMessage("กำลังกำงานโปรดรอสักครู่", s, i)
+		shdl.RespondStateMessage("กำลังทำงานโปรดรอสักครู่", s, i)
 		node := global.ClusterManager.GetNodeAuto()
 		action := func() (map[string]interface{}, error) {
 			shdl.SettingSetOptions(i.ApplicationCommandData().Options, option)
