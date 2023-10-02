@@ -1,10 +1,22 @@
+/*
+ * @Author: SpenserCai
+ * @Date: 2023-10-01 10:22:20
+ * @version: 
+ * @LastEditors: SpenserCai
+ * @LastEditTime: 2023-10-02 23:00:41
+ * @Description: file content
+ */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { userinfo } from '@/api/account'
 import axios from 'axios'
 
 export const useMainStore = defineStore('main', () => {
-  const userName = ref('John Doe')
+  const userName = ref('User')
   const userEmail = ref('doe.doe.doe@example.com')
+  userinfo().then((res) => {
+    userName.value = res.data.user.username
+  })
 
   const userAvatar = computed(
     () =>
