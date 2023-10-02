@@ -3,23 +3,26 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-01 17:03:28
+ * @LastEditTime: 2023-10-02 11:54:36
  * @Description: file content
  */
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import Notifications from 'notiwind'
 
+
+import './css/main.css'
 import App from './App.vue'
 import router from './router'
 import { useMainStore } from '@/stores/main.js'
 
-import './css/main.css'
+
 
 // Init Pinia
 const pinia = createPinia()
 
 // Create Vue app
-createApp(App).use(router).use(pinia).mount('#app')
+createApp(App).use(router).use(pinia).use(Notifications).mount('#app')
 
 // Init main store
 const mainStore = useMainStore(pinia)

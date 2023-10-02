@@ -1,9 +1,21 @@
+/*
+ * @Author: SpenserCai
+ * @Date: 2023-10-01 10:22:20
+ * @version: 
+ * @LastEditors: SpenserCai
+ * @LastEditTime: 2023-10-01 23:33:07
+ * @Description: file content
+ */
 /* eslint-env node */
 
 const plugin = require("tailwindcss/plugin");
 
 module.exports = {
-  content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+    "./node_modules/flowbite-vue/**/*.{js,jsx,ts,tsx}"
+  ],
   darkMode: "class", // or 'media' or 'class'
   theme: {
     asideScrollbars: {
@@ -43,6 +55,7 @@ module.exports = {
   },
   plugins: [
     require("@tailwindcss/forms"),
+    require("flowbite/plugin"),
     plugin(function ({ matchUtilities, theme }) {
       matchUtilities(
         {

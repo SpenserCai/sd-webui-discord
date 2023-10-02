@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useDarkModeStore } from '@/stores/darkMode.js'
+import { notify } from "notiwind"
+
 import {
   mdiContrastCircle,
   mdiInformation,
@@ -59,6 +61,15 @@ const pillsIcon = computed(() =>
 )
 
 const darkModeStore = useDarkModeStore()
+
+const testAlert = () => {
+  notify({
+  title: "Info",
+  text: "This channel archived by the owner!",
+  type: "error",
+  group: "top",
+}, 4000)
+}
 </script>
 
 <template>
@@ -267,6 +278,7 @@ const darkModeStore = useDarkModeStore()
             :outline="buttonsOutline"
             :disabled="buttonsDisabled"
             :rounded-full="buttonsRounded"
+            @click="testAlert"
           />
           <BaseButton
             color="success"
