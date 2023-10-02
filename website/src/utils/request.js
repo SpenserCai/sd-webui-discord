@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 17:40:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-02 22:42:37
+ * @LastEditTime: 2023-10-02 22:44:29
  * @Description: file content
  */
 import axios from "axios";
@@ -18,9 +18,7 @@ const service = axios.create({
 // request 拦截器
 service.interceptors.request.use(
  async (config) => {
-    console.log("cookie", Cookies.get());
     const token = Cookies.get("token");
-    console.log("token", token);
     if (token) {
       config.headers["Authorization"] = "Bearer " + token;
     }
@@ -35,7 +33,6 @@ service.interceptors.request.use(
 // response 拦截器, 如果时401则跳转到登录页面
 service.interceptors.response.use(
   async (response) => {
-    console.log("response", response);
     const res = response.data;
     if (res.code === -100) {
         notify({
@@ -57,9 +54,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log("err" + error); // for debug
     if (error.response.status === 401) {
-      console.log(service.defaults.baseURL, "/login")
       window.location.href = service.defaults.baseURL + "/login";
     }
     return Promise.reject(error);
