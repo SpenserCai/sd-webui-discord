@@ -217,6 +217,9 @@ func init() {
         "id": {
           "type": "string"
         },
+        "roles": {
+          "type": "string"
+        },
         "stable_config": {
           "type": "object"
         },
@@ -483,6 +486,9 @@ func init() {
           "type": "boolean"
         },
         "id": {
+          "type": "string"
+        },
+        "roles": {
           "type": "string"
         },
         "stable_config": {

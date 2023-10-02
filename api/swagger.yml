@@ -103,6 +103,8 @@ definitions:
         type: boolean
       stable_config:
         type: object
+      roles:
+        type: string
   PageInfoRequest:
     type: object
     properties: 

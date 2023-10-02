@@ -3,13 +3,15 @@
  * @Date: 2023-09-29 19:24:52
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-30 21:35:43
+ * @LastEditTime: 2023-10-02 21:08:46
  * @Description: file content
  */
 package business
 
 import (
+	apiMiddleware "github.com/SpenserCai/sd-webui-discord/api/middleware"
 	"github.com/SpenserCai/sd-webui-discord/global"
+	DbotUser "github.com/SpenserCai/sd-webui-discord/user"
 	"golang.org/x/oauth2"
 )
 
@@ -26,4 +28,13 @@ func (b BusinessBase) GetDiscordOauth2Config() oauth2.Config {
 		ClientSecret: global.Config.Discord.ClientSecret,
 		RedirectURL:  global.Config.Discord.OAuth2RedirectUrl + "/api/auth",
 	}
+}
+
+func (b BusinessBase) GetUserInfo(token string) (*DbotUser.UserInfo, error) {
+	jwt, err := apiMiddleware.DecodeJwt(token)
+	if err != nil {
+		return &DbotUser.UserInfo{}, err
+	}
+	return global.UserCenterSvc.GetUserInfo(jwt["id"].(string))
+
 }

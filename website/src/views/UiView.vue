@@ -29,6 +29,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import CardBoxComponentEmpty from '@/components/CardBoxComponentEmpty.vue'
 import CardBoxComponentTitle from '@/components/CardBoxComponentTitle.vue'
 import PillTag from '@/components/PillTag.vue'
+import { userinfo } from '@/api/account'
 
 const modalOneActive = ref(false)
 
@@ -64,11 +65,14 @@ const darkModeStore = useDarkModeStore()
 
 const testAlert = () => {
   notify({
-  title: "Info",
-  text: "This channel archived by the owner!",
-  type: "error",
-  group: "top",
-}, 4000)
+    title: "Info",
+    text: "This channel archived by the owner!",
+    type: "error",
+    group: "top",
+  }, 4000);
+  userinfo().then(res => {
+    console.log(res)
+  });
 }
 </script>
 

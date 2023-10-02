@@ -26,6 +26,9 @@ type UserItem struct {
 	// id
 	ID string `json:"id,omitempty"`
 
+	// roles
+	Roles string `json:"roles,omitempty"`
+
 	// stable config
 	StableConfig interface{} `json:"stable_config,omitempty"`
 

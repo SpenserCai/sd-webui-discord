@@ -3,7 +3,7 @@
  * @Date: 2023-09-30 12:53:43
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-01 10:19:55
+ * @LastEditTime: 2023-10-02 22:32:09
  * @Description: file content
  */
 package business
@@ -27,7 +27,7 @@ type AuthResponse struct {
 }
 
 func (ap AuthResponse) WriteResponse(rw http.ResponseWriter, p runtime.Producer) {
-	cookie := http.Cookie{Name: "token", Value: ap.token}
+	cookie := http.Cookie{Name: "token", Value: ap.token, Path: "/"}
 	http.SetCookie(rw, &cookie)
 	ap.responder.WriteResponse(rw, p)
 }
@@ -84,7 +84,7 @@ func (b BusinessBase) SetAuthHandler() {
 			log.Println("BuildJwt error:", err)
 			return ServiceOperations.NewAuthFound().WithLocation("/error?error=login_error")
 		}
-		response := ServiceOperations.NewAuthFound().WithLocation("/account")
+		response := ServiceOperations.NewAuthFound().WithLocation("/api/user_info")
 		authResponse := AuthResponse{
 			responder: response,
 			token:     jwt,

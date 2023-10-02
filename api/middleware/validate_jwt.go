@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 19:27:29
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-30 23:03:13
+ * @LastEditTime: 2023-10-02 21:02:04
  * @Description: file content
  */
 package middleware
@@ -82,4 +82,25 @@ func RefreshJwt(bearerHeader string) (string, error) {
 		return token.SignedString(global.Config.WebSite.Api.JwtSecret)
 	}
 	return "", errors.New("invalid token")
+}
+
+// 解码jwt
+func DecodeJwt(bearerHeader string) (jwt.MapClaims, error) {
+	bearerToken := strings.Split(bearerHeader, " ")[1]
+	claims := jwt.MapClaims{}
+	token, err := jwt.ParseWithClaims(bearerToken, claims, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			log.Println("error decoding token")
+			return nil, fmt.Errorf("error decoding token")
+		}
+		return []byte(global.Config.WebSite.Api.JwtSecret), nil
+	})
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	if token.Valid {
+		return claims, nil
+	}
+	return nil, errors.New("invalid token")
 }

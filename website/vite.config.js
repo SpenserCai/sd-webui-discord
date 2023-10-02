@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-01 12:00:21
+ * @LastEditTime: 2023-10-02 22:25:11
  * @Description: file content
  */
 import { fileURLToPath, URL } from "node:url";
@@ -20,4 +20,15 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
+  server:{
+    host: "0.0.0.0",
+    port: 18891,
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:18890",
+        changeOrigin: true,
+        // rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  }
 });

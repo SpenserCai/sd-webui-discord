@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 15:37:14
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-30 21:50:16
+ * @LastEditTime: 2023-10-02 21:25:51
  * @Description: file content
  */
 package api
@@ -34,6 +34,7 @@ func BeforeRun() {
 	global.ApiService.BearerAuth = middleware.ValidateJwt
 	business.BusinessBase{}.SetLoginHandler()
 	business.BusinessBase{}.SetAuthHandler()
+	business.BusinessBase{}.SetUserInfoHandler()
 
 }
 
