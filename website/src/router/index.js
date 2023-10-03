@@ -1,8 +1,24 @@
+/*
+ * @Author: SpenserCai
+ * @Date: 2023-10-01 10:22:20
+ * @version: 
+ * @LastEditors: SpenserCai
+ * @LastEditTime: 2023-10-03 16:06:31
+ * @Description: file content
+ */
 import { createRouter, createWebHashHistory } from 'vue-router'
 import Style from '@/views/StyleView.vue'
 import Home from '@/views/HomeView.vue'
 
 const routes = [
+  {
+    meta:{
+      title: 'Home'
+    },
+    path: '/app',
+    name: 'app',
+    component: () => import('@/views/AppView.vue')
+  },
   {
     meta: {
       title: 'Select style'

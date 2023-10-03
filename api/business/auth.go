@@ -3,7 +3,7 @@
  * @Date: 2023-09-30 12:53:43
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-02 22:32:09
+ * @LastEditTime: 2023-10-03 16:45:54
  * @Description: file content
  */
 package business
@@ -63,6 +63,12 @@ func (b BusinessBase) SetAuthHandler() {
 		rsgMsg, err := global.UserCenterSvc.RegisterUser(&DbotUser.UserInfo{
 			Id:   user.ID,
 			Name: user.Username,
+			Avatar: func() string {
+				if user.Avatar == "" {
+					return ""
+				}
+				return "https://cdn.discordapp.com/avatars/" + user.ID + "/" + user.Avatar + ".png"
+			}(),
 		})
 		if err != nil {
 			log.Println("RegisterUser error:", err)
@@ -84,7 +90,7 @@ func (b BusinessBase) SetAuthHandler() {
 			log.Println("BuildJwt error:", err)
 			return ServiceOperations.NewAuthFound().WithLocation("/error?error=login_error")
 		}
-		response := ServiceOperations.NewAuthFound().WithLocation("/api/user_info")
+		response := ServiceOperations.NewAuthFound().WithLocation(global.Config.WebSite.Api.AuthCallbackUrl)
 		authResponse := AuthResponse{
 			responder: response,
 			token:     jwt,

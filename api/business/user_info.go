@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 21:26:43
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-02 21:32:41
+ * @LastEditTime: 2023-10-03 17:04:15
  * @Description: file content
  */
 package business
@@ -31,6 +31,7 @@ func (b BusinessBase) SetUserInfoHandler() {
 				User: &models.UserItem{
 					ID:           userInfo.Id,
 					Username:     userInfo.Name,
+					Avatar:       userInfo.Avatar,
 					Enable:       userInfo.Enable,
 					StableConfig: userInfo.StableConfig,
 					Roles:        userInfo.Roles,

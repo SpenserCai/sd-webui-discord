@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-29 12:03:00
+ * @LastEditTime: 2023-10-03 16:49:54
  * @Description: file content
  */
 package user
@@ -39,6 +39,7 @@ type StableConfig struct {
 
 type UserInfo struct {
 	Enable       bool         `json:"enable"`
+	Avatar       string       `json:"avatar"`
 	Name         string       `json:"name"`
 	Id           string       `json:"id"`
 	Roles        string       `json:"roles"`
@@ -78,6 +79,7 @@ func (ucs *UserCenterService) GetUserInfo(id string) (*UserInfo, error) {
 
 	return &UserInfo{
 		Enable:       userInfo.Enable,
+		Avatar:       userInfo.Avatar,
 		Name:         userInfo.Name,
 		Id:           userInfo.ID,
 		Roles:        userInfo.Roles,
@@ -140,6 +142,7 @@ func (ucs *UserCenterService) RegisterUser(user *UserInfo) (string, error) {
 	newUserInfo := &db_backend.UserInfo{
 		ID:      user.Id,
 		Name:    user.Name,
+		Avatar:  user.Avatar,
 		Created: time.Now().Format("2006-01-02 15:04:05"),
 		Enable:  true,
 		// 如果用户总数为0，则创建的用户为admin，否则为user
@@ -164,6 +167,7 @@ func (ucs *UserCenterService) UpdateUserInfo(user *UserInfo) error {
 	userInfo := &db_backend.UserInfo{
 		ID:     user.Id,
 		Name:   user.Name,
+		Avatar: user.Avatar,
 		Enable: user.Enable,
 		Roles:  user.Roles,
 	}

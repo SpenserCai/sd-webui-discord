@@ -3,28 +3,32 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-02 23:00:41
+ * @LastEditTime: 2023-10-03 17:10:30
  * @Description: file content
  */
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { userinfo } from '@/api/account'
 import axios from 'axios'
 
 export const useMainStore = defineStore('main', () => {
   const userName = ref('User')
   const userEmail = ref('doe.doe.doe@example.com')
+
+  const userAvatar = ref('')
+
   userinfo().then((res) => {
     userName.value = res.data.user.username
-  })
-
-  const userAvatar = computed(
-    () =>
-      `https://api.dicebear.com/7.x/avataaars/svg?seed=${userEmail.value.replace(
+    // 如果res.data.user.avatar不为空，就用res.data.user.avatar，否则用默认的
+    if (res.data.user.avatar != "") {
+      userAvatar.value = res.data.user.avatar
+    } else {
+      userAvatar.value = `https://api.dicebear.com/7.x/avataaars/svg?seed=${userEmail.value.replace(
         /[^a-z0-9]+/gi,
         '-'
       )}`
-  )
+    }
+  })
 
   const isFieldFocusRegistered = ref(false)
 

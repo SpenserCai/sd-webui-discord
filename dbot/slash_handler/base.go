@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-28 20:45:00
+ * @LastEditTime: 2023-10-03 16:47:33
  * @Description: file content
  */
 package slash_handler
@@ -233,11 +233,25 @@ func (shdl SlashHandler) ConvertInteractionToUserInfo(i *discordgo.InteractionCr
 		return &user.UserInfo{
 			Id:   i.Interaction.User.ID,
 			Name: i.Interaction.User.Username,
+			Avatar: func() string {
+				if i.Interaction.User.Avatar == "" {
+					return ""
+				} else {
+					return "https://cdn.discordapp.com/avatars/" + i.Interaction.User.ID + "/" + i.Interaction.User.Avatar + ".png"
+				}
+			}(),
 		}
 	} else {
 		return &user.UserInfo{
 			Id:   i.Interaction.Member.User.ID,
 			Name: i.Interaction.Member.User.Username,
+			Avatar: func() string {
+				if i.Interaction.Member.User.Avatar == "" {
+					return ""
+				} else {
+					return "https://cdn.discordapp.com/avatars/" + i.Interaction.Member.User.ID + "/" + i.Interaction.Member.User.Avatar + ".png"
+				}
+			}(),
 		}
 	}
 }

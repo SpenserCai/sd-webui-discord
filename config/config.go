@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-30 00:17:18
+ * @LastEditTime: 2023-10-03 12:46:54
  * @Description: file content
  */
 package config
@@ -41,9 +41,10 @@ type UserCenter struct {
 
 type WebSite struct {
 	Api struct {
-		Host      string `json:"host"`
-		Port      int    `json:"port"`
-		JwtSecret string `json:"jwt_secret"`
+		Host            string `json:"host"`
+		Port            int    `json:"port"`
+		JwtSecret       string `json:"jwt_secret"`
+		AuthCallbackUrl string `json:"auth_callback_url"`
 	} `json:"api"`
 }
 

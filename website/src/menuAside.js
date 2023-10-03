@@ -1,7 +1,14 @@
+/*
+ * @Author: SpenserCai
+ * @Date: 2023-10-01 10:22:20
+ * @version: 
+ * @LastEditors: SpenserCai
+ * @LastEditTime: 2023-10-03 16:03:38
+ * @Description: file content
+ */
 import {
   mdiAccountCircle,
   mdiMonitor,
-  mdiGithub,
   mdiLock,
   mdiAlertCircle,
   mdiSquareEditOutline,
@@ -10,10 +17,15 @@ import {
   mdiTelevisionGuide,
   mdiResponsive,
   mdiPalette,
-  mdiReact
+  mdiHome
 } from '@mdi/js'
 
 export default [
+  {
+    to: '/app',
+    icon: mdiHome,
+    label: 'Home'
+  },
   {
     to: '/dashboard',
     icon: mdiMonitor,
@@ -70,17 +82,5 @@ export default [
         label: 'Item Two'
       }
     ]
-  },
-  {
-    href: 'https://github.com/justboil/admin-one-vue-tailwind',
-    label: 'GitHub',
-    icon: mdiGithub,
-    target: '_blank'
-  },
-  {
-    href: 'https://github.com/justboil/admin-one-react-tailwind',
-    label: 'React version',
-    icon: mdiReact,
-    target: '_blank'
   }
 ]
