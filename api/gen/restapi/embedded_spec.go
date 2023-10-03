@@ -211,6 +211,9 @@ func init() {
         "avatar": {
           "type": "string"
         },
+        "created": {
+          "type": "string"
+        },
         "enable": {
           "type": "boolean"
         },
@@ -480,6 +483,9 @@ func init() {
       "type": "object",
       "properties": {
         "avatar": {
+          "type": "string"
+        },
+        "created": {
           "type": "string"
         },
         "enable": {

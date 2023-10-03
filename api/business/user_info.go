@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 21:26:43
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-03 17:04:15
+ * @LastEditTime: 2023-10-04 00:12:56
  * @Description: file content
  */
 package business
@@ -35,6 +35,7 @@ func (b BusinessBase) SetUserInfoHandler() {
 					Enable:       userInfo.Enable,
 					StableConfig: userInfo.StableConfig,
 					Roles:        userInfo.Roles,
+					Created:      userInfo.Created,
 				},
 			},
 		})

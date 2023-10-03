@@ -20,6 +20,9 @@ type UserItem struct {
 	// avatar
 	Avatar string `json:"avatar,omitempty"`
 
+	// created
+	Created string `json:"created,omitempty"`
+
 	// enable
 	Enable bool `json:"enable,omitempty"`
 

@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-03 17:10:30
+ * @LastEditTime: 2023-10-04 00:36:13
  * @Description: file content
  */
 import { defineStore } from 'pinia'
@@ -14,6 +14,8 @@ import axios from 'axios'
 export const useMainStore = defineStore('main', () => {
   const userName = ref('User')
   const userEmail = ref('doe.doe.doe@example.com')
+  const created = ref("")
+  const stableConfig = ref({})
 
   const userAvatar = ref('')
 
@@ -28,6 +30,8 @@ export const useMainStore = defineStore('main', () => {
         '-'
       )}`
     }
+    created.value = res.data.user.created
+    stableConfig.value = res.data.user.stable_config
   })
 
   const isFieldFocusRegistered = ref(false)
@@ -68,7 +72,9 @@ export const useMainStore = defineStore('main', () => {
 
   return {
     userName,
+    created,
     userEmail,
+    stableConfig,
     userAvatar,
     isFieldFocusRegistered,
     clients,

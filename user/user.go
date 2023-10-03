@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-03 16:49:54
+ * @LastEditTime: 2023-10-04 00:17:19
  * @Description: file content
  */
 package user
@@ -84,6 +84,7 @@ func (ucs *UserCenterService) GetUserInfo(id string) (*UserInfo, error) {
 		Id:           userInfo.ID,
 		Roles:        userInfo.Roles,
 		StableConfig: stableConfig,
+		Created:      userInfo.Created,
 	}, nil
 }
 

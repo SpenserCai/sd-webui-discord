@@ -105,6 +105,8 @@ definitions:
         type: object
       roles:
         type: string
+      created:
+        type: string
   PageInfoRequest:
     type: object
     properties: 
