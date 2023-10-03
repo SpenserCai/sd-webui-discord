@@ -34,7 +34,7 @@
             "host":"0.0.0.0",
             "port":18890,
             "jwt_secret":"<your jwt secret here>",
-            "auth_callback_url":"<your auth callback url here.example: http://127.0.0.1:18890/#/dashboard>"
+            "auth_callback_url":"http://127.0.0.1:18890/#/app"
         }
     },
     "disable_return_gen_info":true
