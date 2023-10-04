@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-02 12:30:33
+ * @LastEditTime: 2023-10-04 10:27:28
  * @Description: file content
 -->
 <script setup>
@@ -19,6 +19,7 @@ import NavBar from '@/components/NavBar.vue'
 import NavBarItemPlain from '@/components/NavBarItemPlain.vue'
 import AsideMenu from '@/components/AsideMenu.vue'
 import FooterBar from '@/components/FooterBar.vue'
+import Cookies from "js-cookie"
 
 const layoutAsidePadding = 'xl:pl-60'
 
@@ -41,7 +42,9 @@ const menuClick = (event, item) => {
   }
 
   if (item.isLogout) {
-    //
+    Cookies.remove('token')
+    router.push('/')
+    
   }
 }
 </script>

@@ -3,11 +3,11 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-03 16:06:31
+ * @LastEditTime: 2023-10-04 10:46:43
  * @Description: file content
  */
 import { createRouter, createWebHashHistory } from 'vue-router'
-import Style from '@/views/StyleView.vue'
+import FirstPage from '@/views/FirsView.vue'
 import Home from '@/views/HomeView.vue'
 
 const routes = [
@@ -21,11 +21,11 @@ const routes = [
   },
   {
     meta: {
-      title: 'Select style'
+      title: 'Wecome'
     },
     path: '/',
-    name: 'style',
-    component: Style
+    name: 'first',
+    component: FirstPage
   },
   {
     // Document title tag

@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-02 11:54:36
+ * @LastEditTime: 2023-10-04 10:39:44
  * @Description: file content
  */
 import { createApp } from 'vue'
@@ -14,7 +14,7 @@ import Notifications from 'notiwind'
 import './css/main.css'
 import App from './App.vue'
 import router from './router'
-import { useMainStore } from '@/stores/main.js'
+// import { useMainStore } from '@/stores/main.js'
 
 
 
@@ -25,11 +25,11 @@ const pinia = createPinia()
 createApp(App).use(router).use(pinia).use(Notifications).mount('#app')
 
 // Init main store
-const mainStore = useMainStore(pinia)
+// const mainStore = useMainStore(pinia)
 
 // Fetch sample data
-mainStore.fetchSampleClients()
-mainStore.fetchSampleHistory()
+// mainStore.fetchSampleClients()
+// mainStore.fetchSampleHistory()
 
 // Dark mode
 // Uncomment, if you'd like to restore persisted darkMode setting, or use `prefers-color-scheme: dark`. Make sure to uncomment localStorage block in src/stores/darkMode.js
