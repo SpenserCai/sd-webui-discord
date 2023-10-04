@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 00:44:10
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-03 16:38:12
+ * @LastEditTime: 2023-10-04 12:38:53
  * @Description: file content
  */
 package db_backend
@@ -28,6 +28,7 @@ type History struct {
 	OptionJson  string `gorm:"column:option_json;size:0"`
 	Images      string `gorm:"column:images;size:0"`
 	Created     string `gorm:"column:created;size:50"`
+	Deleted     bool   `gorm:"column:deleted;default:false"`
 }
 
 func (UserInfo) TableName() string {

@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-03 16:47:33
+ * @LastEditTime: 2023-10-04 12:37:20
  * @Description: file content
  */
 package slash_handler
@@ -305,6 +305,13 @@ func (shdl SlashHandler) SetHistoryImages(messageId string, i *discordgo.Interac
 	if global.Config.UserCenter.Enable {
 		userId := shdl.GetDiscordUserId(i)
 		global.UserCenterSvc.WriteUserHistoryImages(messageId, userId, strings.Join(images, ","))
+	}
+}
+
+func (shdl SlashHandler) DeleteHistory(messageId string, i *discordgo.InteractionCreate) {
+	if global.Config.UserCenter.Enable {
+		userId := shdl.GetDiscordUserId(i)
+		global.UserCenterSvc.DeleteUserHistory(messageId, userId)
 	}
 }
 

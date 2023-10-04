@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-29 12:10:24
+ * @LastEditTime: 2023-10-04 12:38:03
  * @Description: file content
  */
 package slash_handler
@@ -534,7 +534,11 @@ func (shdl SlashHandler) Txt2imgComponentHandler(s *discordgo.Session, i *discor
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseDeferredMessageUpdate,
 			})
-			s.ChannelMessageDelete(i.ChannelID, i.Interaction.Message.ID)
+			err := s.ChannelMessageDelete(i.ChannelID, i.Interaction.Message.ID)
+			if err == nil {
+				shdl.DeleteHistory(i.Interaction.Message.ID, i)
+			}
+
 		} else {
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,

@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-04 00:17:19
+ * @LastEditTime: 2023-10-04 12:34:15
  * @Description: file content
  */
 package user
@@ -253,6 +253,7 @@ func (ucs *UserCenterService) WriteUserHistory(messageId string, userId string, 
 		CommandName: commandName,
 		OptionJson:  optionJson,
 		Created:     time.Now().Format("2006-01-02 15:04:05"),
+		Deleted:     false,
 	}
 	err := ucs.Db.Db.Create(history).Error
 	return err
@@ -261,6 +262,12 @@ func (ucs *UserCenterService) WriteUserHistory(messageId string, userId string, 
 // 写入图片信息
 func (ucs *UserCenterService) WriteUserHistoryImages(messageId string, userId string, images string) error {
 	err := ucs.Db.Db.Model(&db_backend.History{}).Where("message_id = ? AND user_id = ?", messageId, userId).Update("images", images).Error
+	return err
+}
+
+// 删除历史记录（软删除）
+func (ucs *UserCenterService) DeleteUserHistory(messageId string, userId string) error {
+	err := ucs.Db.Db.Model(&db_backend.History{}).Where("message_id = ? AND user_id = ?", messageId, userId).Update("deleted", true).Error
 	return err
 }
 
