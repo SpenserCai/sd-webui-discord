@@ -3,13 +3,11 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-01 16:54:20
+ * @LastEditTime: 2023-10-07 00:18:25
  * @Description: file content
  */
 import {
   mdiAccount,
-  mdiCogOutline,
-  mdiEmail,
   mdiLogout,
   mdiGithub,
 } from '@mdi/js'
@@ -20,16 +18,8 @@ export default [
     menu: [
       {
         icon: mdiAccount,
-        label: 'My Profile',
-        to: '/profile'
-      },
-      {
-        icon: mdiCogOutline,
-        label: 'Settings'
-      },
-      {
-        icon: mdiEmail,
-        label: 'Messages'
+        label: 'Profile',
+        to: '/app'
       },
       {
         isDivider: true
