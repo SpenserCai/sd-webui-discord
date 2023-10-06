@@ -87,6 +87,29 @@ paths:
           description: 'Success'
           schema:
             $ref: '#/definitions/UserList'
+  /user_history:
+    post:
+      description: 'Get User History'
+      operationId: 'user_history'
+      tags: [user]
+      security:
+        - Bearer: []
+      parameters:
+        - name: body
+          in: body
+          description: 'Page Info'
+          required: true
+          schema:
+            properties:
+              query:
+                $ref: '#/definitions/HistoryQuery'
+              page_info:
+                $ref: '#/definitions/PageInfoRequest'
+      responses:
+        200:
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/HistoryList'
           
 
 definitions:
@@ -162,6 +185,25 @@ definitions:
               $ref: '#/definitions/UserItem'
           page_info:
             $ref: '#/definitions/PageInfoResponse'
+  HistoryList:
+    type: object
+    properties: 
+      code:
+        type: integer
+        format: int32
+        x-omitempty: false
+      message:
+        type: string
+      data:
+        type: object
+        x-omitempty: false
+        properties:
+          history:
+            type: array
+            items:
+              $ref: '#/definitions/HistoryItem'
+          page_info:
+            $ref: '#/definitions/PageInfoResponse'
   UserQuery:
     type: object
     properties: 
@@ -171,4 +213,26 @@ definitions:
         type: string
       enable:
         type: boolean
+  HistoryQuery:
+    type: object
+    properties: 
+      command:
+        type: string
+  HistoryItem:
+    type: object
+    properties: 
+      id:
+        type: string
+      user_id:
+        type: string
+      command:
+        type: string
+      options:
+        type: object
+      images:
+        type: array
+        items:
+          type: string
+      created:
+        type: string
       

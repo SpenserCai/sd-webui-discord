@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-04 10:26:26
+ * @LastEditTime: 2023-10-06 17:31:48
  * @Description: file content
  */
 import {
@@ -17,7 +17,8 @@ import {
   // mdiTelevisionGuide,
   // mdiResponsive,
   // mdiPalette,
-  mdiHome
+  mdiHome,
+  mdiImageArea
 } from '@mdi/js'
 
 export default [
@@ -25,6 +26,16 @@ export default [
     to: '/app',
     icon: mdiHome,
     label: 'Home'
+  },
+  {
+    label: 'Gallery',
+    icon: mdiImageArea,
+    menu:[
+      {
+        to: '/txt2img',
+        label: 'Txt2img'
+      }
+    ]
   },
   // {
   //   to: '/dashboard',

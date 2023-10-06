@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-04 10:46:43
+ * @LastEditTime: 2023-10-06 17:29:12
  * @Description: file content
  */
 import { createRouter, createWebHashHistory } from 'vue-router'
@@ -11,6 +11,14 @@ import FirstPage from '@/views/FirsView.vue'
 import Home from '@/views/HomeView.vue'
 
 const routes = [
+  {
+    meta: {
+      title: 'Wecome'
+    },
+    path: '/',
+    name: 'first',
+    component: FirstPage
+  },
   {
     meta:{
       title: 'Home'
@@ -21,11 +29,11 @@ const routes = [
   },
   {
     meta: {
-      title: 'Wecome'
+      title: 'Txt2img'
     },
-    path: '/',
-    name: 'first',
-    component: FirstPage
+    path: '/txt2img',
+    name: 'txt2img',
+    component: () => import('@/views/Txt2imgView.vue')
   },
   {
     // Document title tag

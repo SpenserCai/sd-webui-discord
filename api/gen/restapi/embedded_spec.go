@@ -89,6 +89,46 @@ func init() {
         }
       }
     },
+    "/user_history": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get User History",
+        "tags": [
+          "user"
+        ],
+        "operationId": "user_history",
+        "parameters": [
+          {
+            "description": "Page Info",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "page_info": {
+                  "$ref": "#/definitions/PageInfoRequest"
+                },
+                "query": {
+                  "$ref": "#/definitions/HistoryQuery"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/HistoryList"
+            }
+          }
+        }
+      }
+    },
     "/user_info": {
       "get": {
         "security": [
@@ -153,6 +193,68 @@ func init() {
     }
   },
   "definitions": {
+    "HistoryItem": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "options": {
+          "type": "object"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "HistoryList": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "history": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/HistoryItem"
+              }
+            },
+            "page_info": {
+              "$ref": "#/definitions/PageInfoResponse"
+            }
+          },
+          "x-omitempty": false
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "HistoryQuery": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string"
+        }
+      }
+    },
     "PageInfoRequest": {
       "type": "object",
       "properties": {
@@ -354,6 +456,46 @@ func init() {
         }
       }
     },
+    "/user_history": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get User History",
+        "tags": [
+          "user"
+        ],
+        "operationId": "user_history",
+        "parameters": [
+          {
+            "description": "Page Info",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "page_info": {
+                  "$ref": "#/definitions/PageInfoRequest"
+                },
+                "query": {
+                  "$ref": "#/definitions/HistoryQuery"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/HistoryList"
+            }
+          }
+        }
+      }
+    },
     "/user_info": {
       "get": {
         "security": [
@@ -418,6 +560,83 @@ func init() {
     }
   },
   "definitions": {
+    "HistoryItem": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "options": {
+          "type": "object"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "HistoryList": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "history": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/HistoryItem"
+              }
+            },
+            "page_info": {
+              "$ref": "#/definitions/PageInfoResponse"
+            }
+          },
+          "x-omitempty": false
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "HistoryListData": {
+      "type": "object",
+      "properties": {
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/HistoryItem"
+          }
+        },
+        "page_info": {
+          "$ref": "#/definitions/PageInfoResponse"
+        }
+      },
+      "x-omitempty": false
+    },
+    "HistoryQuery": {
+      "type": "object",
+      "properties": {
+        "command": {
+          "type": "string"
+        }
+      }
+    },
     "PageInfoRequest": {
       "type": "object",
       "properties": {

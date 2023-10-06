@@ -62,6 +62,11 @@ func configureAPI(api *operations.APIServiceAPI) http.Handler {
 			return middleware.NotImplemented("operation user.Login has not yet been implemented")
 		})
 	}
+	if api.UserUserHistoryHandler == nil {
+		api.UserUserHistoryHandler = user.UserHistoryHandlerFunc(func(params user.UserHistoryParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation user.UserHistory has not yet been implemented")
+		})
+	}
 	if api.UserUserInfoHandler == nil {
 		api.UserUserInfoHandler = user.UserInfoHandlerFunc(func(params user.UserInfoParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation user.UserInfo has not yet been implemented")

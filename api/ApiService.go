@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 15:37:14
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-02 21:25:51
+ * @LastEditTime: 2023-10-06 17:22:12
  * @Description: file content
  */
 package api
@@ -35,6 +35,7 @@ func BeforeRun() {
 	business.BusinessBase{}.SetLoginHandler()
 	business.BusinessBase{}.SetAuthHandler()
 	business.BusinessBase{}.SetUserInfoHandler()
+	business.BusinessBase{}.SetUserHistoryHandler()
 
 }
 

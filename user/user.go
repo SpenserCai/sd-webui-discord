@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-04 12:34:15
+ * @LastEditTime: 2023-10-06 17:58:40
  * @Description: file content
  */
 package user
@@ -279,6 +279,22 @@ func (ucs *UserCenterService) GetUserHistoryOptWithMessageId(messageId string, c
 		return "", err
 	}
 	return history.OptionJson, nil
+}
+
+// 获取用户历史记录列表分页获取
+func (ucs *UserCenterService) GetUserHistoryList(userId string, cmd string, page int, pageSize int) ([]*db_backend.History, int, error) {
+	historyList := []*db_backend.History{}
+	// 之获取没有软删除的历史记录，同时返回总数,按照created的倒序排列
+	err := ucs.Db.Db.Where("user_id = ? AND command_name = ? AND deleted = ?", userId, cmd, false).Order("created desc").Offset((page - 1) * pageSize).Limit(pageSize).Find(&historyList).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	var count int64
+	err = ucs.Db.Db.Model(&db_backend.History{}).Where("user_id = ? AND command_name = ? AND deleted = ?", userId, cmd, false).Count(&count).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	return historyList, int(count), nil
 }
 
 // 获取用户总数
