@@ -3,7 +3,7 @@
  # @Date: 2023-08-17 11:04:55
  # @version: 
  # @LastEditors: SpenserCai
- # @LastEditTime: 2023-09-29 20:26:57
+ # @LastEditTime: 2023-10-06 22:04:49
  # @Description: file content
 ### 
 # Web接口代码生存
@@ -52,4 +52,10 @@ fi
 if [ -d "./release/location" ]; then
     rm -rf ./release/location
 fi
+
+if [ -d "./release/website" ]; then
+    rm -rf ./release/website
+fi
+
 cp -r ./location ./release/location
+cp -r ./website ./release/website
