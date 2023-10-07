@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-07 21:14:46
+ * @LastEditTime: 2023-10-07 23:16:52
  * @Description: file content
 -->
 <script setup>
@@ -84,6 +84,15 @@ const showImageInfo = (index) => {
   let history = currentList.value[index]
   currentImageInfo.value = history
   isShowImageInfoModal.value = true
+  // 延时0.5秒执行，等待Modal显示
+  setTimeout(() => {
+    // 给image_detail内的第一个div设置style: top: 0
+    let div = document.getElementById("image_detail").children[1].children[0]
+    // 如果div的高度大于app高度，设置top为3rem
+    if (div.clientHeight > window.innerHeight) {
+      div.style.top = "3rem"
+    }
+  }, 100)
 }
 
 const getImagesList = () => {
@@ -108,7 +117,7 @@ getListFunc(1, 4 * gridRowCount.value)
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-        <Modal v-if="isShowImageInfoModal" size="5xl" @close="closeImageInfo">
+        <Modal v-if="isShowImageInfoModal" id="image_detail" size="5xl" @close="closeImageInfo">
           <template #body>
             <div class="flex justify-center">
               <Img size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].src"/>
@@ -182,17 +191,17 @@ getListFunc(1, 4 * gridRowCount.value)
             </div>
           </template>
         </Modal>
-        <div v-if="show" id="t2i_list" class="flex grid-cols-2 md:grid-cols-4 gap-4">
-          <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
-          <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
-            <div v-for="(i_number,i_index) of gridRowCount" :key="i_index">
-              <img class="h-auto max-w-full rounded-lg" :src="getImage(i_index*4+index)" alt="" @click="showImageInfo(i_index*4+index)">
-            </div>
+      <div v-if="show" id="t2i_list" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
+        <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
+          <div v-for="(i_number,i_index) of gridRowCount" :key="i_index">
+            <img class="h-auto max-w-full rounded-lg" :src="getImage(i_index*4+index)" alt="" @click="showImageInfo(i_index*4+index)">
           </div>
         </div>
-        <div class="lg:text-center my-3">
-            <Pagination v-model="currentPage" :total-pages="total/12 + 1" :slice-length="4" @page-changed="onPageChanged"></Pagination>
-        </div>
+      </div>
+      <div class="lg:text-center my-3">
+          <Pagination v-model="currentPage" :total-pages="total/12 + 1" :slice-length="4" @page-changed="onPageChanged"></Pagination>
+      </div>
     </SectionMain>
   </LayoutAuthenticated>
 </template>
