@@ -1,3 +1,11 @@
+<!--
+ * @Author: SpenserCai
+ * @Date: 2023-10-01 10:22:20
+ * @version: 
+ * @LastEditors: SpenserCai
+ * @LastEditTime: 2023-10-07 17:33:36
+ * @Description: file content
+-->
 <script setup>
 import { computed } from 'vue'
 
@@ -17,6 +25,10 @@ const props = defineProps({
   size: {
     type: [String, Number],
     default: null
+  },
+  class: {
+    type: String,
+    default: null
   }
 })
 
@@ -28,7 +40,7 @@ const iconSize = computed(() => props.size ?? 16)
 <template>
   <span :class="spanClass">
     <svg viewBox="0 0 24 24" :width="iconSize" :height="iconSize" class="inline-block">
-      <path fill="currentColor" :d="path" />
+      <path fill="currentColor" :class="props.class" :d="path" />
     </svg>
     <slot />
   </span>
