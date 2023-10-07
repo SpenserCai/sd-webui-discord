@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-01 23:33:07
+ * @LastEditTime: 2023-10-07 11:14:45
  * @Description: file content
  */
 /* eslint-env node */
@@ -14,7 +14,8 @@ module.exports = {
   content: [
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
-    "./node_modules/flowbite-vue/**/*.{js,jsx,ts,tsx}"
+    './node_modules/flowbite-vue/**/*.{js,jsx,ts,tsx}',
+    './node_modules/flowbite/**/*.{js,jsx,ts,tsx}'
   ],
   darkMode: "class", // or 'media' or 'class'
   theme: {

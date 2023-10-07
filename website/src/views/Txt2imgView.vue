@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-06 21:59:28
+ * @LastEditTime: 2023-10-07 12:22:52
  * @Description: file content
 -->
 <script setup>
@@ -65,14 +65,15 @@ getListFunc(1, 12)
           <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
           <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
             <div v-for="(i_number,i_index) of 3" :key="i_index">
+              <div>
                 <img class="h-auto max-w-full rounded-lg" :src="getImage(index*3+i_index)" alt="">
+              </div>
             </div>
           </div>
         </div>
         <div class="lg:text-center my-3">
             <Pagination v-model="currentPage"  :total-pages="total/12 + 1" :slice-length="4" @page-changed="onPageChanged"></Pagination>
         </div>
-
     </SectionMain>
   </LayoutAuthenticated>
 </template>
