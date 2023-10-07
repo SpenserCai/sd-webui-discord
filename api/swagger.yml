@@ -225,6 +225,10 @@ definitions:
         type: string
       user_id:
         type: string
+      user_name:
+        type: string
+      user_avatar:
+        type: string
       command:
         type: string
       options:

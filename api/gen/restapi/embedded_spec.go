@@ -214,7 +214,13 @@ func init() {
         "options": {
           "type": "object"
         },
+        "user_avatar": {
+          "type": "string"
+        },
         "user_id": {
+          "type": "string"
+        },
+        "user_name": {
           "type": "string"
         }
       }
@@ -581,7 +587,13 @@ func init() {
         "options": {
           "type": "object"
         },
+        "user_avatar": {
+          "type": "string"
+        },
         "user_id": {
+          "type": "string"
+        },
+        "user_name": {
           "type": "string"
         }
       }

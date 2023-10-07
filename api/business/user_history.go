@@ -3,7 +3,7 @@
  * @Date: 2023-10-04 20:26:32
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-06 17:21:04
+ * @LastEditTime: 2023-10-07 15:25:33
  * @Description: file content
  */
 package business
@@ -28,6 +28,13 @@ func (b BusinessBase) SetUserHistoryHandler() {
 				Message: err.Error(),
 			})
 		}
+		userInfo, err := global.UserCenterSvc.GetUserInfo(principal.(string))
+		if err != nil {
+			return ServiceOperations.NewUserHistoryOK().WithPayload(&models.HistoryList{
+				Code:    -1,
+				Message: err.Error(),
+			})
+		}
 		historyRes := make([]*models.HistoryItem, 0)
 		for _, item := range history {
 			historyRes = append(historyRes, &models.HistoryItem{
@@ -38,9 +45,16 @@ func (b BusinessBase) SetUserHistoryHandler() {
 					json.Unmarshal([]byte(item.OptionJson), &option)
 					return option
 				}(),
-				Created: item.Created,
-				UserID:  item.UserID,
-				Images:  strings.Split(item.Images, ","),
+				Created:  item.Created,
+				UserID:   item.UserID,
+				UserName: userInfo.Name,
+				UserAvatar: func() string {
+					if userInfo.Avatar == "" {
+						return "https://cdn.discordapp.com/embed/avatars/0.png"
+					}
+					return userInfo.Avatar
+				}(),
+				Images: strings.Split(item.Images, ","),
 			})
 		}
 		return ServiceOperations.NewUserHistoryOK().WithPayload(&models.HistoryList{

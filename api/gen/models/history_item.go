@@ -32,8 +32,14 @@ type HistoryItem struct {
 	// options
 	Options interface{} `json:"options,omitempty"`
 
+	// user avatar
+	UserAvatar string `json:"user_avatar,omitempty"`
+
 	// user id
 	UserID string `json:"user_id,omitempty"`
+
+	// user name
+	UserName string `json:"user_name,omitempty"`
 }
 
 // Validate validates this history item
