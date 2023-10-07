@@ -3,12 +3,14 @@
  * @Date: 2023-08-16 22:27:15
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 22:24:00
+ * @LastEditTime: 2023-10-07 23:38:13
  * @Description: file content
  */
 package slash_handler
 
 import (
+	"log"
+
 	"github.com/SpenserCai/sd-webui-discord/cluster"
 	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/utils"
@@ -80,7 +82,7 @@ func (shdl SlashHandler) DeoldifyAction(s *discordgo.Session, i *discordgo.Inter
 				Content: func() *string { v := err.Error(); return &v }(),
 			})
 		} else {
-			msg, _ := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+			msg, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Success"; return &v }(),
 				Files: []*discordgo.File{
 					{
@@ -90,7 +92,11 @@ func (shdl SlashHandler) DeoldifyAction(s *discordgo.Session, i *discordgo.Inter
 					},
 				},
 			})
-			shdl.SetHistory("deoldify", msg.ID, i, opt)
+			if err != nil {
+				log.Println(err)
+			} else {
+				shdl.SetHistory("deoldify", msg.ID, i, opt)
+			}
 		}
 	}
 }

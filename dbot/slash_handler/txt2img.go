@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-04 12:38:03
+ * @LastEditTime: 2023-10-07 23:37:49
  * @Description: file content
  */
 package slash_handler
@@ -488,9 +488,8 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		})
 		if err != nil {
 			log.Println(err)
-		}
-		opt.Seed = func() *int64 { v, _ := strconv.ParseInt(seed, 10, 64); return &v }()
-		if err == nil {
+		} else {
+			opt.Seed = func() *int64 { v, _ := strconv.ParseInt(seed, 10, 64); return &v }()
 			shdl.SetHistory("txt2img", msg.ID, i, opt)
 			urls := make([]string, 0)
 			for _, v := range msg.Embeds {
