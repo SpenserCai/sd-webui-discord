@@ -38,6 +38,7 @@
         },
         "web":{
             "start_with_server":true,
+            "open_browser":true,
             "host":"127.0.0.1",
             "port":18891
         }

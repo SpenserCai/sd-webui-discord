@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-08 16:24:14
+ * @LastEditTime: 2023-10-08 17:00:21
  * @Description: file content
  */
 package config
@@ -50,6 +50,7 @@ type WebSite struct {
 		Host            string `json:"host"`
 		Port            int    `json:"port"`
 		StartWithServer bool   `json:"start_with_server"`
+		OpenBrowser     bool   `json:"open_browser"`
 	} `json:"web"`
 }
 

@@ -3,7 +3,7 @@
  * @Date: 2023-08-15 21:55:36
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-08 16:26:00
+ * @LastEditTime: 2023-10-08 17:00:50
  * @Description: file content
  */
 package main
@@ -16,7 +16,9 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 
 	"github.com/SpenserCai/sd-webui-discord/api"
 	"github.com/SpenserCai/sd-webui-discord/cluster"
@@ -106,6 +108,24 @@ func RunWebSite() error {
 	return nil
 }
 
+func OpenWebSite(url string) error {
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "darwin": // macOS
+		cmd = exec.Command("open", url)
+	case "windows": // Windows
+		cmd = exec.Command("cmd", "/c", "start", url)
+	default: // Linux 或其他 Unix 系统
+		cmd = exec.Command("xdg-open", url)
+	}
+
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
 	err := LoadConfig()
 	if err != nil {
@@ -130,6 +150,14 @@ func main() {
 	go api.StartApiService()
 	if global.Config.WebSite.Web.StartWithServer {
 		go RunWebSite()
+		if global.Config.WebSite.Web.OpenBrowser {
+			// 使用默认浏览器打开网页
+			err = OpenWebSite(fmt.Sprintf("http://%s:%d", global.Config.WebSite.Web.Host, global.Config.WebSite.Web.Port))
+			if err != nil {
+				log.Println(err)
+			}
+		}
+
 	}
 	disBot.Run()
 
