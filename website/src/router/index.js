@@ -3,10 +3,10 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-07 00:13:13
+ * @LastEditTime: 2023-10-08 13:09:33
  * @Description: file content
  */
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import FirstPage from '@/views/FirstView.vue'
 import Home from '@/views/HomeView.vue'
 
@@ -104,7 +104,8 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  // history: createWebHashHistory(),
+  history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
     return savedPosition || { top: 0 }

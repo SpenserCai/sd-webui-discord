@@ -3,7 +3,7 @@
  # @Date: 2023-08-17 11:04:55
  # @version: 
  # @LastEditors: SpenserCai
- # @LastEditTime: 2023-10-06 22:04:49
+ # @LastEditTime: 2023-10-08 13:26:09
  # @Description: file content
 ### 
 # Web接口代码生存
@@ -53,9 +53,15 @@ if [ -d "./release/location" ]; then
     rm -rf ./release/location
 fi
 
+# 切换到website目录，安装依赖并打包
+cd ./website
+npm install
+npm run build
+cd ..
+
 if [ -d "./release/website" ]; then
     rm -rf ./release/website
 fi
 
 cp -r ./location ./release/location
-cp -r ./website ./release/website
+cp -r ./website/dist ./release/website
