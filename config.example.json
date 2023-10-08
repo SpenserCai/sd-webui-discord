@@ -31,10 +31,15 @@
     },
     "website":{
         "api":{
-            "host":"0.0.0.0",
+            "host":"127.0.0.1",
             "port":18890,
             "jwt_secret":"<your jwt secret here>",
-            "auth_callback_url":"http://127.0.0.1:18890/#/app"
+            "auth_callback_url":"http://127.0.0.1:18891/#/app"
+        },
+        "web":{
+            "start_with_server":true,
+            "host":"127.0.0.1",
+            "port":18891
         }
     },
     "disable_return_gen_info":true

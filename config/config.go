@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-03 12:46:54
+ * @LastEditTime: 2023-10-08 16:24:14
  * @Description: file content
  */
 package config
@@ -46,6 +46,11 @@ type WebSite struct {
 		JwtSecret       string `json:"jwt_secret"`
 		AuthCallbackUrl string `json:"auth_callback_url"`
 	} `json:"api"`
+	Web struct {
+		Host            string `json:"host"`
+		Port            int    `json:"port"`
+		StartWithServer bool   `json:"start_with_server"`
+	} `json:"web"`
 }
 
 type Config struct {

@@ -3,14 +3,18 @@
  * @Date: 2023-08-15 21:55:36
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-30 01:21:25
+ * @LastEditTime: 2023-10-08 16:26:00
  * @Description: file content
  */
 package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
 	"os"
 	"path/filepath"
 
@@ -76,6 +80,32 @@ func PrintEvent() {
 	}
 }
 
+func RunWebSite() error {
+	exePath, err := os.Executable()
+	if err != nil {
+		return err
+	}
+	exeDir := filepath.Dir(exePath)
+	websiteDir := filepath.Join(exeDir, "website")
+	fs := http.FileServer(http.Dir(websiteDir))
+	http.Handle("/", fs)
+	log.Println("website dir:", websiteDir)
+	apiURL, err := url.Parse(fmt.Sprintf("http://%s:%d", global.Config.WebSite.Api.Host, global.Config.WebSite.Api.Port))
+	if err != nil {
+		return err
+	}
+	http.Handle("/api/", httputil.NewSingleHostReverseProxy(apiURL))
+	log.Println("api url:", apiURL)
+	// 启动Web服务器
+	addr := fmt.Sprintf("%s:%d", global.Config.WebSite.Web.Host, global.Config.WebSite.Web.Port) // 替换为实际的端口号
+	log.Printf("WebSite started on port %s\n", addr)
+	err = http.ListenAndServe(addr, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
 	err := LoadConfig()
 	if err != nil {
@@ -98,6 +128,9 @@ func main() {
 		return
 	}
 	go api.StartApiService()
+	if global.Config.WebSite.Web.StartWithServer {
+		go RunWebSite()
+	}
 	disBot.Run()
 
 }
