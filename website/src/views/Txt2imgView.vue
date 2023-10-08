@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-08 09:49:03
+ * @LastEditTime: 2023-10-08 10:50:58
  * @Description: file content
 -->
 <script setup>
@@ -131,21 +131,25 @@ getListFunc(1, 4 * gridRowCount.value)
               </div>
               <div class="h-4"></div>
               <div class="flex-col items-start grid grid-cols-2 gap-2">
-                <CardBox class="flex flex-col items-start h-full max-h-48 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
+                <CardBox class="flex flex-col items-start h-full">
                   <span class="flex items-center justify-start gap-1 text-xs font-bold uppercase leading-[0] tracking-wide text-slate-400 md:text-sm">
                     <BaseIcon :path="mdiDrawPen" class="text-emerald-600" size="16"/>
                     Prompt
                   </span>
                   <div class="h-2"></div>
+                  <div class="max-h-48 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
                   <p class="text-base font-medium text-gray-300 break-all">{{ currentImageInfo.options.prompt }}</p>
+                  </div>
                 </CardBox>
-                <CardBox class="flex flex-col items-start h-full max-h-48 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
+                <CardBox class="flex flex-col items-start h-full">
                   <span class="flex items-center justify-start gap-1 text-xs font-bold uppercase leading-[0] tracking-wide text-slate-400 md:text-sm">
                     <BaseIcon :path="mdiCancel" class="text-red-600" size="16"/>
                     Negative Prompt
                   </span>
                   <div class="h-2"></div>
+                  <div class="max-h-48 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
                   <p class="text-base font-medium text-gray-300 break-all">{{ currentImageInfo.options.negative_prompt }}</p>
+                  </div>
                 </CardBox>
               </div>
               <div class="h-4"></div>
