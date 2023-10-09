@@ -3,13 +3,14 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-04 00:36:13
+ * @LastEditTime: 2023-10-09 11:49:02
  * @Description: file content
  */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { userinfo } from '@/api/account'
 import axios from 'axios'
+import { discordserver } from '@/api/system'
 
 export const useMainStore = defineStore('main', () => {
   const userName = ref('User')
@@ -18,6 +19,8 @@ export const useMainStore = defineStore('main', () => {
   const stableConfig = ref({})
 
   const userAvatar = ref('')
+
+  const discordUrl = ref('')
 
   userinfo().then((res) => {
     userName.value = res.data.user.username
@@ -32,6 +35,10 @@ export const useMainStore = defineStore('main', () => {
     }
     created.value = res.data.user.created
     stableConfig.value = res.data.user.stable_config
+  })
+
+  discordserver().then((res) => {
+    discordUrl.value = res.data.url
   })
 
   const isFieldFocusRegistered = ref(false)
@@ -79,6 +86,7 @@ export const useMainStore = defineStore('main', () => {
     isFieldFocusRegistered,
     clients,
     history,
+    discordUrl,
     setUser,
     fetchSampleClients,
     fetchSampleHistory

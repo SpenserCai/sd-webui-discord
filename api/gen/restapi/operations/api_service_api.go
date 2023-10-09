@@ -20,6 +20,7 @@ import (
 	"github.com/go-openapi/swag"
 
 	"github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations/admin"
+	"github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations/system"
 	"github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations/user"
 )
 
@@ -48,8 +49,14 @@ func NewAPIServiceAPI(spec *loads.Document) *APIServiceAPI {
 		UserAuthHandler: user.AuthHandlerFunc(func(params user.AuthParams) middleware.Responder {
 			return middleware.NotImplemented("operation user.Auth has not yet been implemented")
 		}),
+		SystemDiscordServerHandler: system.DiscordServerHandlerFunc(func(params system.DiscordServerParams) middleware.Responder {
+			return middleware.NotImplemented("operation system.DiscordServer has not yet been implemented")
+		}),
 		UserLoginHandler: user.LoginHandlerFunc(func(params user.LoginParams) middleware.Responder {
 			return middleware.NotImplemented("operation user.Login has not yet been implemented")
+		}),
+		SystemOpenDiscordServerHandler: system.OpenDiscordServerHandlerFunc(func(params system.OpenDiscordServerParams) middleware.Responder {
+			return middleware.NotImplemented("operation system.OpenDiscordServer has not yet been implemented")
 		}),
 		UserUserHistoryHandler: user.UserHistoryHandlerFunc(func(params user.UserHistoryParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation user.UserHistory has not yet been implemented")
@@ -112,8 +119,12 @@ type APIServiceAPI struct {
 
 	// UserAuthHandler sets the operation handler for the auth operation
 	UserAuthHandler user.AuthHandler
+	// SystemDiscordServerHandler sets the operation handler for the discord server operation
+	SystemDiscordServerHandler system.DiscordServerHandler
 	// UserLoginHandler sets the operation handler for the login operation
 	UserLoginHandler user.LoginHandler
+	// SystemOpenDiscordServerHandler sets the operation handler for the open discord server operation
+	SystemOpenDiscordServerHandler system.OpenDiscordServerHandler
 	// UserUserHistoryHandler sets the operation handler for the user history operation
 	UserUserHistoryHandler user.UserHistoryHandler
 	// UserUserInfoHandler sets the operation handler for the user info operation
@@ -204,8 +215,14 @@ func (o *APIServiceAPI) Validate() error {
 	if o.UserAuthHandler == nil {
 		unregistered = append(unregistered, "user.AuthHandler")
 	}
+	if o.SystemDiscordServerHandler == nil {
+		unregistered = append(unregistered, "system.DiscordServerHandler")
+	}
 	if o.UserLoginHandler == nil {
 		unregistered = append(unregistered, "user.LoginHandler")
+	}
+	if o.SystemOpenDiscordServerHandler == nil {
+		unregistered = append(unregistered, "system.OpenDiscordServerHandler")
 	}
 	if o.UserUserHistoryHandler == nil {
 		unregistered = append(unregistered, "user.UserHistoryHandler")
@@ -320,7 +337,15 @@ func (o *APIServiceAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
+	o.handlers["GET"]["/discord_server"] = system.NewDiscordServer(o.context, o.SystemDiscordServerHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
 	o.handlers["GET"]["/login"] = user.NewLogin(o.context, o.UserLoginHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/open_discord_server"] = system.NewOpenDiscordServer(o.context, o.SystemOpenDiscordServerHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

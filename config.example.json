@@ -19,7 +19,8 @@
         "server_id":"<your servers id here if empty all servers>",
         "bot_name":"SD-WEBUI-BOT",
         "bot_avatar":"https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/logo.png",
-        "bot_url":"https://github.com/SpenserCai/sd-webui-discord"
+        "bot_url":"https://github.com/SpenserCai/sd-webui-discord",
+        "discord_server_url":"https://discord.com/invite/uNJpzEE4sZ"
     },
     "user_center":{
         "enable":true,

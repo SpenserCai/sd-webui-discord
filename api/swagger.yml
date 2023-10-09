@@ -110,6 +110,28 @@ paths:
           description: 'Success'
           schema:
             $ref: '#/definitions/HistoryList'
+  /discord_server:
+    get:
+      description: 'Get Discord Server'
+      operationId: 'discord_server'
+      tags: [system]
+      responses:
+        200:
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/DiscordServer'
+  /open_discord_server:
+    get:
+      description: 'Open Discord Server'
+      operationId: 'open_discord_server'
+      tags: [system]
+      responses:
+        302:
+          description: 'Open Discord Servers'
+          headers:
+            Location:
+              type: string
+              format: url
           
 
 definitions:
@@ -239,4 +261,20 @@ definitions:
           type: string
       created:
         type: string
+  DiscordServer:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+        x-omitempty: false
+      message:
+        type: string
+      data:
+        type: object
+        x-omitempty: false
+        properties: 
+          url:
+            type: string
+    
       

@@ -69,6 +69,23 @@ func init() {
         }
       }
     },
+    "/discord_server": {
+      "get": {
+        "description": "Get Discord Server",
+        "tags": [
+          "system"
+        ],
+        "operationId": "discord_server",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/DiscordServer"
+            }
+          }
+        }
+      }
+    },
     "/login": {
       "get": {
         "description": "Login With Discord",
@@ -79,6 +96,26 @@ func init() {
         "responses": {
           "302": {
             "description": "Redirect",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "url"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/open_discord_server": {
+      "get": {
+        "description": "Open Discord Server",
+        "tags": [
+          "system"
+        ],
+        "operationId": "open_discord_server",
+        "responses": {
+          "302": {
+            "description": "Open Discord Servers",
             "headers": {
               "Location": {
                 "type": "string",
@@ -193,6 +230,28 @@ func init() {
     }
   },
   "definitions": {
+    "DiscordServer": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            }
+          },
+          "x-omitempty": false
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "HistoryItem": {
       "type": "object",
       "properties": {
@@ -442,6 +501,23 @@ func init() {
         }
       }
     },
+    "/discord_server": {
+      "get": {
+        "description": "Get Discord Server",
+        "tags": [
+          "system"
+        ],
+        "operationId": "discord_server",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/DiscordServer"
+            }
+          }
+        }
+      }
+    },
     "/login": {
       "get": {
         "description": "Login With Discord",
@@ -452,6 +528,26 @@ func init() {
         "responses": {
           "302": {
             "description": "Redirect",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "url"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/open_discord_server": {
+      "get": {
+        "description": "Open Discord Server",
+        "tags": [
+          "system"
+        ],
+        "operationId": "open_discord_server",
+        "responses": {
+          "302": {
+            "description": "Open Discord Servers",
             "headers": {
               "Location": {
                 "type": "string",
@@ -566,6 +662,37 @@ func init() {
     }
   },
   "definitions": {
+    "DiscordServer": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            }
+          },
+          "x-omitempty": false
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "DiscordServerData": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      },
+      "x-omitempty": false
+    },
     "HistoryItem": {
       "type": "object",
       "properties": {

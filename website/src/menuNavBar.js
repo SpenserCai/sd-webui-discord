@@ -3,13 +3,14 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-07 00:18:25
+ * @LastEditTime: 2023-10-09 12:51:09
  * @Description: file content
  */
 import {
   mdiAccount,
   mdiLogout,
   mdiGithub,
+  mdiPalette,
 } from '@mdi/js'
 
 export default [
@@ -30,6 +31,14 @@ export default [
         isLogout: true
       }
     ]
+  },
+  {
+    isDiscordUrl: true,
+    icon: mdiPalette,
+    label: 'Go to Discord',
+    href: '/api/open_discord_server',
+    target: '_blank'
+    
   },
   {
     icon: mdiGithub,

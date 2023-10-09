@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 15:37:14
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-06 17:22:12
+ * @LastEditTime: 2023-10-09 12:52:39
  * @Description: file content
  */
 package api
@@ -36,6 +36,8 @@ func BeforeRun() {
 	business.BusinessBase{}.SetAuthHandler()
 	business.BusinessBase{}.SetUserInfoHandler()
 	business.BusinessBase{}.SetUserHistoryHandler()
+	business.BusinessBase{}.SetDiscordServerHandler()
+	business.BusinessBase{}.SetOpenDiscordServerHandler()
 
 }
 

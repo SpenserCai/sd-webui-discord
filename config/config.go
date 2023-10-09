@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-08 17:00:21
+ * @LastEditTime: 2023-10-09 10:55:03
  * @Description: file content
  */
 package config
@@ -68,6 +68,7 @@ type Config struct {
 		BotName           string `json:"bot_name"`
 		BotAvatar         string `json:"bot_avatar"`
 		BotUrl            string `json:"bot_url"`
+		DiscordServerUrl  string `json:"discord_server_url"`
 	} `json:"discord"`
 	UserCenter           UserCenter `json:"user_center"`
 	DisableReturnGenInfo bool       `json:"disable_return_gen_info"`

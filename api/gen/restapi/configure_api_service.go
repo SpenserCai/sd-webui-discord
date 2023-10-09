@@ -12,6 +12,7 @@ import (
 
 	"github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations"
 	"github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations/admin"
+	"github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations/system"
 	"github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations/user"
 )
 
@@ -57,9 +58,19 @@ func configureAPI(api *operations.APIServiceAPI) http.Handler {
 			return middleware.NotImplemented("operation user.Auth has not yet been implemented")
 		})
 	}
+	if api.SystemDiscordServerHandler == nil {
+		api.SystemDiscordServerHandler = system.DiscordServerHandlerFunc(func(params system.DiscordServerParams) middleware.Responder {
+			return middleware.NotImplemented("operation system.DiscordServer has not yet been implemented")
+		})
+	}
 	if api.UserLoginHandler == nil {
 		api.UserLoginHandler = user.LoginHandlerFunc(func(params user.LoginParams) middleware.Responder {
 			return middleware.NotImplemented("operation user.Login has not yet been implemented")
+		})
+	}
+	if api.SystemOpenDiscordServerHandler == nil {
+		api.SystemOpenDiscordServerHandler = system.OpenDiscordServerHandlerFunc(func(params system.OpenDiscordServerParams) middleware.Responder {
+			return middleware.NotImplemented("operation system.OpenDiscordServer has not yet been implemented")
 		})
 	}
 	if api.UserUserHistoryHandler == nil {
