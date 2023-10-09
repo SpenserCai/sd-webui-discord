@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 18:22:44
+ * @LastEditTime: 2023-10-09 18:30:37
  * @Description: file content
 -->
 <script setup>
@@ -177,9 +177,6 @@ const menuClick = (event, item) => {
           </div>
         </div>
       </NotificationGroup>
-      <!--<FooterBar>
-
-      </FooterBar>-->
     </div>
   </div>
 </template>
