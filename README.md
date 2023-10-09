@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-29 14:22:55
+ * @LastEditTime: 2023-10-09 10:28:22
  * @Description: file content
 -->
 <div align="center">
@@ -123,154 +123,12 @@ The command is still under active development, and there are two ways to experie
 1. Join our Discord Server where you can try out the latest features and contribute by submitting issues and pull requests. 
 2. Self-deploy it to have your own sd-webui-discord instance.
 
-### Discord Server
 [![Discord](https://invidget.switchblade.xyz/uNJpzEE4sZ)](https://discord.gg/uNJpzEE4sZ)
 
-<!--
 
-#### Text to Image
-<details>
-<summary>See Image</summary>
+## Documentation
+Detailed tutorial reference [Wiki](https://github.com/SpenserCai/sd-webui-discord/wiki)
 
-  ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/txt2img_demo.png)
-
-</details>
-
-#### ControlNet
-Extension: [sd-webui-controlnet](https://github.com/Mikubill/sd-webui-controlnet)
-<details>
-<summary>See Image</summary>
-
-  ![Demo1](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/controlnet_1.jpeg)
-  ![Demo2](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/controlnet_2.jpeg)
-
-</details>
-
-#### Roop
-Extension: [sd-webui-roop](https://github.com/s0md3v/sd-webui-roop)
-<details>
-<summary>See Image</summary>
-
-  ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/roop_demo.jpeg)
-
-</details>
-
-#### Segment Anything With Prompt
-Extension: [sd-webui-segment-anything](https://github.com/continue-revolution/sd-webui-segment-anything)
-<details>
-<summary>See Image</summary>
-
-  ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/sam_demo.png)
-  ![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/sam_options.png)
-
-</details>
-
-#### Deoldify
-Extension: [sd-webui-deoldify](https://github.com/SpenserCai/sd-webui-deoldify)
-<details>
-<summary>See Image</summary>
-
-  ![Demo](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_demo.png)
-  ![options](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/deoldify_options.png)
-
-</details> -->
-
-### Installation
-You need to install the following extensions on the SD webui:
-
-[sd-webui-segment-anything](https://github.com/continue-revolution/sd-webui-segment-anything)
-
-[sd-weubi-deoldify](https://github.com/SpenserCai/sd-webui-deoldify)
-
-[stable-diffusion-webui-rembg](https://github.com/AUTOMATIC1111/stable-diffusion-webui-rembg)
-
-[sd-webui-roop](https://github.com/s0md3v/sd-webui-roop)
-
-[sd-webui-controlnet](https://github.com/Mikubill/sd-webui-controlnet)
-
-***
-
-1.Download the latest release from [here](https://github.com/SpenserCai/sd-webui-discord/releases/latest).
-
-2.Create a bot account on Discord and get the token. [How To Create Discord App](https://discord.com/developers/docs/getting-started).
-
-3.Configuration and Startup
-```bash
-tar -zxvf sd-webui-discord-release-v*.tar.gz # unzip the release package
-
-cd sd-webui-discord-release-v*/release/
-```
-Edit the `config.json` file and fill in the token and other information.
-
-```json
-{
-    "sd_webui":{
-        "servers":[
-            {
-                "name":"webui-1",
-                "host":"127.0.0.1:7860",
-                "max_concurrent":5,
-                "max_queue":100,
-                "max_vram":"20G"
-            }
-        ]
-    },
-    "discord":{
-        "token":"<your token here>",
-        "server_id":"<your servers id here if empty all servers>"
-    }
-}
-```
-
-If you want set default value with sd-webui
-```json
-{
-    "sd_webui":{
-        "servers":[...],
-        "default_setting": {
-            "cfg_scale": 8,
-            "negative_prompt": "bad,text,watermask",
-            "height":1024,
-            "width":1024,
-            "steps":32,
-            "sampler":"Euler",
-            "sd_model_checkpoint":"sd_xl_base_1.0.safetensors [31e35c80fc]"
-        }
-    }
-    ...
-}
-```
-
-If you want to enable the **User Center**
-```json
-{
-  ...
-  "user_center":{
-        "enable":false,
-        "db_config":{
-            "type":"sqlite", // support mysql and sqlite
-            "dsn":"./user_center.db"
-        }
-  }
-  ...
-}
-```
-
-If you want disable return info in `img2img` and `txt2img`
-```json
-{
-  ...
-  "disable_return_gen_info":true
-  ...
-}
-```
-
-Start The Bot
-```bash
-# if you can't connect discord,you need use proxy and run this command:
-# export https_proxy=http://127.0.0.1:8888;export http_proxy=http://127.0.0.1:8888;
-./sd-webui-discord
-```
 
 ## Participating
 This is an ongoing project, and if you are interested in contributing, you can join our [Discord Server](https://discord.gg/uNJpzEE4sZ). We welcome any feedback or suggestions, so feel free to submit an issue.
