@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 11:49:02
+ * @LastEditTime: 2023-10-09 15:57:07
  * @Description: file content
  */
 import { defineStore } from 'pinia'
@@ -22,6 +22,8 @@ export const useMainStore = defineStore('main', () => {
 
   const discordUrl = ref('')
 
+  const userRoles = ref([])
+
   userinfo().then((res) => {
     userName.value = res.data.user.username
     // 如果res.data.user.avatar不为空，就用res.data.user.avatar，否则用默认的
@@ -35,6 +37,8 @@ export const useMainStore = defineStore('main', () => {
     }
     created.value = res.data.user.created
     stableConfig.value = res.data.user.stable_config
+    // 逗号分割roles
+    userRoles.value = res.data.user.roles.split(",")
   })
 
   discordserver().then((res) => {
@@ -87,6 +91,7 @@ export const useMainStore = defineStore('main', () => {
     clients,
     history,
     discordUrl,
+    userRoles,
     setUser,
     fetchSampleClients,
     fetchSampleHistory

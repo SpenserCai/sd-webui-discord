@@ -1,10 +1,20 @@
+<!--
+ * @Author: SpenserCai
+ * @Date: 2023-10-01 10:22:20
+ * @version: 
+ * @LastEditors: SpenserCai
+ * @LastEditTime: 2023-10-09 15:55:41
+ * @Description: file content
+-->
 <script setup>
 import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { mdiMinus, mdiPlus } from '@mdi/js'
 import { getButtonColor } from '@/colors.js'
+import { useMainStore } from '@/stores/main'
 import BaseIcon from '@/components/BaseIcon.vue'
 import AsideMenuList from '@/components/AsideMenuList.vue'
+import BaseDivider from '@/components/BaseDivider.vue'
 
 const props = defineProps({
   item: {
@@ -17,6 +27,16 @@ const props = defineProps({
 const emit = defineEmits(['menu-click'])
 
 const hasColor = computed(() => props.item && props.item.color)
+
+const isShow = () => { 
+  // 判断是否有roles属性如果没有则直接显示
+  if (!props.item.roles) {
+    return true
+  }
+  // 判断item.roles中的任意一个是否在store中的userRoles中
+  const mainStore = useMainStore()
+  return props.item.roles.some(role => mainStore.userRoles.includes(role))
+}
 
 const asideMenuItemActiveStyle = computed(() =>
   hasColor.value ? '' : 'aside-menu-item-active font-bold'
@@ -44,8 +64,11 @@ const menuClick = (event) => {
 
 <template>
   <li>
+    <BaseDivider v-if="item.isDivider" nav-bar />
     <component
       :is="item.to ? RouterLink : 'a'"
+      v-show="isShow()"
+      v-else
       v-slot="vSlot"
       :to="item.to ?? null"
       :href="item.href ?? null"

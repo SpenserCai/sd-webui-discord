@@ -132,6 +132,18 @@ paths:
             Location:
               type: string
               format: url
+  /cluster:
+    get:
+      description: 'Get Cluster Info'
+      operationId: 'cluster'
+      tags: [system]
+      security:
+        - Bearer: []
+      responses:
+        200:
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/ClusterInfo'
           
 
 definitions:
@@ -261,6 +273,25 @@ definitions:
           type: string
       created:
         type: string
+  NodeItem:
+    type: object
+    properties:
+      name:
+        type: string
+      host:
+        type: string
+      max_concurrent:
+        type: integer
+        format: int32
+        x-omitempty: false
+      running:
+        type: integer
+        format: int32
+        x-omitempty: false
+      pending:
+        type: integer
+        format: int32
+        x-omitempty: false
   DiscordServer:
     type: object
     properties:
@@ -276,5 +307,22 @@ definitions:
         properties: 
           url:
             type: string
+  ClusterInfo:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+        x-omitempty: false
+      message:
+        type: string
+      data:
+        type: object
+        x-omitempty: false
+        properties: 
+          cluster:
+            type: array
+            items: 
+              $ref: '#/definitions/NodeItem'
     
       

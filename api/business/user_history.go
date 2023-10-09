@@ -3,7 +3,7 @@
  * @Date: 2023-10-04 20:26:32
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-07 15:25:33
+ * @LastEditTime: 2023-10-09 15:26:53
  * @Description: file content
  */
 package business
@@ -15,20 +15,21 @@ import (
 	"github.com/SpenserCai/sd-webui-discord/api/gen/models"
 	ServiceOperations "github.com/SpenserCai/sd-webui-discord/api/gen/restapi/operations/user"
 	"github.com/SpenserCai/sd-webui-discord/global"
+	DbotUser "github.com/SpenserCai/sd-webui-discord/user"
 	"github.com/SpenserCai/sd-webui-go/intersvc"
 	"github.com/go-openapi/runtime/middleware"
 )
 
 func (b BusinessBase) SetUserHistoryHandler() {
 	global.ApiService.UserUserHistoryHandler = ServiceOperations.UserHistoryHandlerFunc(func(params ServiceOperations.UserHistoryParams, principal interface{}) middleware.Responder {
-		history, total, err := global.UserCenterSvc.GetUserHistoryList(principal.(string), params.Body.Query.Command, int(params.Body.PageInfo.Page), int(params.Body.PageInfo.PageSize))
+		history, total, err := global.UserCenterSvc.GetUserHistoryList(principal.(DbotUser.UserInfo).Id, params.Body.Query.Command, int(params.Body.PageInfo.Page), int(params.Body.PageInfo.PageSize))
 		if err != nil {
 			return ServiceOperations.NewUserHistoryOK().WithPayload(&models.HistoryList{
 				Code:    -1,
 				Message: err.Error(),
 			})
 		}
-		userInfo, err := global.UserCenterSvc.GetUserInfo(principal.(string))
+		userInfo, err := global.UserCenterSvc.GetUserInfo(principal.(DbotUser.UserInfo).Id)
 		if err != nil {
 			return ServiceOperations.NewUserHistoryOK().WithPayload(&models.HistoryList{
 				Code:    -1,

@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-04 10:27:28
+ * @LastEditTime: 2023-10-09 18:22:44
  * @Description: file content
 -->
 <script setup>
@@ -18,7 +18,7 @@ import FormControl from '@/components/FormControl.vue'
 import NavBar from '@/components/NavBar.vue'
 import NavBarItemPlain from '@/components/NavBarItemPlain.vue'
 import AsideMenu from '@/components/AsideMenu.vue'
-import FooterBar from '@/components/FooterBar.vue'
+// import FooterBar from '@/components/FooterBar.vue'
 import Cookies from "js-cookie"
 
 const layoutAsidePadding = 'xl:pl-60'
@@ -177,9 +177,9 @@ const menuClick = (event, item) => {
           </div>
         </div>
       </NotificationGroup>
-      <FooterBar>
+      <!--<FooterBar>
 
-      </FooterBar>
+      </FooterBar>-->
     </div>
   </div>
 </template>

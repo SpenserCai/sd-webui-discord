@@ -58,6 +58,11 @@ func configureAPI(api *operations.APIServiceAPI) http.Handler {
 			return middleware.NotImplemented("operation user.Auth has not yet been implemented")
 		})
 	}
+	if api.SystemClusterHandler == nil {
+		api.SystemClusterHandler = system.ClusterHandlerFunc(func(params system.ClusterParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation system.Cluster has not yet been implemented")
+		})
+	}
 	if api.SystemDiscordServerHandler == nil {
 		api.SystemDiscordServerHandler = system.DiscordServerHandlerFunc(func(params system.DiscordServerParams) middleware.Responder {
 			return middleware.NotImplemented("operation system.DiscordServer has not yet been implemented")

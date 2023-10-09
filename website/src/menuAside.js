@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-06 17:31:48
+ * @LastEditTime: 2023-10-09 18:23:40
  * @Description: file content
  */
 import {
@@ -18,7 +18,8 @@ import {
   // mdiResponsive,
   // mdiPalette,
   mdiHome,
-  mdiImageArea
+  mdiImageArea,
+  mdiShieldCrown
 } from '@mdi/js'
 
 export default [
@@ -37,6 +38,24 @@ export default [
       }
     ]
   },
+  {
+    isDivider: true
+  },
+  {
+    label: 'Admin',
+    icon: mdiShieldCrown,
+    menu:[
+      {
+        label: 'Cluster',
+        to: '/cluster'
+      },
+      {
+        label: 'Users',
+        // to: '/users'
+      }
+    ],
+    roles: ['admin']
+  }
   // {
   //   to: '/dashboard',
   //   icon: mdiMonitor,

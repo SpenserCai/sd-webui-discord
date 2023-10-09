@@ -69,6 +69,28 @@ func init() {
         }
       }
     },
+    "/cluster": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get Cluster Info",
+        "tags": [
+          "system"
+        ],
+        "operationId": "cluster",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ClusterInfo"
+            }
+          }
+        }
+      }
+    },
     "/discord_server": {
       "get": {
         "description": "Get Discord Server",
@@ -230,6 +252,31 @@ func init() {
     }
   },
   "definitions": {
+    "ClusterInfo": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "cluster": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NodeItem"
+              }
+            }
+          },
+          "x-omitempty": false
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "DiscordServer": {
       "type": "object",
       "properties": {
@@ -317,6 +364,32 @@ func init() {
       "properties": {
         "command": {
           "type": "string"
+        }
+      }
+    },
+    "NodeItem": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "max_concurrent": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "name": {
+          "type": "string"
+        },
+        "pending": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "running": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
         }
       }
     },
@@ -501,6 +574,28 @@ func init() {
         }
       }
     },
+    "/cluster": {
+      "get": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get Cluster Info",
+        "tags": [
+          "system"
+        ],
+        "operationId": "cluster",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/ClusterInfo"
+            }
+          }
+        }
+      }
+    },
     "/discord_server": {
       "get": {
         "description": "Get Discord Server",
@@ -662,6 +757,43 @@ func init() {
     }
   },
   "definitions": {
+    "ClusterInfo": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "cluster": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/NodeItem"
+              }
+            }
+          },
+          "x-omitempty": false
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "ClusterInfoData": {
+      "type": "object",
+      "properties": {
+        "cluster": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NodeItem"
+          }
+        }
+      },
+      "x-omitempty": false
+    },
     "DiscordServer": {
       "type": "object",
       "properties": {
@@ -773,6 +905,32 @@ func init() {
       "properties": {
         "command": {
           "type": "string"
+        }
+      }
+    },
+    "NodeItem": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "max_concurrent": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "name": {
+          "type": "string"
+        },
+        "pending": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "running": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
         }
       }
     },

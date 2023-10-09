@@ -3,13 +3,13 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-07 12:45:52
+ * @LastEditTime: 2023-10-09 18:25:35
  * @Description: file content
  */
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import Notifications from 'notiwind'
-import { initFlowbite,initModals } from 'flowbite'
+// import { initFlowbite,initModals } from 'flowbite'
 
 
 import './css/main.css'
@@ -21,11 +21,12 @@ import router from './router'
 
 // Init Pinia
 const pinia = createPinia()
-const flowbite = initFlowbite()
-const modals = initModals()
+// const flowbite = initFlowbite()
+// const modals = initModals()
 
 // Create Vue app
-createApp(App).use(router).use(pinia).use(Notifications).use(flowbite).use(modals).mount('#app')
+// createApp(App).use(router).use(pinia).use(Notifications).use(flowbite).use(modals).mount('#app')
+createApp(App).use(router).use(pinia).use(Notifications).mount('#app')
 
 // Init main store
 // const mainStore = useMainStore(pinia)

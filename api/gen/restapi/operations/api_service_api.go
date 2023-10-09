@@ -49,6 +49,9 @@ func NewAPIServiceAPI(spec *loads.Document) *APIServiceAPI {
 		UserAuthHandler: user.AuthHandlerFunc(func(params user.AuthParams) middleware.Responder {
 			return middleware.NotImplemented("operation user.Auth has not yet been implemented")
 		}),
+		SystemClusterHandler: system.ClusterHandlerFunc(func(params system.ClusterParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation system.Cluster has not yet been implemented")
+		}),
 		SystemDiscordServerHandler: system.DiscordServerHandlerFunc(func(params system.DiscordServerParams) middleware.Responder {
 			return middleware.NotImplemented("operation system.DiscordServer has not yet been implemented")
 		}),
@@ -119,6 +122,8 @@ type APIServiceAPI struct {
 
 	// UserAuthHandler sets the operation handler for the auth operation
 	UserAuthHandler user.AuthHandler
+	// SystemClusterHandler sets the operation handler for the cluster operation
+	SystemClusterHandler system.ClusterHandler
 	// SystemDiscordServerHandler sets the operation handler for the discord server operation
 	SystemDiscordServerHandler system.DiscordServerHandler
 	// UserLoginHandler sets the operation handler for the login operation
@@ -214,6 +219,9 @@ func (o *APIServiceAPI) Validate() error {
 
 	if o.UserAuthHandler == nil {
 		unregistered = append(unregistered, "user.AuthHandler")
+	}
+	if o.SystemClusterHandler == nil {
+		unregistered = append(unregistered, "system.ClusterHandler")
 	}
 	if o.SystemDiscordServerHandler == nil {
 		unregistered = append(unregistered, "system.DiscordServerHandler")
@@ -334,6 +342,10 @@ func (o *APIServiceAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/auth"] = user.NewAuth(o.context, o.UserAuthHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/cluster"] = system.NewCluster(o.context, o.SystemClusterHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 19:27:29
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-02 21:02:04
+ * @LastEditTime: 2023-10-09 15:19:49
  * @Description: file content
  */
 package middleware
@@ -40,7 +40,12 @@ func ValidateJwt(bearerHeader string) (interface{}, error) {
 		if claims["exp"].(float64) < float64(time.Now().Unix()) {
 			return nil, errors.New("token expired")
 		}
-		return claims["id"].(string), nil
+		info := DbotUser.UserInfo{
+			Id:    claims["id"].(string),
+			Name:  claims["name"].(string),
+			Roles: claims["role"].(string),
+		}
+		return info, nil
 	}
 	return nil, errors.New("invalid token")
 }
