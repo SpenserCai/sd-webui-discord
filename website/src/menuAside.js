@@ -3,10 +3,11 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 18:23:40
+ * @LastEditTime: 2023-10-09 22:05:59
  * @Description: file content
  */
 import {
+  mdiAccountGroup,
   // mdiAccountCircle,
   // mdiMonitor,
   // mdiLock,
@@ -37,6 +38,14 @@ export default [
         label: 'Txt2img'
       }
     ]
+  },
+  {
+    isDivider: true
+  },
+  {
+    label: 'Community',
+    icon: mdiAccountGroup,
+    to: '/community'
   },
   {
     isDivider: true

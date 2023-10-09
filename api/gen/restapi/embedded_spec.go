@@ -91,6 +91,46 @@ func init() {
         }
       }
     },
+    "/community_history": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get Community History",
+        "tags": [
+          "user"
+        ],
+        "operationId": "community_history",
+        "parameters": [
+          {
+            "description": "Page Info",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "page_info": {
+                  "$ref": "#/definitions/PageInfoRequest"
+                },
+                "query": {
+                  "$ref": "#/definitions/HistoryQuery"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/HistoryList"
+            }
+          }
+        }
+      }
+    },
     "/discord_server": {
       "get": {
         "description": "Get Discord Server",
@@ -591,6 +631,46 @@ func init() {
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/ClusterInfo"
+            }
+          }
+        }
+      }
+    },
+    "/community_history": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Get Community History",
+        "tags": [
+          "user"
+        ],
+        "operationId": "community_history",
+        "parameters": [
+          {
+            "description": "Page Info",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "page_info": {
+                  "$ref": "#/definitions/PageInfoRequest"
+                },
+                "query": {
+                  "$ref": "#/definitions/HistoryQuery"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/HistoryList"
             }
           }
         }

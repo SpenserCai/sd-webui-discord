@@ -52,6 +52,9 @@ func NewAPIServiceAPI(spec *loads.Document) *APIServiceAPI {
 		SystemClusterHandler: system.ClusterHandlerFunc(func(params system.ClusterParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation system.Cluster has not yet been implemented")
 		}),
+		UserCommunityHistoryHandler: user.CommunityHistoryHandlerFunc(func(params user.CommunityHistoryParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation user.CommunityHistory has not yet been implemented")
+		}),
 		SystemDiscordServerHandler: system.DiscordServerHandlerFunc(func(params system.DiscordServerParams) middleware.Responder {
 			return middleware.NotImplemented("operation system.DiscordServer has not yet been implemented")
 		}),
@@ -124,6 +127,8 @@ type APIServiceAPI struct {
 	UserAuthHandler user.AuthHandler
 	// SystemClusterHandler sets the operation handler for the cluster operation
 	SystemClusterHandler system.ClusterHandler
+	// UserCommunityHistoryHandler sets the operation handler for the community history operation
+	UserCommunityHistoryHandler user.CommunityHistoryHandler
 	// SystemDiscordServerHandler sets the operation handler for the discord server operation
 	SystemDiscordServerHandler system.DiscordServerHandler
 	// UserLoginHandler sets the operation handler for the login operation
@@ -222,6 +227,9 @@ func (o *APIServiceAPI) Validate() error {
 	}
 	if o.SystemClusterHandler == nil {
 		unregistered = append(unregistered, "system.ClusterHandler")
+	}
+	if o.UserCommunityHistoryHandler == nil {
+		unregistered = append(unregistered, "user.CommunityHistoryHandler")
 	}
 	if o.SystemDiscordServerHandler == nil {
 		unregistered = append(unregistered, "system.DiscordServerHandler")
@@ -346,6 +354,10 @@ func (o *APIServiceAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/cluster"] = system.NewCluster(o.context, o.SystemClusterHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/community_history"] = user.NewCommunityHistory(o.context, o.UserCommunityHistoryHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

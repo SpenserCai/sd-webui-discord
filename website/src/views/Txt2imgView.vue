@@ -3,18 +3,19 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-08 10:50:58
+ * @LastEditTime: 2023-10-09 22:51:12
  * @Description: file content
 -->
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionMain from '@/components/SectionMain.vue'
-import { userhistory } from '@/api/account'
+import { userhistory,communityhistory } from '@/api/account'
 import CardBox from '@/components/CardBox.vue'
 import BaseIcon from '@/components/BaseIcon.vue'
 import { Pagination,Modal,Img,Avatar } from 'flowbite-vue'
 import { mdiDrawPen,mdiCancel,mdiCogOutline } from '@mdi/js'
+import { useRoute,useRouter } from 'vue-router'
 // import CardBox from '@/components/CardBox.vue'
 // import SectionTitleLine from '@/components/SectionTitleLine.vue'
 // import { useMainStore } from '@/stores/main'
@@ -22,6 +23,8 @@ import { mdiDrawPen,mdiCancel,mdiCogOutline } from '@mdi/js'
 
 // const mainStore = useMainStore()
 // 获取用户历史记录方法，参数为页数和每页数量
+const route = useRoute()
+const router = useRouter()
 const isShowImageInfoModal = ref(false)
 const currentImageInfo = ref({})
 const show = ref(false)
@@ -31,7 +34,18 @@ const currentPage = ref(1)
 const gridRowCount = ref(3)
 // 当前list
 const currentList = ref([])
-const getListFunc = (page, pageSize) => {
+
+const isUserHistory = () => {
+  let history_type = route.path
+  console.log(history_type)
+  if (history_type == "/community") {
+    return false
+  } else {
+    return true
+  }
+}
+
+const getUserHistory = (page, pageSize) => {
   userhistory({
     query: {
         command: "txt2img"
@@ -46,6 +60,31 @@ const getListFunc = (page, pageSize) => {
     currentList.value = res.data.history
     show.value = true
   })
+}
+
+const getCommunityHistory = (page, pageSize) => {
+  communityhistory({
+    query: {
+        command: "txt2img"
+    },
+    page_info: {
+        page: page,
+        page_size: pageSize // 12
+    }
+  }).then(res => {
+    total.value = res.data.page_info.total
+    currentPage.value = res.data.page_info.page
+    currentList.value = res.data.history
+    show.value = true
+  })
+}
+
+const getListFunc = (page, pageSize) => {
+  if (isUserHistory()) {
+    getUserHistory(page, pageSize)
+  } else {
+    getCommunityHistory(page, pageSize)
+  }
 }
 
 const onPageChanged = (page) => {
@@ -111,12 +150,18 @@ const closeImageInfo = () => {
   isShowImageInfoModal.value = false
 }
 
-getListFunc(1, 4 * gridRowCount.value)
+onMounted(() => {
+  getListFunc(1, 4 * gridRowCount.value)
+})
+
+watch(() => router.currentRoute.value.path,() => {
+  getListFunc(1, 4 * gridRowCount.value)
+})
 </script>
 
 <template>
   <LayoutAuthenticated>
-    <SectionMain>
+    <SectionMain :key="route.fullPath">
         <Modal v-if="isShowImageInfoModal" id="image_detail" size="5xl" @close="closeImageInfo">
           <template #body>
             <div class="flex justify-center">

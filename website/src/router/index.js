@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 16:48:32
+ * @LastEditTime: 2023-10-09 22:19:37
  * @Description: file content
  */
 import { createRouter,createWebHashHistory } from 'vue-router'
@@ -33,6 +33,14 @@ const routes = [
     },
     path: '/txt2img',
     name: 'txt2img',
+    component: () => import('@/views/Txt2imgView.vue')
+  },
+  {
+    meta: {
+      title: 'Community'
+    },
+    path: '/community',
+    name: 'community',
     component: () => import('@/views/Txt2imgView.vue')
   },
   {

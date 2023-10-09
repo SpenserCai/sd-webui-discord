@@ -110,6 +110,29 @@ paths:
           description: 'Success'
           schema:
             $ref: '#/definitions/HistoryList'
+  /community_history:
+    post:
+      description: 'Get Community History'
+      operationId: 'community_history'
+      tags: [user]
+      security:
+        - Bearer: []
+      parameters:
+        - name: body
+          in: body
+          description: 'Page Info'
+          required: true
+          schema:
+            properties:
+              query:
+                $ref: '#/definitions/HistoryQuery'
+              page_info:
+                $ref: '#/definitions/PageInfoRequest'
+      responses:
+        200:
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/HistoryList'
   /discord_server:
     get:
       description: 'Get Discord Server'
