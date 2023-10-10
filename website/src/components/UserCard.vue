@@ -18,13 +18,13 @@ const userName = computed(() => mainStore.userName)
       <UserAvatarCurrentUser class="lg:mx-12" />
       <div class="space-y-3 text-center md:text-left lg:mx-12">
         
-        <h1 class="text-2xl">
+        <h1 class="text-3xl">
           <b>{{ userName }}</b>
         </h1>
+        <p class="text-slate-300">Created {{ mainStore.userImageCount }} Images</p>
         <p class="text-gray-500">
           <span class="text-gray-400">Joined on</span> {{ mainStore.created }}
-        </p>
-        
+        </p>        
       </div>
     </BaseLevel>
   </CardBox>

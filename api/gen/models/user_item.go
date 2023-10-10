@@ -29,6 +29,9 @@ type UserItem struct {
 	// id
 	ID string `json:"id,omitempty"`
 
+	// image count
+	ImageCount int32 `json:"image_count"`
+
 	// roles
 	Roles string `json:"roles,omitempty"`
 

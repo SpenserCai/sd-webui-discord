@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 21:45:40
+ * @LastEditTime: 2023-10-10 10:26:07
  * @Description: file content
  */
 package user
@@ -86,6 +86,15 @@ func (ucs *UserCenterService) GetUserInfo(id string) (*UserInfo, error) {
 		StableConfig: stableConfig,
 		Created:      userInfo.Created,
 	}, nil
+}
+
+func (ucs *UserCenterService) GetUserImageTotal(id string) (int64, error) {
+	var count int64
+	err := ucs.Db.Db.Model(&db_backend.History{}).Where("user_id = ? AND deleted = ?", id, false).Count(&count).Error
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func (ucs *UserCenterService) GetUserInfoList(ids []string) ([]*UserInfo, error) {

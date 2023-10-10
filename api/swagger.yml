@@ -187,6 +187,10 @@ definitions:
         type: string
       created:
         type: string
+      image_count:
+        type: integer
+        format: int32
+        x-omitempty: false
   PageInfoRequest:
     type: object
     properties: 

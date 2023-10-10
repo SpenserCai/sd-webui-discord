@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 15:57:07
+ * @LastEditTime: 2023-10-10 10:30:39
  * @Description: file content
  */
 import { defineStore } from 'pinia'
@@ -19,6 +19,8 @@ export const useMainStore = defineStore('main', () => {
   const stableConfig = ref({})
 
   const userAvatar = ref('')
+
+  const userImageCount = ref(0)
 
   const discordUrl = ref('')
 
@@ -39,6 +41,7 @@ export const useMainStore = defineStore('main', () => {
     stableConfig.value = res.data.user.stable_config
     // 逗号分割roles
     userRoles.value = res.data.user.roles.split(",")
+    userImageCount.value = res.data.user.image_count
   })
 
   discordserver().then((res) => {
@@ -92,6 +95,7 @@ export const useMainStore = defineStore('main', () => {
     history,
     discordUrl,
     userRoles,
+    userImageCount,
     setUser,
     fetchSampleClients,
     fetchSampleHistory

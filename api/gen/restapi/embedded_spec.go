@@ -500,6 +500,11 @@ func init() {
         "id": {
           "type": "string"
         },
+        "image_count": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
         "roles": {
           "type": "string"
         },
@@ -1089,6 +1094,11 @@ func init() {
         },
         "id": {
           "type": "string"
+        },
+        "image_count": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
         },
         "roles": {
           "type": "string"
