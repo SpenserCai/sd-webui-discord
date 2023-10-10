@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-10 09:52:21
+ * @LastEditTime: 2023-10-10 12:51:34
  * @Description: file content
 -->
 <script setup>
@@ -14,7 +14,7 @@ import { userhistory,communityhistory } from '@/api/account'
 import CardBox from '@/components/CardBox.vue'
 import BaseIcon from '@/components/BaseIcon.vue'
 import { Pagination,Modal,Img,Avatar } from 'flowbite-vue'
-import { mdiDrawPen,mdiCancel,mdiCogOutline,mdiImageArea,mdiAccountGroup } from '@mdi/js'
+import { mdiDrawPen,mdiCancel,mdiCogOutline,mdiImageArea,mdiImage,mdiAccountGroup } from '@mdi/js'
 import { useRoute,useRouter } from 'vue-router'
 // import CardBox from '@/components/CardBox.vue'
 import SectionTitleLine from '@/components/SectionTitleLine.vue'
@@ -173,16 +173,24 @@ watch(() => router.currentRoute.value.path,() => {
     <SectionMain :key="route.fullPath">
       <Modal v-if="isShowImageInfoModal" id="image_detail" size="5xl" @close="closeImageInfo">
         <template #body>
-          <div class="flex justify-center">
-            <Img size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].src"/>
-          </div>
-          <div class="content relative mx-auto w-full max-w-5xl rounded-2xl p-4 pt-5 text-white md:p-8 translate-y-0 opacity-100">
-            <div class="flex w-full flex-wrap-reverse justify-between">
-              <div class="-ml-2 flex items-center justify-between max-md:w-full md:justify-start">
-                <Avatar status="online" rounded :img="currentImageInfo.user_avatar"></Avatar>
-                <p :title="currentImageInfo.user_name" class="ml-4 text-lg font-medium active:text-blue-100 group-hover:underline underline-offset-2 active:underline-offset-4 break-all line-clamp-1 md:text-xl">{{ currentImageInfo.user_name }}</p>
+          <div class="content relative mx-auto w-full max-w-5xl rounded-2xl p-4 pt-1 text-white md:p-8 md:pt-1 translate-y-0 opacity-100">
+            <CardBox>
+              <span class="flex items-center justify-start gap-1 text-xs font-bold uppercase leading-[0] tracking-wide text-slate-400 md:text-sm">
+                <BaseIcon :path="mdiImage" class="text-indigo-500" size="16"/>
+                Image
+              </span>
+              <div class="h-2"></div>
+              <div class="flex justify-center">
+                <Img size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].src"/>
               </div>
-            </div>
+              <div class="h-2"></div>
+              <div class="flex w-full flex-wrap-reverse justify-between">
+                <div class="-ml-2 flex items-center justify-between max-md:w-full md:justify-start">
+                  <Avatar status="online" rounded :img="currentImageInfo.user_avatar"></Avatar>
+                  <p :title="currentImageInfo.user_name" class="ml-4 text-lg font-medium active:text-blue-100 group-hover:underline underline-offset-2 active:underline-offset-4 break-all line-clamp-1 md:text-xl">{{ currentImageInfo.user_name }}</p>
+                </div>
+              </div>
+            </CardBox>
             <div class="h-4"></div>
             <div class="flex-col items-start grid grid-cols-2 gap-2">
               <CardBox class="flex flex-col items-start h-full">
@@ -191,7 +199,7 @@ watch(() => router.currentRoute.value.path,() => {
                   Prompt
                 </span>
                 <div class="h-2"></div>
-                <div class="max-h-48 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
+                <div class="max-h-32 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
                 <p class="text-base font-medium text-gray-300 break-all">{{ currentImageInfo.options.prompt }}</p>
                 </div>
               </CardBox>
@@ -201,7 +209,7 @@ watch(() => router.currentRoute.value.path,() => {
                   Negative Prompt
                 </span>
                 <div class="h-2"></div>
-                <div class="max-h-48 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
+                <div class="max-h-32 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
                 <p class="text-base font-medium text-gray-300 break-all">{{ currentImageInfo.options.negative_prompt }}</p>
                 </div>
               </CardBox>
@@ -242,6 +250,10 @@ watch(() => router.currentRoute.value.path,() => {
                   <div title="Seed" class="flex flex-col items-start justify-start leading-tight">
                     <h5 class="text-xs font-medium tracking-wider text-slate-500">Seed</h5>
                     <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.seed }}</p>
+                  </div>
+                  <div title="Created" class="flex flex-col items-start justify-start leading-tight">
+                    <h5 class="text-xs font-medium tracking-wider text-slate-500">Created</h5>
+                    <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.created }}</p>
                   </div>
                 </div>
               </CardBox>
