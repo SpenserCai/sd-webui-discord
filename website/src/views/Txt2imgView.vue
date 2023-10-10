@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-10 12:51:34
+ * @LastEditTime: 2023-10-10 22:20:52
  * @Description: file content
 -->
 <script setup>
@@ -13,8 +13,8 @@ import SectionMain from '@/components/SectionMain.vue'
 import { userhistory,communityhistory } from '@/api/account'
 import CardBox from '@/components/CardBox.vue'
 import BaseIcon from '@/components/BaseIcon.vue'
-import { Pagination,Modal,Img,Avatar } from 'flowbite-vue'
-import { mdiDrawPen,mdiCancel,mdiCogOutline,mdiImageArea,mdiImage,mdiAccountGroup } from '@mdi/js'
+import { Pagination,Modal,Img,Avatar,Button,Spinner } from 'flowbite-vue'
+import { mdiDrawPen,mdiCancel,mdiCogOutline,mdiImageArea,mdiImage,mdiAccountGroup, mdiRefresh } from '@mdi/js'
 import { useRoute,useRouter } from 'vue-router'
 // import CardBox from '@/components/CardBox.vue'
 import SectionTitleLine from '@/components/SectionTitleLine.vue'
@@ -24,6 +24,7 @@ import SectionTitleLine from '@/components/SectionTitleLine.vue'
 // const mainStore = useMainStore()
 // 获取用户历史记录方法，参数为页数和每页数量
 const route = useRoute()
+const isLoading = ref(false)
 const router = useRouter()
 const isShowImageInfoModal = ref(false)
 const currentImageInfo = ref({})
@@ -46,6 +47,7 @@ const isUserHistory = () => {
 }
 
 const getUserHistory = (page, pageSize) => {
+  isLoading.value = true
   userhistory({
     query: {
         command: "txt2img"
@@ -59,10 +61,13 @@ const getUserHistory = (page, pageSize) => {
     currentPage.value = res.data.page_info.page
     currentList.value = res.data.history
     show.value = true
+  }).finally(() => {
+    isLoading.value = false
   })
 }
 
 const getCommunityHistory = (page, pageSize) => {
+  isLoading.value = true
   communityhistory({
     query: {
         command: "txt2img"
@@ -76,6 +81,8 @@ const getCommunityHistory = (page, pageSize) => {
     currentPage.value = res.data.page_info.page
     currentList.value = res.data.history
     show.value = true
+  }).finally(() => {
+    isLoading.value = false
   })
 }
 
@@ -261,8 +268,19 @@ watch(() => router.currentRoute.value.path,() => {
           </div>
         </template>
       </Modal>
-      <SectionTitleLine v-if="isUserHistory()" main title="Gallery" :icon="mdiImageArea"/>
-      <SectionTitleLine v-else main title="Community" :icon="mdiAccountGroup"/>
+      <SectionTitleLine v-if="isUserHistory()" main title="Gallery" :icon="mdiImageArea">
+        <Button size="xs" gradient="purple-blue" outline square @click="getListFunc(1, 4 * gridRowCount)">
+          <spinner v-show="isLoading" size="6" />
+          <BaseIcon :path="mdiRefresh" />
+        </Button>
+      </SectionTitleLine>
+      <SectionTitleLine v-else main title="Community" :icon="mdiAccountGroup">
+        <Button size="xs" gradient="purple-blue" outline square @click="getListFunc(1, 4 * gridRowCount)">
+          <spinner v-show="isLoading" size="6" />
+          <BaseIcon :path="mdiRefresh" />
+        </Button>
+      </SectionTitleLine>
+      
       <div v-if="show" id="t2i_list" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4">

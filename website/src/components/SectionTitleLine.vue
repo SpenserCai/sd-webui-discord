@@ -1,5 +1,5 @@
 <script setup>
-
+// import { useSlots } from 'vue'
 import BaseIcon from '@/components/BaseIcon.vue'
 import IconRounded from '@/components/IconRounded.vue'
 
@@ -26,5 +26,6 @@ defineProps({
         {{ title }}
       </h1>
     </div>
+    <slot />
   </section>
 </template>
