@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 22:51:12
+ * @LastEditTime: 2023-10-10 09:52:21
  * @Description: file content
 -->
 <script setup>
@@ -14,10 +14,10 @@ import { userhistory,communityhistory } from '@/api/account'
 import CardBox from '@/components/CardBox.vue'
 import BaseIcon from '@/components/BaseIcon.vue'
 import { Pagination,Modal,Img,Avatar } from 'flowbite-vue'
-import { mdiDrawPen,mdiCancel,mdiCogOutline } from '@mdi/js'
+import { mdiDrawPen,mdiCancel,mdiCogOutline,mdiImageArea,mdiAccountGroup } from '@mdi/js'
 import { useRoute,useRouter } from 'vue-router'
 // import CardBox from '@/components/CardBox.vue'
-// import SectionTitleLine from '@/components/SectionTitleLine.vue'
+import SectionTitleLine from '@/components/SectionTitleLine.vue'
 // import { useMainStore } from '@/stores/main'
 // import { mdiApplicationSettings } from '@mdi/js'
 
@@ -134,6 +134,15 @@ const showImageInfo = (index) => {
   }, 100)
 }
 
+const getTotalPage = (total) => {
+  // 如果total是12的倍数，返回total/12，否则返回total/12取整+1
+  if (total % 12 == 0) {
+    return total / 12
+  } else {
+    return Math.floor(total / 12) + 1
+  }
+}
+
 const getImagesList = () => {
   let images = currentImageInfo.value.images
   let imagesList = []
@@ -162,84 +171,86 @@ watch(() => router.currentRoute.value.path,() => {
 <template>
   <LayoutAuthenticated>
     <SectionMain :key="route.fullPath">
-        <Modal v-if="isShowImageInfoModal" id="image_detail" size="5xl" @close="closeImageInfo">
-          <template #body>
-            <div class="flex justify-center">
-              <Img size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].src"/>
+      <Modal v-if="isShowImageInfoModal" id="image_detail" size="5xl" @close="closeImageInfo">
+        <template #body>
+          <div class="flex justify-center">
+            <Img size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].src"/>
+          </div>
+          <div class="content relative mx-auto w-full max-w-5xl rounded-2xl p-4 pt-5 text-white md:p-8 translate-y-0 opacity-100">
+            <div class="flex w-full flex-wrap-reverse justify-between">
+              <div class="-ml-2 flex items-center justify-between max-md:w-full md:justify-start">
+                <Avatar status="online" rounded :img="currentImageInfo.user_avatar"></Avatar>
+                <p :title="currentImageInfo.user_name" class="ml-4 text-lg font-medium active:text-blue-100 group-hover:underline underline-offset-2 active:underline-offset-4 break-all line-clamp-1 md:text-xl">{{ currentImageInfo.user_name }}</p>
+              </div>
             </div>
-            <div class="content relative mx-auto w-full max-w-5xl rounded-2xl p-4 pt-5 text-white md:p-8 translate-y-0 opacity-100">
-              <div class="flex w-full flex-wrap-reverse justify-between">
-                <div class="-ml-2 flex items-center justify-between max-md:w-full md:justify-start">
-                  <Avatar status="online" rounded :img="currentImageInfo.user_avatar"></Avatar>
-                  <p :title="currentImageInfo.user_name" class="ml-4 text-lg font-medium active:text-blue-100 group-hover:underline underline-offset-2 active:underline-offset-4 break-all line-clamp-1 md:text-xl">{{ currentImageInfo.user_name }}</p>
+            <div class="h-4"></div>
+            <div class="flex-col items-start grid grid-cols-2 gap-2">
+              <CardBox class="flex flex-col items-start h-full">
+                <span class="flex items-center justify-start gap-1 text-xs font-bold uppercase leading-[0] tracking-wide text-slate-400 md:text-sm">
+                  <BaseIcon :path="mdiDrawPen" class="text-emerald-600" size="16"/>
+                  Prompt
+                </span>
+                <div class="h-2"></div>
+                <div class="max-h-48 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
+                <p class="text-base font-medium text-gray-300 break-all">{{ currentImageInfo.options.prompt }}</p>
                 </div>
-              </div>
-              <div class="h-4"></div>
-              <div class="flex-col items-start grid grid-cols-2 gap-2">
-                <CardBox class="flex flex-col items-start h-full">
-                  <span class="flex items-center justify-start gap-1 text-xs font-bold uppercase leading-[0] tracking-wide text-slate-400 md:text-sm">
-                    <BaseIcon :path="mdiDrawPen" class="text-emerald-600" size="16"/>
-                    Prompt
-                  </span>
-                  <div class="h-2"></div>
-                  <div class="max-h-48 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
-                  <p class="text-base font-medium text-gray-300 break-all">{{ currentImageInfo.options.prompt }}</p>
-                  </div>
-                </CardBox>
-                <CardBox class="flex flex-col items-start h-full">
-                  <span class="flex items-center justify-start gap-1 text-xs font-bold uppercase leading-[0] tracking-wide text-slate-400 md:text-sm">
-                    <BaseIcon :path="mdiCancel" class="text-red-600" size="16"/>
-                    Negative Prompt
-                  </span>
-                  <div class="h-2"></div>
-                  <div class="max-h-48 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
-                  <p class="text-base font-medium text-gray-300 break-all">{{ currentImageInfo.options.negative_prompt }}</p>
-                  </div>
-                </CardBox>
-              </div>
-              <div class="h-4"></div>
-              <div class="flex-col items-start">
-                <CardBox>
-                  <span class="flex items-center justify-start gap-1 text-xs font-bold uppercase leading-[0] tracking-wide text-slate-400 md:text-sm">
-                    <BaseIcon :path="mdiCogOutline" class="text-indigo-500" size="16"/>
-                    Info
-                  </span>
-                  <div class="h-2"></div>
-                  <div class="grid grid-cols-3 gap-3">
-                    <div title="Model" class="flex flex-col items-start justify-start leading-tight">
-                      <h5 class="text-xs font-medium tracking-wider text-slate-500">Model</h5>
-                      <p class="whitespace-nowrap max-md:text-sm">{{ getCurrentImageModel() }}</p>
-                    </div>
-                    <div title="Vae" class="flex flex-col items-start justify-start leading-tight">
-                      <h5 class="text-xs font-medium tracking-wider text-slate-500">Vae</h5>
-                      <p class="whitespace-nowrap max-md:text-sm">{{ getCurrentImageVae() }}</p>
-                    </div>
-                    <div title="Sampler" class="flex flex-col items-start justify-start leading-tight">
-                      <h5 class="text-xs font-medium tracking-wider text-slate-500">Sampler</h5>
-                      <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.sampler_index }}</p>
-                    </div>
-                    <div title="Size" class="flex flex-col items-start justify-start leading-tight">
-                      <h5 class="text-xs font-medium tracking-wider text-slate-500">Size</h5>
-                      <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.height }}<span class="mx-1 opacity-50">x</span>{{ currentImageInfo.options.width }}</p>
-                    </div>
-                    <div title="Steps" class="flex flex-col items-start justify-start leading-tight">
-                      <h5 class="text-xs font-medium tracking-wider text-slate-500">Steps</h5>
-                      <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.steps }}</p>
-                    </div>
-                    <div title="Cfg Scale" class="flex flex-col items-start justify-start leading-tight">
-                      <h5 class="text-xs font-medium tracking-wider text-slate-500">Cfg Scale</h5>
-                      <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.cfg_scale }}</p>
-                    </div>
-                    <div title="Seed" class="flex flex-col items-start justify-start leading-tight">
-                      <h5 class="text-xs font-medium tracking-wider text-slate-500">Seed</h5>
-                      <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.seed }}</p>
-                    </div>
-                  </div>
-                </CardBox>
-              </div>
+              </CardBox>
+              <CardBox class="flex flex-col items-start h-full">
+                <span class="flex items-center justify-start gap-1 text-xs font-bold uppercase leading-[0] tracking-wide text-slate-400 md:text-sm">
+                  <BaseIcon :path="mdiCancel" class="text-red-600" size="16"/>
+                  Negative Prompt
+                </span>
+                <div class="h-2"></div>
+                <div class="max-h-48 overflow-y-auto aside-scrollbars dark:aside-scrollbars-[slate]">
+                <p class="text-base font-medium text-gray-300 break-all">{{ currentImageInfo.options.negative_prompt }}</p>
+                </div>
+              </CardBox>
             </div>
-          </template>
-        </Modal>
+            <div class="h-4"></div>
+            <div class="flex-col items-start">
+              <CardBox>
+                <span class="flex items-center justify-start gap-1 text-xs font-bold uppercase leading-[0] tracking-wide text-slate-400 md:text-sm">
+                  <BaseIcon :path="mdiCogOutline" class="text-indigo-500" size="16"/>
+                  Info
+                </span>
+                <div class="h-2"></div>
+                <div class="grid grid-cols-3 gap-3">
+                  <div title="Model" class="flex flex-col items-start justify-start leading-tight">
+                    <h5 class="text-xs font-medium tracking-wider text-slate-500">Model</h5>
+                    <p class="whitespace-nowrap max-md:text-sm">{{ getCurrentImageModel() }}</p>
+                  </div>
+                  <div title="Vae" class="flex flex-col items-start justify-start leading-tight">
+                    <h5 class="text-xs font-medium tracking-wider text-slate-500">Vae</h5>
+                    <p class="whitespace-nowrap max-md:text-sm">{{ getCurrentImageVae() }}</p>
+                  </div>
+                  <div title="Sampler" class="flex flex-col items-start justify-start leading-tight">
+                    <h5 class="text-xs font-medium tracking-wider text-slate-500">Sampler</h5>
+                    <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.sampler_index }}</p>
+                  </div>
+                  <div title="Size" class="flex flex-col items-start justify-start leading-tight">
+                    <h5 class="text-xs font-medium tracking-wider text-slate-500">Size</h5>
+                    <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.height }}<span class="mx-1 opacity-50">x</span>{{ currentImageInfo.options.width }}</p>
+                  </div>
+                  <div title="Steps" class="flex flex-col items-start justify-start leading-tight">
+                    <h5 class="text-xs font-medium tracking-wider text-slate-500">Steps</h5>
+                    <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.steps }}</p>
+                  </div>
+                  <div title="Cfg Scale" class="flex flex-col items-start justify-start leading-tight">
+                    <h5 class="text-xs font-medium tracking-wider text-slate-500">Cfg Scale</h5>
+                    <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.cfg_scale }}</p>
+                  </div>
+                  <div title="Seed" class="flex flex-col items-start justify-start leading-tight">
+                    <h5 class="text-xs font-medium tracking-wider text-slate-500">Seed</h5>
+                    <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.options.seed }}</p>
+                  </div>
+                </div>
+              </CardBox>
+            </div>
+          </div>
+        </template>
+      </Modal>
+      <SectionTitleLine v-if="isUserHistory()" main title="Gallery" :icon="mdiImageArea"/>
+      <SectionTitleLine v-else main title="Community" :icon="mdiAccountGroup"/>
       <div v-if="show" id="t2i_list" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
@@ -249,7 +260,7 @@ watch(() => router.currentRoute.value.path,() => {
         </div>
       </div>
       <div class="lg:text-center my-3">
-          <Pagination v-model="currentPage" :total-pages="total/12 + 1" :slice-length="4" @page-changed="onPageChanged"></Pagination>
+          <Pagination v-model="currentPage" :total-pages="getTotalPage(total)" :slice-length="4" @page-changed="onPageChanged"></Pagination>
       </div>
     </SectionMain>
   </LayoutAuthenticated>
