@@ -3,7 +3,7 @@
  * @Date: 2023-10-11 21:36:11
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-12 00:20:57
+ * @LastEditTime: 2023-10-12 01:07:00
  * @Description: file content
 -->
 <script setup>
@@ -11,9 +11,9 @@ import SectionMain from '@/components/SectionMain.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLine from '@/components/SectionTitleLine.vue'
 
-import { mdiAccountMultiple } from '@mdi/js';
+import { mdiAccount, mdiAccountMultiple } from '@mdi/js';
 import { onMounted,ref } from 'vue'
-import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell,Avatar,Pagination,Toggle } from 'flowbite-vue'
+import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell,Avatar,Pagination,Toggle,Badge } from 'flowbite-vue'
 import { userlist } from '@/api/system'
 
 const total = ref(0)
@@ -28,6 +28,16 @@ const getTotalPage = (total) => {
     return total / pageSize
   } else {
     return Math.floor(total / pageSize) + 1
+  }
+}
+
+const getRoleBadgeColor = (role) => {
+  if (role == 'admin') {
+    return 'yellow'
+  } else if (role == 'user') {
+    return 'green'
+  } else {
+    return 'blue'
   }
 }
 
@@ -75,13 +85,24 @@ onMounted(() => {
               <table-cell>
                 <div class="-ml-2 flex items-center justify-between max-md:w-full md:justify-start">
                   <Avatar size="xs" status="online" rounded :img="item.avatar"></Avatar>
-                  <p :title="item.name" class="ml-2 text-sm font-medium active:text-blue-100 group-hover:underline underline-offset-2 active:underline-offset-4 break-all line-clamp-1 md:text-sm">{{ item.username }}</p>
+                  <p :title="item.name" class="ml-2 text-sm font-medium active:text-blue-100 break-all md:text-sm">{{ item.username }}</p>
                 </div>
               </table-cell>
               <table-cell>
                 <Toggle v-model="item.enable" :disabled="true" />
               </table-cell>
-              <table-cell>{{ item.roles }}</table-cell>
+              <table-cell>
+                <div class="flex uppercase">
+                  <Badge v-for="(role,idx) in item.roles.split(',')" :key="idx" :type="getRoleBadgeColor(role)">
+                    <template #icon>
+                        <svg aria-hidden="true" class="mr-1 w-3 h-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" :d="mdiAccount" clip-rule="evenodd"></path>
+                        </svg>
+                    </template>
+                    {{ role }}
+                  </Badge>
+                </div>
+              </table-cell>
               <table-cell>{{ item.created }}</table-cell>
             </table-row>
           </table-body>
