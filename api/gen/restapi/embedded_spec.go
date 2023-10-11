@@ -547,11 +547,11 @@ func init() {
     "UserQuery": {
       "type": "object",
       "properties": {
-        "enable": {
-          "type": "boolean"
-        },
         "id": {
           "type": "string"
+        },
+        "only_enable": {
+          "type": "boolean"
         },
         "username": {
           "type": "string"
@@ -1157,11 +1157,11 @@ func init() {
     "UserQuery": {
       "type": "object",
       "properties": {
-        "enable": {
-          "type": "boolean"
-        },
         "id": {
           "type": "string"
+        },
+        "only_enable": {
+          "type": "boolean"
         },
         "username": {
           "type": "string"

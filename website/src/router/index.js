@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 22:19:37
+ * @LastEditTime: 2023-10-11 21:42:40
  * @Description: file content
  */
 import { createRouter,createWebHashHistory } from 'vue-router'
@@ -50,6 +50,14 @@ const routes = [
     path: '/cluster',
     name: 'cluster',
     component: () => import('@/views/ClusterView.vue')
+  },
+  {
+    meta: {
+      title: 'Users'
+    },
+    path: '/users',
+    name: 'users',
+    component: () => import('@/views/UsersView.vue')
   },
   {
     // Document title tag

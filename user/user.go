@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-10 10:26:07
+ * @LastEditTime: 2023-10-11 21:55:05
  * @Description: file content
  */
 package user
@@ -119,10 +119,70 @@ func (ucs *UserCenterService) GetUserInfoList(ids []string) ([]*UserInfo, error)
 			Id:           v.ID,
 			Roles:        v.Roles,
 			StableConfig: stableConfig,
+			Created:      v.Created,
 		})
 
 	}
 	return userInfos, nil
+}
+
+func (ucs *UserCenterService) SearchUserInfoList(page int, pageSize int, query map[string]interface{}) ([]*UserInfo, int, error) {
+	// 判断是否有username字段，如果有则按照username进行模糊查询
+	queryString := ""
+	queryValues := []interface{}{}
+	if query["username"] != nil {
+		queryString += "name LIKE ? AND "
+		queryValues = append(queryValues, "%"+query["username"].(string)+"%")
+	}
+	if query["id"] != nil {
+		queryString += "id = ? AND "
+		queryValues = append(queryValues, query["id"].(string))
+	}
+	if query["enable"] != nil {
+		queryString += "enable = ? AND "
+		queryValues = append(queryValues, query["enable"].(bool))
+	}
+	// 去掉最后一个AND
+	queryString = func() string {
+		if queryString == "" {
+			return ""
+		} else {
+			return queryString[:len(queryString)-4]
+		}
+	}()
+	dbUserInfos := []*db_backend.UserInfo{}
+	err := ucs.Db.Db.Where(queryString, queryValues...).Offset((page - 1) * pageSize).Limit(pageSize).Find(&dbUserInfos).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	// 获取总数
+	var count int64
+	err = ucs.Db.Db.Model(&db_backend.UserInfo{}).Where(queryString, queryValues...).Count(&count).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	userInfos := []*UserInfo{}
+	for _, v := range dbUserInfos {
+		stableConfig := StableConfig{}
+		if v.StableConfig != "{}" {
+			err := json.NewDecoder(strings.NewReader(v.StableConfig)).Decode(&stableConfig)
+			if err != nil {
+				return nil, 0, err
+			}
+		}
+		userInfos = append(userInfos, &UserInfo{
+			Enable:       v.Enable,
+			Avatar:       v.Avatar,
+			Name:         v.Name,
+			Id:           v.ID,
+			Roles:        v.Roles,
+			StableConfig: stableConfig,
+			Created:      v.Created,
+		})
+
+	}
+	return userInfos, int(count), nil
+
 }
 
 func (ucs *UserCenterService) CheckUserPermission(id string, cmd string) bool {

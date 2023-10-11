@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 22:05:59
+ * @LastEditTime: 2023-10-11 21:39:19
  * @Description: file content
  */
 import {
@@ -60,7 +60,7 @@ export default [
       },
       {
         label: 'Users',
-        // to: '/users'
+        to: '/users'
       }
     ],
     roles: ['admin']

@@ -17,11 +17,11 @@ import (
 // swagger:model UserQuery
 type UserQuery struct {
 
-	// enable
-	Enable bool `json:"enable,omitempty"`
-
 	// id
 	ID string `json:"id,omitempty"`
+
+	// only enable
+	OnlyEnable bool `json:"only_enable,omitempty"`
 
 	// username
 	Username string `json:"username,omitempty"`

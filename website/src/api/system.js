@@ -3,7 +3,7 @@
  * @Date: 2023-10-09 11:05:23
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 17:52:42
+ * @LastEditTime: 2023-10-11 21:35:36
  * @Description: file content
  */
 import request from "@/utils/request";
@@ -19,5 +19,13 @@ export function cluster() {
   return request({
     url: "/cluster",
     method: "get"
+  });
+}
+
+export function userlist(body) {
+  return request({
+    url: "/user_list",
+    method: "post",
+    data: body
   });
 }

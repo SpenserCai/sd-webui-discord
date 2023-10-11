@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-11 12:23:33
+ * @LastEditTime: 2023-10-11 19:34:49
  * @Description: file content
 -->
 <script setup>
@@ -207,6 +207,16 @@ const copyCommand = () => {
         let subValue = value[subKey]
         if (subKey == "sd_model_checkpoint") {
           subKey = "checkpoint"
+        }
+        if (subKey == "controlnet") {
+          subKey = "controlnet_args"
+          // 把数组转换为字符串逗号连接
+          let tmpValue = subValue.args
+          let returnValue = ""
+          for (let i = 0; i < tmpValue.length; i++) {
+            returnValue += JSON.stringify(tmpValue[i]) + ","
+          }
+          subValue = returnValue.substring(0, returnValue.length - 1)
         }
         fullCmd += subKey + ": " + subValue + " "
       }

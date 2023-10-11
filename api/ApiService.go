@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 15:37:14
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 21:25:32
+ * @LastEditTime: 2023-10-11 21:52:07
  * @Description: file content
  */
 package api
@@ -40,6 +40,7 @@ func BeforeRun() {
 	business.BusinessBase{}.SetOpenDiscordServerHandler()
 	business.BusinessBase{}.SetClusterHandler()
 	business.BusinessBase{}.SetCommunityHistoryHandler()
+	business.BusinessBase{}.SetUserListHandler()
 
 }
 

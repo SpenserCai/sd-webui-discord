@@ -272,8 +272,9 @@ definitions:
         type: string
       username:
         type: string
-      enable:
+      only_enable:
         type: boolean
+      
   HistoryQuery:
     type: object
     properties: 
