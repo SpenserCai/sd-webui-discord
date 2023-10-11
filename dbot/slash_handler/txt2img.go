@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-07 23:37:49
+ * @LastEditTime: 2023-10-11 14:28:39
  * @Description: file content
  */
 package slash_handler
@@ -529,13 +529,13 @@ func (shdl SlashHandler) Txt2imgComponentHandler(s *discordgo.Session, i *discor
 		if len(customIDList) == 3 {
 			ownerId = customIDList[2]
 		}
-		if shdl.GetDiscordUserId(i) == ownerId {
+		if shdl.GetDiscordUserId(i) == ownerId || shdl.IsAdmin(i) {
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseDeferredMessageUpdate,
 			})
 			err := s.ChannelMessageDelete(i.ChannelID, i.Interaction.Message.ID)
 			if err == nil {
-				shdl.DeleteHistory(i.Interaction.Message.ID, i)
+				shdl.DeleteHistory(i.Interaction.Message.ID, ownerId)
 			}
 
 		} else {

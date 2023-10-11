@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-04 12:37:20
+ * @LastEditTime: 2023-10-11 14:28:18
  * @Description: file content
  */
 package slash_handler
@@ -218,6 +218,18 @@ func (shdl SlashHandler) GetDiscordUserId(i *discordgo.InteractionCreate) string
 	}
 }
 
+// 判断是否是管理员
+func (shdl SlashHandler) IsAdmin(i *discordgo.InteractionCreate) bool {
+	userInfo, err := global.UserCenterSvc.GetUserInfo(shdl.GetDiscordUserId(i))
+	if err != nil {
+		return false
+	}
+	if strings.Contains(userInfo.Roles, "admin") {
+		return true
+	}
+	return false
+}
+
 func (shdl SlashHandler) SetDiscordUserId(i *discordgo.InteractionCreate, userId string) {
 	// 判断是群消息还是私聊消息
 	if i.GuildID == "" {
@@ -308,9 +320,8 @@ func (shdl SlashHandler) SetHistoryImages(messageId string, i *discordgo.Interac
 	}
 }
 
-func (shdl SlashHandler) DeleteHistory(messageId string, i *discordgo.InteractionCreate) {
+func (shdl SlashHandler) DeleteHistory(messageId string, userId string) {
 	if global.Config.UserCenter.Enable {
-		userId := shdl.GetDiscordUserId(i)
 		global.UserCenterSvc.DeleteUserHistory(messageId, userId)
 	}
 }
