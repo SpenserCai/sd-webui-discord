@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-11 02:42:19
+ * @LastEditTime: 2023-10-11 12:23:33
  * @Description: file content
 -->
 <script setup>
@@ -101,12 +101,34 @@ const onPageChanged = (page) => {
   getListFunc(page, 4 * gridRowCount.value)
 }
 
-const getImage = (index) => {
+const getImage = (index,isSmall=false) => {
   let history = currentList.value[index]
   if (history == undefined) {
     return ""
   } else {
-    return history.images[0]
+    let tmpImage = history.images[0]
+    if (isSmall && isDiscordImage(tmpImage)) {
+      // 把cdn.discordapp.com替换为media.discordapp.net
+      tmpImage = tmpImage.replace("cdn.discordapp.com", "media.discordapp.net")
+      // 获取长宽
+      let tmpImageWidth = history.options.width
+      let tmpImageHeight = history.options.height
+      // 如果宽高大于等于1024，把宽设置为512，高等比例缩放
+      if (tmpImageWidth >= 1024 || tmpImageHeight >= 1024) {
+        tmpImageWidth = 512
+        tmpImageHeight = Math.floor(tmpImageHeight * 512 / history.options.width)
+      }
+      let whString = "width=" + tmpImageWidth + "&height=" + tmpImageHeight
+      // 如果url中没有?，则在后面加上?,如果结尾的是&，则直接加上whString，否则加上&whString
+      if (tmpImage.indexOf("?") == -1) {
+        tmpImage += "?" + whString
+      } else if (tmpImage[tmpImage.length - 1] == "&") {
+        tmpImage += whString
+      } else {
+        tmpImage += "&" + whString
+      }
+    }
+    return tmpImage
   }
 }
 
@@ -149,6 +171,14 @@ const getTotalPage = (total) => {
     return total / 12
   } else {
     return Math.floor(total / 12) + 1
+  }
+}
+
+const isDiscordImage = (url) => {
+  if (url.indexOf("discord") != -1) {
+    return true
+  } else {
+    return false
   }
 }
 
@@ -331,7 +361,7 @@ watch(() => router.currentRoute.value.path,() => {
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
           <div v-for="(i_number,i_index) of gridRowCount" :key="i_index">
-            <img class="h-auto max-w-full rounded-lg" :src="getImage(i_index*4+index)" alt="" @click="showImageInfo(i_index*4+index)">
+            <img class="h-auto max-w-full rounded-lg" :src="getImage(i_index*4+index,true)" alt="" @click="showImageInfo(i_index*4+index)">
           </div>
         </div>
       </div>
