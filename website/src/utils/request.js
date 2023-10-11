@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 17:40:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-02 22:44:29
+ * @LastEditTime: 2023-10-11 11:55:22
  * @Description: file content
  */
 import axios from "axios";
@@ -39,7 +39,7 @@ service.interceptors.response.use(
             title: "Error",
             text: res.message,
             type: "error",
-            group: "top",
+            group: "authenticated",
         }, 5000)
     } else {
         if (res.code < 0) {
@@ -47,7 +47,7 @@ service.interceptors.response.use(
                 title: "Error",
                 text: res.message,
                 type: "error",
-                group: "top",
+                group: "authenticated",
             }, 5000)
         }
         return res;

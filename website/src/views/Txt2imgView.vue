@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-10 22:20:52
+ * @LastEditTime: 2023-10-11 02:42:19
  * @Description: file content
 -->
 <script setup>
@@ -14,10 +14,12 @@ import { userhistory,communityhistory } from '@/api/account'
 import CardBox from '@/components/CardBox.vue'
 import BaseIcon from '@/components/BaseIcon.vue'
 import { Pagination,Modal,Img,Avatar,Button,Spinner } from 'flowbite-vue'
-import { mdiDrawPen,mdiCancel,mdiCogOutline,mdiImageArea,mdiImage,mdiAccountGroup, mdiRefresh } from '@mdi/js'
+import { mdiDrawPen,mdiCancel,mdiCogOutline,mdiImageArea,mdiImage,mdiAccountGroup, mdiRefresh, mdiContentCopy } from '@mdi/js'
 import { useRoute,useRouter } from 'vue-router'
 // import CardBox from '@/components/CardBox.vue'
 import SectionTitleLine from '@/components/SectionTitleLine.vue'
+import NotifyGroup from '@/components/NotifyGroup.vue'
+import { notify } from "notiwind"
 // import { useMainStore } from '@/stores/main'
 // import { mdiApplicationSettings } from '@mdi/js'
 
@@ -162,6 +164,40 @@ const getImagesList = () => {
   return imagesList
 }
 
+const copyCommand = () => {
+  // 获取当前Image的StableConfig
+  let stableConfig = currentImageInfo.value.options
+  let mainCmd = currentImageInfo.value.command
+  let fullCmd = "/" + mainCmd + " "
+  // 循环stableConfig，拼接fullCmd，格式是key:[space]value[space],如果value是json则递归
+  for (let key in stableConfig) {
+    let value = stableConfig[key]
+    if (typeof(value) == "object") {
+      for (let subKey in value) {
+        let subValue = value[subKey]
+        if (subKey == "sd_model_checkpoint") {
+          subKey = "checkpoint"
+        }
+        fullCmd += subKey + ": " + subValue + " "
+      }
+    } else {
+      if (key == "sampler_index") {
+        key = "sampler"
+      } 
+      fullCmd += key + ": " + value + " "
+    }
+  }
+  // 把fullCmd复制到剪贴板
+  navigator.clipboard.writeText(fullCmd)
+  notify({
+    title: "Success",
+    text: "Command Copied to clipboard",
+    type: "success",
+    group: "t2i_image_info",
+  }, 5000)
+
+}
+
 const closeImageInfo = () => {
   isShowImageInfoModal.value = false
 }
@@ -177,7 +213,7 @@ watch(() => router.currentRoute.value.path,() => {
 
 <template>
   <LayoutAuthenticated>
-    <SectionMain :key="route.fullPath">
+    <SectionMain>
       <Modal v-if="isShowImageInfoModal" id="image_detail" size="5xl" @close="closeImageInfo">
         <template #body>
           <div class="content relative mx-auto w-full max-w-5xl rounded-2xl p-4 pt-1 text-white md:p-8 md:pt-1 translate-y-0 opacity-100">
@@ -262,10 +298,20 @@ watch(() => router.currentRoute.value.path,() => {
                     <h5 class="text-xs font-medium tracking-wider text-slate-500">Created</h5>
                     <p class="whitespace-nowrap max-md:text-sm">{{ currentImageInfo.created }}</p>
                   </div>
+                  <div>
+                    <div class="h-1"></div>
+                    <Button size="xs" gradient="teal-lime" @click="copyCommand()">
+                      Copy Command
+                      <template #suffix>
+                        <BaseIcon :path="mdiContentCopy" />
+                      </template>
+                    </Button>
+                  </div>
                 </div>
               </CardBox>
             </div>
           </div>
+          <NotifyGroup group="t2i_image_info" />
         </template>
       </Modal>
       <SectionTitleLine v-if="isUserHistory()" main title="Gallery" :icon="mdiImageArea">
