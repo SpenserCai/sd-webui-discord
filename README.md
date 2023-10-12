@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 10:28:22
+ * @LastEditTime: 2023-10-12 09:52:31
  * @Description: file content
 -->
 <div align="center">
@@ -133,3 +133,8 @@ Detailed tutorial reference [Wiki](https://github.com/SpenserCai/sd-webui-discor
 ## Participating
 This is an ongoing project, and if you are interested in contributing, you can join our [Discord Server](https://discord.gg/uNJpzEE4sZ). We welcome any feedback or suggestions, so feel free to submit an issue.
 
+## Used By
+
+### WAN Show Bingo!
+
+[![Discord](https://invidget.switchblade.xyz/pWS5mw7jFz)](https://discord.gg/pWS5mw7jFz)
