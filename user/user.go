@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-11 21:55:05
+ * @LastEditTime: 2023-10-12 13:56:05
  * @Description: file content
  */
 package user
@@ -95,6 +95,24 @@ func (ucs *UserCenterService) GetUserImageTotal(id string) (int64, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+func (ucs *UserCenterService) GetUsersImageTotal(ids []string) (map[string]int, error) {
+	// 根据ids获取用户生成的图片数量，用一条sql语句获取
+	infoMap := make(map[string]int)
+	type UsersImageTotal struct {
+		UserID string `gorm:"column:user_id"`
+		Count  int    `gorm:"column:count"`
+	}
+	var usersImageTotal []UsersImageTotal
+	err := ucs.Db.Db.Model(&db_backend.History{}).Select("user_id,count(*) as count").Where("user_id in (?) AND deleted = ?", ids, false).Group("user_id").Scan(&usersImageTotal).Error
+	if err != nil {
+		return nil, err
+	}
+	for _, v := range usersImageTotal {
+		infoMap[v.UserID] = v.Count
+	}
+	return infoMap, nil
 }
 
 func (ucs *UserCenterService) GetUserInfoList(ids []string) ([]*UserInfo, error) {

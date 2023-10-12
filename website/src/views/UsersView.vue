@@ -3,7 +3,7 @@
  * @Date: 2023-10-11 21:36:11
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-12 01:07:00
+ * @LastEditTime: 2023-10-12 14:17:10
  * @Description: file content
 -->
 <script setup>
@@ -76,8 +76,9 @@ onMounted(() => {
         <Table hoverable>
           <table-head>
             <table-head-cell>Username</table-head-cell>
-            <table-head-cell>Enable</table-head-cell>
+            <table-head-cell>Created Count</table-head-cell>
             <table-head-cell>Roles</table-head-cell>
+            <table-head-cell>Enable</table-head-cell>
             <table-head-cell>Created</table-head-cell>
           </table-head>
           <table-body>
@@ -89,7 +90,9 @@ onMounted(() => {
                 </div>
               </table-cell>
               <table-cell>
-                <Toggle v-model="item.enable" :disabled="true" />
+                <Badge class="w-12" type="purple">
+                  {{ item.image_count }}
+                </Badge>
               </table-cell>
               <table-cell>
                 <div class="flex uppercase">
@@ -102,6 +105,9 @@ onMounted(() => {
                     {{ role }}
                   </Badge>
                 </div>
+              </table-cell>
+              <table-cell>
+                <Toggle v-model="item.enable" :disabled="true" />
               </table-cell>
               <table-cell>{{ item.created }}</table-cell>
             </table-row>

@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 21:26:59
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-11 22:45:20
+ * @LastEditTime: 2023-10-12 13:48:44
  * @Description: file content
  */
 package business
@@ -43,6 +43,18 @@ func (b BusinessBase) SetUserListHandler() {
 				Message: err.Error(),
 			})
 		}
+		// 获取用户列表中用户生成的图片数量
+		userIdList := make([]string, 0)
+		for _, item := range userList {
+			userIdList = append(userIdList, item.Id)
+		}
+		userImageCount, err := global.UserCenterSvc.GetUsersImageTotal(userIdList)
+		if err != nil {
+			return ServiceOperations.NewUserListOK().WithPayload(&models.UserList{
+				Code:    -1,
+				Message: err.Error(),
+			})
+		}
 		userListRes := make([]*models.UserItem, 0)
 		for _, item := range userList {
 			userListRes = append(userListRes, &models.UserItem{
@@ -58,6 +70,7 @@ func (b BusinessBase) SetUserListHandler() {
 				StableConfig: item.StableConfig,
 				Roles:        item.Roles,
 				Created:      item.Created,
+				ImageCount:   int32(userImageCount[item.Id]),
 			})
 		}
 		return ServiceOperations.NewUserListOK().WithPayload(&models.UserList{
