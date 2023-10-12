@@ -3,7 +3,7 @@
  * @Date: 2023-10-11 21:36:11
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-12 14:17:10
+ * @LastEditTime: 2023-10-12 15:25:11
  * @Description: file content
 -->
 <script setup>
@@ -109,7 +109,9 @@ onMounted(() => {
               <table-cell>
                 <Toggle v-model="item.enable" :disabled="true" />
               </table-cell>
-              <table-cell>{{ item.created }}</table-cell>
+              <table-cell>
+                <dev class="flex">{{ item.created }}</dev>
+              </table-cell>
             </table-row>
           </table-body>
         </Table>
