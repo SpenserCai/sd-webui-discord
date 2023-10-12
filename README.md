@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-12 09:52:31
+ * @LastEditTime: 2023-10-12 11:10:06
  * @Description: file content
 -->
 <div align="center">
@@ -122,6 +122,8 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 The command is still under active development, and there are two ways to experience sd-webui-discord: 
 1. Join our Discord Server where you can try out the latest features and contribute by submitting issues and pull requests. 
 2. Self-deploy it to have your own sd-webui-discord instance.
+
+[SD-WEBUI-DISCORD Dashboard](https://aigc.ngrok.io/)
 
 [![Discord](https://invidget.switchblade.xyz/uNJpzEE4sZ)](https://discord.gg/uNJpzEE4sZ)
 
