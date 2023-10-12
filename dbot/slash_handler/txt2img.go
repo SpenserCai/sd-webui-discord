@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-11 14:28:39
+ * @LastEditTime: 2023-10-12 23:31:26
  * @Description: file content
  */
 package slash_handler
@@ -93,6 +93,7 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				Name:        "prompt",
 				Description: "Prompt text",
 				Required:    true,
+				MaxLength:   600,
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
