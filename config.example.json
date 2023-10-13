@@ -28,7 +28,8 @@
             "type":"sqlite",
             "dsn":"./user_center.db"
         },
-        "must_register":false
+        "must_register":true,
+        "enable_credit":false
     },
     "website":{
         "api":{

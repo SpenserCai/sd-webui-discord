@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:05:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 10:55:03
+ * @LastEditTime: 2023-10-13 13:49:25
  * @Description: file content
  */
 package config
@@ -37,6 +37,7 @@ type UserCenter struct {
 	Enable       bool     `json:"enable"`
 	DbConfig     DbConfig `json:"db_config"`
 	MustRegister bool     `json:"must_register"`
+	EnableCredit bool     `json:"enable_credit"`
 }
 
 type WebSite struct {
