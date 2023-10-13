@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 00:44:10
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-13 14:16:21
+ * @LastEditTime: 2023-10-13 14:21:44
  * @Description: file content
  */
 package db_backend
@@ -19,7 +19,7 @@ type UserInfo struct {
 	Enable             bool   `gorm:"column:enable"`
 	Roles              string `gorm:"column:roles;size:0"`
 	StableConfig       string `gorm:"column:stable_config;size:0"`
-	CycleCredit        int    `gorm:"column:credit;default:0"`            // 周期credit
+	CycleCredit        int    `gorm:"column:cycle_credit;default:0"`      // 周期credit
 	CreditUpdateCycle  string `gorm:"column:credit_update_cycle;size:50"` // credit更新周期 格式 1|H 1|D 1|W 1|M
 	CycleCreditUpdated string `gorm:"column:credit_updated;size:50"`      // 周期credit更新时间，用于判断是否需要更新credit
 	PlusCredit         int    `gorm:"column:plus_credit;default:0"`       // 充值的credit
