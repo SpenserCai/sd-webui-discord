@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 00:30:18
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-25 20:57:31
+ * @LastEditTime: 2023-10-14 13:29:00
  * @Description: file content
  */
 package utils
@@ -16,6 +16,7 @@ import (
 	"image/jpeg"
 	"strings"
 
+	"github.com/buckket/go-blurhash"
 	"golang.org/x/image/draw"
 )
 
@@ -64,6 +65,34 @@ func GetImageSizeFromBase64(base64Str string) (int, int, error) {
 	height := bounds.Max.Y - bounds.Min.Y
 
 	return width, height, nil
+}
+
+func GetImageBlurHashFromBase64(base64Str string) (string, error) {
+	// 去除图片标识
+	trimmedStr := strings.TrimPrefix(base64Str, "data:image/jpeg;base64,")
+	trimmedStr = strings.TrimPrefix(trimmedStr, "data:image/png;base64,")
+
+	// 从Base64字符串解码图片数据
+	data, err := base64.StdEncoding.DecodeString(trimmedStr)
+	if err != nil {
+		return "", fmt.Errorf("can't decode base64: %s", err)
+	}
+
+	// 创建一个Reader以读取图片数据
+	reader := strings.NewReader(string(data))
+
+	// 解码图片
+	img, _, err := image.Decode(reader)
+	if err != nil {
+		return "", fmt.Errorf("can't decode image: %s", err)
+	}
+
+	blurHash, err := blurhash.Encode(4, 3, img)
+	if err != nil {
+		return "", fmt.Errorf("can't encode image to blurhash: %s", err)
+	}
+
+	return blurHash, nil
 }
 
 func ResizeImage(inputImage image.Image, scalePercent float64) (image.Image, error) {

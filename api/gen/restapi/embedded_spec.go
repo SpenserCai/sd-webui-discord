@@ -357,6 +357,12 @@ func init() {
             "type": "string"
           }
         },
+        "images_blurhash": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "options": {
           "type": "object"
         },
@@ -923,6 +929,12 @@ func init() {
           "type": "string"
         },
         "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "images_blurhash": {
           "type": "array",
           "items": {
             "type": "string"

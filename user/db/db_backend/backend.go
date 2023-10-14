@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 00:44:10
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-13 14:21:44
+ * @LastEditTime: 2023-10-14 14:45:26
  * @Description: file content
  */
 package db_backend
@@ -19,21 +19,21 @@ type UserInfo struct {
 	Enable             bool   `gorm:"column:enable"`
 	Roles              string `gorm:"column:roles;size:0"`
 	StableConfig       string `gorm:"column:stable_config;size:0"`
-	CycleCredit        int    `gorm:"column:cycle_credit;default:0"`      // 周期credit
+	CycleCredit        int32  `gorm:"column:cycle_credit;default:0"`      // 周期credit
 	CreditUpdateCycle  string `gorm:"column:credit_update_cycle;size:50"` // credit更新周期 格式 1|H 1|D 1|W 1|M
 	CycleCreditUpdated string `gorm:"column:credit_updated;size:50"`      // 周期credit更新时间，用于判断是否需要更新credit
-	PlusCredit         int    `gorm:"column:plus_credit;default:0"`       // 充值的credit
-
+	PlusCredit         int32  `gorm:"column:plus_credit;default:0"`       // 充值的credit
 }
 
 type History struct {
-	MessageID   string `gorm:"column:message_id;size:100;index:idx_message;index:idx_message_id"`
-	UserID      string `gorm:"column:user_id;size:100;index:idx_message"`
-	CommandName string `gorm:"column:command_name;size:50"`
-	OptionJson  string `gorm:"column:option_json;size:0"`
-	Images      string `gorm:"column:images;size:0"`
-	Created     string `gorm:"column:created;size:50"`
-	Deleted     bool   `gorm:"column:deleted;default:false"`
+	MessageID      string `gorm:"column:message_id;size:100;index:idx_message;index:idx_message_id"`
+	UserID         string `gorm:"column:user_id;size:100;index:idx_message"`
+	CommandName    string `gorm:"column:command_name;size:50"`
+	OptionJson     string `gorm:"column:option_json;size:0"`
+	Images         string `gorm:"column:images;size:0"`
+	Created        string `gorm:"column:created;size:50"`
+	Deleted        bool   `gorm:"column:deleted;default:false"`
+	ImageBlurHashs string `gorm:"column:image_blur_hashs;size:0"`
 }
 
 func (UserInfo) TableName() string {

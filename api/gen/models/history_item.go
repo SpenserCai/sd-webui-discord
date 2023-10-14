@@ -29,6 +29,9 @@ type HistoryItem struct {
 	// images
 	Images []string `json:"images"`
 
+	// images blurhash
+	ImagesBlurhash []string `json:"images_blurhash"`
+
 	// options
 	Options interface{} `json:"options,omitempty"`
 

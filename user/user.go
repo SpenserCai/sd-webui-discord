@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-12 13:56:05
+ * @LastEditTime: 2023-10-14 13:58:10
  * @Description: file content
  */
 package user
@@ -38,13 +38,17 @@ type StableConfig struct {
 }
 
 type UserInfo struct {
-	Enable       bool         `json:"enable"`
-	Avatar       string       `json:"avatar"`
-	Name         string       `json:"name"`
-	Id           string       `json:"id"`
-	Roles        string       `json:"roles"`
-	Created      string       `json:"created"`
-	StableConfig StableConfig `json:"stable_config"`
+	Enable             bool         `json:"enable"`
+	Avatar             string       `json:"avatar"`
+	Name               string       `json:"name"`
+	Id                 string       `json:"id"`
+	Roles              string       `json:"roles"`
+	Created            string       `json:"created"`
+	StableConfig       StableConfig `json:"stable_config"`
+	CycleCredit        int          `json:"cycle_credit"`         // 周期credit
+	CreditUpdateCycle  string       `json:"credit_update_cycle"`  // credit更新周期 格式 1|H 1|D 1|W 1|M
+	CycleCreditUpdated string       `json:"cycle_credit_updated"` // 周期credit更新时间，用于判断是否需要更新credit
+	PlusCredit         int          `json:"plus_credit"`          // 充值的credit
 }
 
 type UserCenterService struct {
@@ -375,8 +379,8 @@ func (ucs *UserCenterService) WriteUserHistory(messageId string, userId string, 
 }
 
 // 写入图片信息
-func (ucs *UserCenterService) WriteUserHistoryImages(messageId string, userId string, images string) error {
-	err := ucs.Db.Db.Model(&db_backend.History{}).Where("message_id = ? AND user_id = ?", messageId, userId).Update("images", images).Error
+func (ucs *UserCenterService) WriteUserHistoryImages(messageId string, userId string, images string, imagesBlurHash string) error {
+	err := ucs.Db.Db.Model(&db_backend.History{}).Where("message_id = ? AND user_id = ?", messageId, userId).Update("images", images).Update("image_blur_hashs", imagesBlurHash).Error
 	return err
 }
 

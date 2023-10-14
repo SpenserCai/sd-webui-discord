@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/SpenserCai/sd-webui-go v0.4.3
+	github.com/buckket/go-blurhash v1.1.0
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/go-openapi/errors v0.20.4
 	github.com/go-openapi/loads v0.21.2

@@ -3,13 +3,14 @@
  * @Date: 2023-08-30 21:21:40
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 00:07:49
+ * @LastEditTime: 2023-10-14 14:55:00
  * @Description: file content
  */
 package db
 
 import (
 	"errors"
+	"log"
 	"reflect"
 	"strings"
 
@@ -34,11 +35,11 @@ func (botDb *BotDb) Close() error {
 func (botDb *BotDb) CreateOrUpdateDb() error {
 	err := botDb.Db.AutoMigrate(&db_backend.UserInfo{})
 	if err != nil {
-		return err
+		log.Println("AutoMigrate `user_info` table Error:" + err.Error() + ", try to check db columns")
 	}
 	err = botDb.Db.AutoMigrate(&db_backend.History{})
 	if err != nil {
-		return err
+		log.Println("AutoMigrate `history` table Error:" + err.Error() + ", try to check db columns")
 	}
 	return nil
 }

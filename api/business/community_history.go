@@ -3,7 +3,7 @@
  * @Date: 2023-10-09 20:01:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 21:28:35
+ * @LastEditTime: 2023-10-14 17:18:22
  * @Description: file content
  */
 package business
@@ -74,6 +74,11 @@ func (b BusinessBase) SetCommunityHistoryHandler() {
 					return userInfo.Avatar
 				}(),
 				Images: strings.Split(item.Images, ","),
+				ImagesBlurhash: func() []string {
+					blurs := make([]string, 0)
+					json.Unmarshal([]byte(item.ImageBlurHashs), &blurs)
+					return blurs
+				}(),
 			})
 		}
 		return ServiceOperations.NewCommunityHistoryOK().WithPayload(&models.HistoryList{

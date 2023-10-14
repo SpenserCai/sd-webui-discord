@@ -299,6 +299,10 @@ definitions:
         type: array
         items:
           type: string
+      images_blurhash:
+        type: array
+        items:
+          type: string
       created:
         type: string
   NodeItem:

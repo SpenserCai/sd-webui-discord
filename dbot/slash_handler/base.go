@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 09:52:25
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-11 14:28:18
+ * @LastEditTime: 2023-10-14 13:45:26
  * @Description: file content
  */
 package slash_handler
@@ -313,10 +313,12 @@ func (shdl SlashHandler) SetHistory(command string, messageId string, i *discord
 	}
 }
 
-func (shdl SlashHandler) SetHistoryImages(messageId string, i *discordgo.InteractionCreate, images []string) {
+func (shdl SlashHandler) SetHistoryImages(messageId string, i *discordgo.InteractionCreate, images []string, imagesBlurHash []string) {
 	if global.Config.UserCenter.Enable {
 		userId := shdl.GetDiscordUserId(i)
-		global.UserCenterSvc.WriteUserHistoryImages(messageId, userId, strings.Join(images, ","))
+		// 把imagesBlurHash转成json
+		imagesBlurHashJson, _ := json.Marshal(imagesBlurHash)
+		global.UserCenterSvc.WriteUserHistoryImages(messageId, userId, strings.Join(images, ","), string(imagesBlurHashJson))
 	}
 }
 
@@ -363,4 +365,18 @@ func (shdl SlashHandler) GetDiscordUserCustomId(command string, customId string,
 
 func (shdl SlashHandler) GetDiscordUserCustomIdWithUserId(command string, customId string, userId string) string {
 	return fmt.Sprintf("%s|%s|%s", command, customId, userId)
+}
+
+// 获取图片列表的BlurHash
+func (shdl SlashHandler) GetBase64ImageListBlurHash(imageList []string) []string {
+	blurHashList := []string{}
+	for _, image := range imageList {
+		blurHash, err := utils.GetImageBlurHashFromBase64(image)
+		if err != nil {
+			blurHashList = append(blurHashList, "")
+		} else {
+			blurHashList = append(blurHashList, blurHash)
+		}
+	}
+	return blurHashList
 }

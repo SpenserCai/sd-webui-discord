@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-11 19:34:49
+ * @LastEditTime: 2023-10-14 19:24:17
  * @Description: file content
 -->
 <script setup>
@@ -20,6 +20,7 @@ import { useRoute,useRouter } from 'vue-router'
 import SectionTitleLine from '@/components/SectionTitleLine.vue'
 import NotifyGroup from '@/components/NotifyGroup.vue'
 import { notify } from "notiwind"
+import { decode } from "blurhash";
 // import { useMainStore } from '@/stores/main'
 // import { mdiApplicationSettings } from '@mdi/js'
 
@@ -46,6 +47,16 @@ const isUserHistory = () => {
   } else {
     return true
   }
+}
+
+function convertUint8ClampedArrayToBase64Image(uint8Array, width, height) {
+  const imageData = new ImageData(uint8Array, width, height);
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  canvas.width = width;
+  canvas.height = height;
+  context.putImageData(imageData, 0, 0);
+  return canvas.toDataURL();
 }
 
 const getUserHistory = (page, pageSize) => {
@@ -186,10 +197,20 @@ const getImagesList = () => {
   let images = currentImageInfo.value.images
   let imagesList = []
   for (let i = 0; i < images.length; i++) {
+    let base64data = ""
+    let blurdata = currentImageInfo.value.images_blurhash[i]
+    if (blurdata == undefined) {
+      blurdata = "L58gph9F0g~VMc4:Mw?H~CNGpK%M"
+    }  
+    
+    let pixels = decode(blurdata, currentImageInfo.value.options.width, currentImageInfo.value.options.height);
+    base64data = convertUint8ClampedArrayToBase64Image(pixels, currentImageInfo.value.options.width, currentImageInfo.value.options.height)
     imagesList.push({
       src: images[i],
-      alt: "image_" + i
+      alt: "image_" + i,
+      hash: base64data
     })
+    
   }
   return imagesList
 }
@@ -264,7 +285,8 @@ watch(() => router.currentRoute.value.path,() => {
               </span>
               <div class="h-2"></div>
               <div class="flex justify-center">
-                <Img size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].src"/>
+                <Img id="img_info_loading" size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].hash"/>
+                <Img id="img_info_loaded" onload="document.getElementById('img_info_loaded').hidden=false;document.getElementById('img_info_loading').hidden=true;" hidden="hidden" size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].src"/>
               </div>
               <div class="h-2"></div>
               <div class="flex w-full flex-wrap-reverse justify-between">
