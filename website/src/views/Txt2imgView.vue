@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-14 19:24:17
+ * @LastEditTime: 2023-10-15 01:35:16
  * @Description: file content
 -->
 <script setup>
@@ -200,11 +200,11 @@ const getImagesList = () => {
     let base64data = ""
     let blurdata = currentImageInfo.value.images_blurhash[i]
     if (blurdata == undefined) {
-      blurdata = "L58gph9F0g~VMc4:Mw?H~CNGpK%M"
+      blurdata = "KED+rLozE4~UakohE4IW%3"
     }  
     
-    let pixels = decode(blurdata, currentImageInfo.value.options.width, currentImageInfo.value.options.height);
-    base64data = convertUint8ClampedArrayToBase64Image(pixels, currentImageInfo.value.options.width, currentImageInfo.value.options.height)
+    let pixels = decode(blurdata, currentImageInfo.value.options.width/2, currentImageInfo.value.options.height/2);
+    base64data = convertUint8ClampedArrayToBase64Image(pixels, currentImageInfo.value.options.width/2, currentImageInfo.value.options.height/2)
     imagesList.push({
       src: images[i],
       alt: "image_" + i,
