@@ -3,7 +3,7 @@
  * @Date: 2023-08-22 17:13:19
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-14 13:40:49
+ * @LastEditTime: 2023-10-15 11:33:25
  * @Description: file content
  */
 package slash_handler
@@ -496,7 +496,7 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 			for _, v := range msg.Embeds {
 				urls = append(urls, v.Image.URL)
 			}
-			shdl.SetHistoryImages(msg.ID, i, urls, shdl.GetBase64ImageListBlurHash(txt2img.GetResponse().Images[:*opt.NIter]))
+			shdl.SetHistoryImages(msg.ID, i, urls, shdl.GetBase64ImageListBlurHash(txt2img.GetResponse().Images))
 		}
 
 	}
