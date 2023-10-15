@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-15 12:17:29
+ * @LastEditTime: 2023-10-15 15:59:39
  * @Description: file content
 -->
 <div align="center">
@@ -154,3 +154,10 @@ This is an ongoing project, and if you are interested in contributing, you can j
 ### WAN Show Bingo!
 
 [![Discord](https://invidget.switchblade.xyz/pWS5mw7jFz)](https://discord.gg/pWS5mw7jFz)
+
+## Support Development
+If you like this project and would like to become a supporter or sponsor, you will receive:
+ - One-to-one technical support.
+ - Your or your company's logo will be displayed in the sponsor of this page.
+
+<a href="https://www.patreon.com/sd_webui_discord"><img alt="Sponsor with Patreon" title="Sponsor with Patreon" src="https://img.shields.io/badge/-Sponsor-ea4aaa?style=for-the-badge&logo=patreon&logoColor=white"/></a>
