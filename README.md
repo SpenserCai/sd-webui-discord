@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-12 11:10:06
+ * @LastEditTime: 2023-10-15 12:14:22
  * @Description: file content
 -->
 <div align="center">
@@ -42,38 +42,52 @@ At the same time, there is also the [sd-webui-discord-ex](https://github.com/Spe
 ## Screenshots
 
 ![First](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/first_page_new.png)
+![Second](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/second_page_new.png)
 
 ## News
-
-### **2023-09-24: Support multi image generate in `txt2img` command**
-### **2023-09-23:**
- - Support `Retry` and `Delete` in `txt2img` command
-### **2023-09-22:** 
- - Support `setting_ui` command
- - Better `txt2img` response ui,thanks for [venetanji](https://github.com/venetanji) support that! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
- - Optimize command add when bot start,thanks for [venetanji](https://github.com/venetanji) support that! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
-### **2023-09-10:** Support local language
-### **2023-09-05:** Support User Center on Windows
-### **2023-09-04:** Support Image to Image
-### **2023-08-31:** Support User Center
-### **2023-08-27:**
- - Support txt2img choice model checkpoint
- - Support upload image with attachment: `deoldify` `png_info` `roop_image` commands
+ - `2023-10-12 `: Support `Website` command
    <details>
-   <summary>See Image</summary>
+     <summary>See Image</summary>
+       
+      ![example](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/website_gallery.png)
+      ![example](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/website_community.png)
+      ![example](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/website_image_detail.png)
+
+   </details>
+ - `2023-09-24 `: Support multi image generate in `txt2img` command**
+ - `2023-09-23 `: Support `Retry` and `Delete` in `txt2img` command
+ - `2023-09-22 ` 
+     - Support `setting_ui` command
+     - Better `txt2img` response ui,thanks for [venetanji](https://github.com/venetanji) support that! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
+     - Optimize command add when bot start,thanks for [venetanji](https://github.com/venetanji) support that! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
+ - `2023-09-10 `: Support local language
+ - `2023-09-05 `: Support User Center on Windows
+ - `2023-09-04 `: Support Image to Image
+ - `2023-08-31 `: Support User Center
+ - `2023-08-27 `:
+     - Support txt2img choice model checkpoint
+     - Support upload image with attachment: `deoldify` `png_info` `roop_image` commands
+     <details>
+     <summary>See Image</summary>
 
       ![example](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/support_attechment.png)
-    
-   </details>
+     
+     </details>
   
-### **2023-08-26: Support Setting default sd-webui options**
-### **2023-08-23: Support ControlNet for `txt2img` command**
- - By using the `controlnet_detect` command to obtain the parameters of ControlNet and filling them into the `controlnet_args` parameter of the `txt2img` command, you can use ControlNet in txt2img.
-### **2023-08-22: Support `txt2img` command**
-### **2023-08-22: Support `roop` command** 
-### **2023-08-20: Support `controlnet_detect` command**  
+ - `2023-08-26 `: Support Setting default sd-webui options
+ - `2023-08-23 `: Support ControlNet for `txt2img` command
+     - By using the `controlnet_detect` command to obtain the parameters of ControlNet and filling them into the `controlnet_args` parameter of the `txt2img` command, you can use ControlNet in txt2img.
+ - `2023-08-22 `: Support `txt2img` command
+ - `2023-08-22 `: Support `roop` command
+ - `2023-08-20 `: Support `controlnet_detect` command  
 
 ## Features
+- Website
+    - User gallery.
+    - Community gallery.
+    - User setting view.
+    - User list(Admin).
+    - Cluster node list(Admin).
 - Local language support.
 - Global sd-webui default options.
 - Supports multi-node (sd-webui) deployment, distributed cluster queue with automatic scheduling.
