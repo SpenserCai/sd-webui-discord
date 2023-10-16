@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 11:06:01
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-22 00:21:54
+ * @LastEditTime: 2023-10-16 21:09:08
  * @Description: file content
  */
 package dbot
@@ -18,11 +18,11 @@ import (
 )
 
 type DiscordBot struct {
-	AppCommands      []*discordgo.ApplicationCommand
-	RegisteredCommands    []*discordgo.ApplicationCommand
-	Session         *discordgo.Session
-	ServerID        string
-	SlashHandlerMap map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate)
+	AppCommands        []*discordgo.ApplicationCommand
+	RegisteredCommands []*discordgo.ApplicationCommand
+	Session            *discordgo.Session
+	ServerID           string
+	SlashHandlerMap    map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate)
 }
 
 func NewDiscordBot(token string, serverID string) (*DiscordBot, error) {
@@ -35,7 +35,7 @@ func NewDiscordBot(token string, serverID string) (*DiscordBot, error) {
 		Session:         session,
 		ServerID:        serverID,
 		SlashHandlerMap: make(map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate)),
-		AppCommands:      make([]*discordgo.ApplicationCommand, 0),
+		AppCommands:     make([]*discordgo.ApplicationCommand, 0),
 	}
 
 	// 预存长选项
@@ -61,6 +61,7 @@ func (d *DiscordBot) Run() {
 		return
 	}
 	d.SyncCommands()
+	d.SetBaseCommandHelperInfo()
 	defer d.Session.Close()
 
 	stop := make(chan os.Signal, 1)

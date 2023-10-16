@@ -3,12 +3,13 @@
  * @Date: 2023-08-16 22:02:04
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-28 16:41:38
+ * @LastEditTime: 2023-10-16 21:21:40
  * @Description: file content
  */
 package dbot
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -96,7 +97,29 @@ func (dbot *DiscordBot) SyncCommands() {
 			continue
 		}
 	}
+	updatedCommands, err := dbot.Session.ApplicationCommands(dbot.Session.State.User.ID, dbot.ServerID)
+	if err != nil {
+		log.Panicf("Cannot get commands: %v", err)
+	}
+	dbot.RegisteredCommands = updatedCommands
 
+}
+
+func (dbot *DiscordBot) SetBaseCommandHelperInfo() {
+	commandInfo := "\n"
+	needAddCmd := []string{
+		"setting",
+		"setting_ui",
+		"txt2img",
+	}
+	for _, v := range dbot.RegisteredCommands {
+		for _, vv := range needAddCmd {
+			if v.Name == vv {
+				commandInfo += fmt.Sprintf("</%s:%s> ", v.Name, v.ID)
+			}
+		}
+	}
+	fmt.Println("Please update this to App description:", commandInfo)
 }
 
 func (dbot *DiscordBot) CheckCommandInList(name string) bool {
