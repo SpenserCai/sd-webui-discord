@@ -3,7 +3,7 @@
  * @Date: 2023-10-09 20:01:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-14 17:18:22
+ * @LastEditTime: 2023-10-18 22:11:22
  * @Description: file content
  */
 package business
@@ -29,7 +29,11 @@ func (b BusinessBase) SetCommunityHistoryHandler() {
 				Message: "Not supported",
 			})
 		}
-		history, total, err := global.UserCenterSvc.GetUserHistoryList("", params.Body.Query.Command, int(params.Body.PageInfo.Page), int(params.Body.PageInfo.PageSize))
+		// 只有管理员才能忽略is_private
+		excludePrivate := func() bool {
+			return !strings.Contains(principal.(DbotUser.UserInfo).Roles, "admin")
+		}()
+		history, total, err := global.UserCenterSvc.GetUserHistoryList("", params.Body.Query.Command, int(params.Body.PageInfo.Page), int(params.Body.PageInfo.PageSize), excludePrivate)
 		if err != nil {
 			return ServiceOperations.NewCommunityHistoryOK().WithPayload(&models.HistoryList{
 				Code:    -1,

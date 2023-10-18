@@ -3,7 +3,7 @@
  * @Date: 2023-08-31 00:44:10
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-14 14:45:26
+ * @LastEditTime: 2023-10-18 21:43:21
  * @Description: file content
  */
 package db_backend
@@ -23,6 +23,7 @@ type UserInfo struct {
 	CreditUpdateCycle  string `gorm:"column:credit_update_cycle;size:50"` // credit更新周期 格式 1|H 1|D 1|W 1|M
 	CycleCreditUpdated string `gorm:"column:credit_updated;size:50"`      // 周期credit更新时间，用于判断是否需要更新credit
 	PlusCredit         int32  `gorm:"column:plus_credit;default:0"`       // 充值的credit
+	IsPrivate          bool   `gorm:"column:is_private;default:false"`
 }
 
 type History struct {
@@ -34,6 +35,7 @@ type History struct {
 	Created        string `gorm:"column:created;size:50"`
 	Deleted        bool   `gorm:"column:deleted;default:false"`
 	ImageBlurHashs string `gorm:"column:image_blur_hashs;size:0"`
+	IsPrivate      bool   `gorm:"column:is_private;default:false"`
 }
 
 func (UserInfo) TableName() string {

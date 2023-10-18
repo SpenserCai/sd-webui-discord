@@ -3,7 +3,7 @@
  * @Date: 2023-10-04 20:26:32
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-14 17:19:28
+ * @LastEditTime: 2023-10-18 22:08:17
  * @Description: file content
  */
 package business
@@ -22,7 +22,7 @@ import (
 
 func (b BusinessBase) SetUserHistoryHandler() {
 	global.ApiService.UserUserHistoryHandler = ServiceOperations.UserHistoryHandlerFunc(func(params ServiceOperations.UserHistoryParams, principal interface{}) middleware.Responder {
-		history, total, err := global.UserCenterSvc.GetUserHistoryList(principal.(DbotUser.UserInfo).Id, params.Body.Query.Command, int(params.Body.PageInfo.Page), int(params.Body.PageInfo.PageSize))
+		history, total, err := global.UserCenterSvc.GetUserHistoryList(principal.(DbotUser.UserInfo).Id, params.Body.Query.Command, int(params.Body.PageInfo.Page), int(params.Body.PageInfo.PageSize), false)
 		if err != nil {
 			return ServiceOperations.NewUserHistoryOK().WithPayload(&models.HistoryList{
 				Code:    -1,

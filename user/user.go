@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-14 13:58:10
+ * @LastEditTime: 2023-10-18 22:07:26
  * @Description: file content
  */
 package user
@@ -366,6 +366,13 @@ func (ucs *UserCenterService) GetUserStableConfigItem(id string, key string, def
 
 // 写入用户历史记录
 func (ucs *UserCenterService) WriteUserHistory(messageId string, userId string, commandName string, optionJson string) error {
+	isPrivate := func() bool {
+		isPriva, err := ucs.IsPrivate(userId)
+		if err != nil {
+			return false
+		}
+		return isPriva
+	}()
 	history := &db_backend.History{
 		MessageID:   messageId,
 		UserID:      userId,
@@ -373,6 +380,7 @@ func (ucs *UserCenterService) WriteUserHistory(messageId string, userId string, 
 		OptionJson:  optionJson,
 		Created:     time.Now().Format("2006-01-02 15:04:05"),
 		Deleted:     false,
+		IsPrivate:   isPrivate,
 	}
 	err := ucs.Db.Db.Create(history).Error
 	return err
@@ -400,13 +408,19 @@ func (ucs *UserCenterService) GetUserHistoryOptWithMessageId(messageId string, c
 	return history.OptionJson, nil
 }
 
-// 获取用户历史记录列表分页获取
-func (ucs *UserCenterService) GetUserHistoryList(userId string, cmd string, page int, pageSize int) ([]*db_backend.History, int, error) {
+// 获取用户历史记录列表分页获取 TODO:加上参数：excludePrivate
+func (ucs *UserCenterService) GetUserHistoryList(userId string, cmd string, page int, pageSize int, excludePrivate bool) ([]*db_backend.History, int, error) {
 	historyList := []*db_backend.History{}
 	var err error
 	// 之获取没有软删除的历史记录，同时返回总数,按照created的倒序排列
 	if userId == "" {
-		err = ucs.Db.Db.Where("command_name = ? AND deleted = ?", cmd, false).Order("created desc").Offset((page - 1) * pageSize).Limit(pageSize).Find(&historyList).Error
+		args := []interface{}{cmd, false}
+		whereString := "command_name = ? AND deleted = ?"
+		if excludePrivate {
+			whereString += " AND is_private = ?"
+			args = append(args, false)
+		}
+		err = ucs.Db.Db.Where(whereString, args...).Order("created desc").Offset((page - 1) * pageSize).Limit(pageSize).Find(&historyList).Error
 	} else {
 		err = ucs.Db.Db.Where("user_id = ? AND command_name = ? AND deleted = ?", userId, cmd, false).Order("created desc").Offset((page - 1) * pageSize).Limit(pageSize).Find(&historyList).Error
 	}
@@ -450,7 +464,16 @@ func (ucs *UserCenterService) IsAdmin(id string) (bool, error) {
 	return false, nil
 }
 
-//
+// 获取用户是否是Private
+func (ucs *UserCenterService) IsPrivate(id string) (bool, error) {
+	// 根据id判断用户是否是private
+	isPrivate := false
+	err := ucs.Db.Db.Model(&db_backend.UserInfo{}).Where("id = ?", id).Select("is_private").Scan(&isPrivate).Error
+	if err != nil {
+		return false, err
+	}
+	return isPrivate, nil
+}
 
 // 获取用户列表 判断当前用户是否为管理员，如果是管理员则返回所有用户，如果不是管理员则返回当前用户
 func (ucs *UserCenterService) GetUserList(id string) ([]*UserInfo, error) {

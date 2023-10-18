@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:02:04
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-16 21:21:40
+ * @LastEditTime: 2023-10-18 22:19:45
  * @Description: file content
  */
 package dbot
@@ -53,18 +53,18 @@ func (dbot *DiscordBot) SyncCommands() {
 		log.Panicf("Cannot get commands: %v", err)
 	}
 	if len(dbot.RegisteredCommands) > 0 {
-		log.Println("Clearing other bots commands...")
+		// log.Println("Clearing other bots commands...")
 		for _, v := range dbot.RegisteredCommands {
 
 			// if command is not in the command list, remove it
 			if dbot.CheckCommandInList(v.Name) {
-				log.Printf("'%v' command is in the command list, skip...", v.Name)
+				// log.Printf("'%v' command is in the command list, skip...", v.Name)
 				continue
 			}
 			log.Printf("Removing '%v' command...", v.Name)
 			err := dbot.Session.ApplicationCommandDelete(dbot.Session.State.User.ID, dbot.ServerID, v.ID)
 			if err != nil {
-				log.Panicf("Cannot remove '%v' command: %v", v.Name, err)
+				// log.Panicf("Cannot remove '%v' command: %v", v.Name, err)
 				continue
 			}
 		}
@@ -75,7 +75,7 @@ func (dbot *DiscordBot) SyncCommands() {
 
 		// check if command needs update
 		if !dbot.CommandNeedsUpdate(v) {
-			log.Printf("'%v' command options are unchanged, skipping...", v.Name)
+			// log.Printf("'%v' command options are unchanged, skipping...", v.Name)
 			continue
 		}
 		// delete old version of command
@@ -90,7 +90,7 @@ func (dbot *DiscordBot) SyncCommands() {
 		}
 
 		// add new version of command
-		log.Printf("Adding '%v' command...", v.Name)
+		// log.Printf("Adding '%v' command...", v.Name)
 		_, err := dbot.Session.ApplicationCommandCreate(dbot.Session.State.User.ID, dbot.ServerID, v)
 		if err != nil {
 			log.Panicf("Cannot create '%v' command: %v", v.Name, err)
@@ -162,7 +162,7 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 			for i, option := range command.Options {
 				// new option description
 				if option.Description != registeredCommand.Options[i].Description {
-					log.Println("Registered description '", registeredCommand.Options[i].Description, "' is different from command description '", option.Description, "' for command", command.Name)
+					// log.Println("Registered description '", registeredCommand.Options[i].Description, "' is different from command description '", option.Description, "' for command", command.Name)
 					return true
 				}
 
@@ -174,15 +174,15 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 				for k, choice := range option.Choices {
 
 					if len(registeredCommand.Options[i].Choices) != len(option.Choices) {
-						log.Println("Length of choices is different for command", command.Name)
-						log.Println("Registered command:", registeredCommand.Options[i].Choices)
-						// print all the choices names and their description
-						for _, v := range command.Options[i].Choices {
-							log.Println("Command", v.Name, v.Value)
-						}
-						for _, v := range registeredCommand.Options[i].Choices {
-							log.Println("RegisteredCommand", v.Name, v.Value)
-						}
+						// log.Println("Length of choices is different for command", command.Name)
+						// log.Println("Registered command:", registeredCommand.Options[i].Choices)
+						// // print all the choices names and their description
+						// for _, v := range command.Options[i].Choices {
+						// 	log.Println("Command", v.Name, v.Value)
+						// }
+						// for _, v := range registeredCommand.Options[i].Choices {
+						// 	log.Println("RegisteredCommand", v.Name, v.Value)
+						// }
 						return true
 					}
 					if choice.Name == registeredCommand.Options[i].Choices[k].Name {
