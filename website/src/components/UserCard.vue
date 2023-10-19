@@ -3,7 +3,7 @@
  * @Date: 2023-10-04 00:04:25
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-19 21:48:50
+ * @LastEditTime: 2023-10-19 22:00:15
  * @Description: file content
 -->
 <script setup>
@@ -27,7 +27,7 @@ const userName = computed(() => mainStore.userName)
     <BaseLevel type="flex w-full items-center justify-between gap-4 justify-self-start">
       <div class="flex justify-start">
         <UserAvatarCurrentUser class="lg:mx-12" />
-        <div class="space-y-3 text-center md:text-left lg:mx-12">
+        <div class="space-y-3 text-center mt-2 md:text-left lg:mx-12">
           <h1 class="text-3xl">
             <b>{{ userName }}</b>
           </h1>
