@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 21:26:59
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-12 13:48:44
+ * @LastEditTime: 2023-10-19 14:09:53
  * @Description: file content
  */
 package business
@@ -67,6 +67,7 @@ func (b BusinessBase) SetUserListHandler() {
 					return item.Avatar
 				}(),
 				Enable:       item.Enable,
+				IsPrivate:    item.IsPrivate,
 				StableConfig: item.StableConfig,
 				Roles:        item.Roles,
 				Created:      item.Created,

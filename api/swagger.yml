@@ -167,6 +167,52 @@ paths:
           description: 'Success'
           schema:
             $ref: '#/definitions/ClusterInfo'
+  /set_user_private:
+    post:
+      description: 'Set User Private'
+      operationId: 'set_user_private'
+      tags: [admin]
+      security:
+        - Bearer: []
+      parameters:
+        - name: body
+          in: body
+          description: 'Set User Private'
+          required: true
+          schema:
+            properties:
+              user_id:
+                type: string
+              is_private:
+                type: boolean
+      responses:
+        200:
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/BaseResponse'
+  /set_user_enable:
+    post:
+      description: 'Set User Enable'
+      operationId: 'set_user_enable'
+      tags: [admin]
+      security:
+        - Bearer: []
+      parameters:
+        - name: body
+          in: body
+          description: 'Set User Enable'
+          required: true
+          schema:
+            properties:
+              user_id:
+                type: string
+              is_enable:
+                type: boolean
+      responses:
+        200:
+          description: 'Success'
+          schema:
+            $ref: '#/definitions/BaseResponse'
           
 
 definitions:
@@ -181,6 +227,10 @@ definitions:
         type: string
       enable:
         type: boolean
+        x-omitempty: false
+      is_private:
+        type: boolean
+        x-omitempty: false
       stable_config:
         type: object
       roles:
@@ -356,5 +406,14 @@ definitions:
             type: array
             items: 
               $ref: '#/definitions/NodeItem'
+  BaseResponse:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+        x-omitempty: false
+      message:
+        type: string
     
       

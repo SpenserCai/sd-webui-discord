@@ -188,6 +188,86 @@ func init() {
         }
       }
     },
+    "/set_user_enable": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Set User Enable",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "set_user_enable",
+        "parameters": [
+          {
+            "description": "Set User Enable",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "is_enable": {
+                  "type": "boolean"
+                },
+                "user_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse"
+            }
+          }
+        }
+      }
+    },
+    "/set_user_private": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Set User Private",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "set_user_private",
+        "parameters": [
+          {
+            "description": "Set User Private",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "is_private": {
+                  "type": "boolean"
+                },
+                "user_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse"
+            }
+          }
+        }
+      }
+    },
     "/user_history": {
       "post": {
         "security": [
@@ -292,6 +372,19 @@ func init() {
     }
   },
   "definitions": {
+    "BaseResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "ClusterInfo": {
       "type": "object",
       "properties": {
@@ -501,7 +594,8 @@ func init() {
           "type": "string"
         },
         "enable": {
-          "type": "boolean"
+          "type": "boolean",
+          "x-omitempty": false
         },
         "id": {
           "type": "string"
@@ -509,6 +603,10 @@ func init() {
         "image_count": {
           "type": "integer",
           "format": "int32",
+          "x-omitempty": false
+        },
+        "is_private": {
+          "type": "boolean",
           "x-omitempty": false
         },
         "roles": {
@@ -744,6 +842,86 @@ func init() {
         }
       }
     },
+    "/set_user_enable": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Set User Enable",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "set_user_enable",
+        "parameters": [
+          {
+            "description": "Set User Enable",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "is_enable": {
+                  "type": "boolean"
+                },
+                "user_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse"
+            }
+          }
+        }
+      }
+    },
+    "/set_user_private": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "description": "Set User Private",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "set_user_private",
+        "parameters": [
+          {
+            "description": "Set User Private",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "properties": {
+                "is_private": {
+                  "type": "boolean"
+                },
+                "user_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BaseResponse"
+            }
+          }
+        }
+      }
+    },
     "/user_history": {
       "post": {
         "security": [
@@ -848,6 +1026,19 @@ func init() {
     }
   },
   "definitions": {
+    "BaseResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "x-omitempty": false
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "ClusterInfo": {
       "type": "object",
       "properties": {
@@ -1102,7 +1293,8 @@ func init() {
           "type": "string"
         },
         "enable": {
-          "type": "boolean"
+          "type": "boolean",
+          "x-omitempty": false
         },
         "id": {
           "type": "string"
@@ -1110,6 +1302,10 @@ func init() {
         "image_count": {
           "type": "integer",
           "format": "int32",
+          "x-omitempty": false
+        },
+        "is_private": {
+          "type": "boolean",
           "x-omitempty": false
         },
         "roles": {

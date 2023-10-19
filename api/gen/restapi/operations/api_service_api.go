@@ -64,6 +64,12 @@ func NewAPIServiceAPI(spec *loads.Document) *APIServiceAPI {
 		SystemOpenDiscordServerHandler: system.OpenDiscordServerHandlerFunc(func(params system.OpenDiscordServerParams) middleware.Responder {
 			return middleware.NotImplemented("operation system.OpenDiscordServer has not yet been implemented")
 		}),
+		AdminSetUserEnableHandler: admin.SetUserEnableHandlerFunc(func(params admin.SetUserEnableParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation admin.SetUserEnable has not yet been implemented")
+		}),
+		AdminSetUserPrivateHandler: admin.SetUserPrivateHandlerFunc(func(params admin.SetUserPrivateParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation admin.SetUserPrivate has not yet been implemented")
+		}),
 		UserUserHistoryHandler: user.UserHistoryHandlerFunc(func(params user.UserHistoryParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation user.UserHistory has not yet been implemented")
 		}),
@@ -135,6 +141,10 @@ type APIServiceAPI struct {
 	UserLoginHandler user.LoginHandler
 	// SystemOpenDiscordServerHandler sets the operation handler for the open discord server operation
 	SystemOpenDiscordServerHandler system.OpenDiscordServerHandler
+	// AdminSetUserEnableHandler sets the operation handler for the set user enable operation
+	AdminSetUserEnableHandler admin.SetUserEnableHandler
+	// AdminSetUserPrivateHandler sets the operation handler for the set user private operation
+	AdminSetUserPrivateHandler admin.SetUserPrivateHandler
 	// UserUserHistoryHandler sets the operation handler for the user history operation
 	UserUserHistoryHandler user.UserHistoryHandler
 	// UserUserInfoHandler sets the operation handler for the user info operation
@@ -239,6 +249,12 @@ func (o *APIServiceAPI) Validate() error {
 	}
 	if o.SystemOpenDiscordServerHandler == nil {
 		unregistered = append(unregistered, "system.OpenDiscordServerHandler")
+	}
+	if o.AdminSetUserEnableHandler == nil {
+		unregistered = append(unregistered, "admin.SetUserEnableHandler")
+	}
+	if o.AdminSetUserPrivateHandler == nil {
+		unregistered = append(unregistered, "admin.SetUserPrivateHandler")
 	}
 	if o.UserUserHistoryHandler == nil {
 		unregistered = append(unregistered, "user.UserHistoryHandler")
@@ -370,6 +386,14 @@ func (o *APIServiceAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/open_discord_server"] = system.NewOpenDiscordServer(o.context, o.SystemOpenDiscordServerHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/set_user_enable"] = admin.NewSetUserEnable(o.context, o.AdminSetUserEnableHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/set_user_private"] = admin.NewSetUserPrivate(o.context, o.AdminSetUserPrivateHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}

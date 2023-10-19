@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 21:26:43
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-10 10:28:18
+ * @LastEditTime: 2023-10-19 14:09:38
  * @Description: file content
  */
 package business
@@ -46,6 +46,7 @@ func (b BusinessBase) SetUserInfoHandler() {
 						return userInfo.Avatar
 					}(),
 					Enable:       userInfo.Enable,
+					IsPrivate:    userInfo.IsPrivate,
 					StableConfig: userInfo.StableConfig,
 					Roles:        userInfo.Roles,
 					Created:      userInfo.Created,

@@ -24,13 +24,16 @@ type UserItem struct {
 	Created string `json:"created,omitempty"`
 
 	// enable
-	Enable bool `json:"enable,omitempty"`
+	Enable bool `json:"enable"`
 
 	// id
 	ID string `json:"id,omitempty"`
 
 	// image count
 	ImageCount int32 `json:"image_count"`
+
+	// is private
+	IsPrivate bool `json:"is_private"`
 
 	// roles
 	Roles string `json:"roles,omitempty"`

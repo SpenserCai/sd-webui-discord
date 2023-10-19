@@ -3,7 +3,7 @@
  * @Date: 2023-08-30 20:38:24
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-18 22:07:26
+ * @LastEditTime: 2023-10-19 14:20:09
  * @Description: file content
  */
 package user
@@ -39,6 +39,7 @@ type StableConfig struct {
 
 type UserInfo struct {
 	Enable             bool         `json:"enable"`
+	IsPrivate          bool         `json:"is_private"`
 	Avatar             string       `json:"avatar"`
 	Name               string       `json:"name"`
 	Id                 string       `json:"id"`
@@ -83,6 +84,7 @@ func (ucs *UserCenterService) GetUserInfo(id string) (*UserInfo, error) {
 
 	return &UserInfo{
 		Enable:       userInfo.Enable,
+		IsPrivate:    userInfo.IsPrivate,
 		Avatar:       userInfo.Avatar,
 		Name:         userInfo.Name,
 		Id:           userInfo.ID,
@@ -136,6 +138,7 @@ func (ucs *UserCenterService) GetUserInfoList(ids []string) ([]*UserInfo, error)
 		}
 		userInfos = append(userInfos, &UserInfo{
 			Enable:       v.Enable,
+			IsPrivate:    v.IsPrivate,
 			Avatar:       v.Avatar,
 			Name:         v.Name,
 			Id:           v.ID,
@@ -194,6 +197,7 @@ func (ucs *UserCenterService) SearchUserInfoList(page int, pageSize int, query m
 		}
 		userInfos = append(userInfos, &UserInfo{
 			Enable:       v.Enable,
+			IsPrivate:    v.IsPrivate,
 			Avatar:       v.Avatar,
 			Name:         v.Name,
 			Id:           v.ID,
@@ -260,11 +264,12 @@ func (ucs *UserCenterService) RegisterUser(user *UserInfo) (string, error) {
 	}
 	// 如果用户不存在则创建用户
 	newUserInfo := &db_backend.UserInfo{
-		ID:      user.Id,
-		Name:    user.Name,
-		Avatar:  user.Avatar,
-		Created: time.Now().Format("2006-01-02 15:04:05"),
-		Enable:  true,
+		ID:        user.Id,
+		Name:      user.Name,
+		Avatar:    user.Avatar,
+		Created:   time.Now().Format("2006-01-02 15:04:05"),
+		Enable:    true,
+		IsPrivate: false,
 		// 如果用户总数为0，则创建的用户为admin，否则为user
 		Roles: func() string {
 			count, err := ucs.GetUserCount()
@@ -285,11 +290,12 @@ func (ucs *UserCenterService) RegisterUser(user *UserInfo) (string, error) {
 
 func (ucs *UserCenterService) UpdateUserInfo(user *UserInfo) error {
 	userInfo := &db_backend.UserInfo{
-		ID:     user.Id,
-		Name:   user.Name,
-		Avatar: user.Avatar,
-		Enable: user.Enable,
-		Roles:  user.Roles,
+		ID:        user.Id,
+		Name:      user.Name,
+		Avatar:    user.Avatar,
+		Enable:    user.Enable,
+		Roles:     user.Roles,
+		IsPrivate: user.IsPrivate,
 	}
 	err := ucs.Db.Db.Model(&db_backend.UserInfo{}).Where("id = ?", user.Id).Updates(userInfo).Error
 	return err
@@ -302,6 +308,11 @@ func (ucs *UserCenterService) BanUser(id string) error {
 
 func (ucs *UserCenterService) UnBanUser(id string) error {
 	err := ucs.Db.Db.Model(&db_backend.UserInfo{}).Where("id = ?", id).Update("enable", true).Error
+	return err
+}
+
+func (ucs *UserCenterService) SetUserEnable(id string, enable bool) error {
+	err := ucs.Db.Db.Model(&db_backend.UserInfo{}).Where("id = ?", id).Update("enable", enable).Error
 	return err
 }
 
@@ -473,6 +484,12 @@ func (ucs *UserCenterService) IsPrivate(id string) (bool, error) {
 		return false, err
 	}
 	return isPrivate, nil
+}
+
+// 设置用户是否是Private
+func (ucs *UserCenterService) SetUserPrivate(id string, isPrivate bool) error {
+	err := ucs.Db.Db.Model(&db_backend.UserInfo{}).Where("id = ?", id).Update("is_private", isPrivate).Error
+	return err
 }
 
 // 获取用户列表 判断当前用户是否为管理员，如果是管理员则返回所有用户，如果不是管理员则返回当前用户

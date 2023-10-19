@@ -3,7 +3,7 @@
  * @Date: 2023-09-29 15:37:14
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-11 21:52:07
+ * @LastEditTime: 2023-10-19 14:30:01
  * @Description: file content
  */
 package api
@@ -41,6 +41,8 @@ func BeforeRun() {
 	business.BusinessBase{}.SetClusterHandler()
 	business.BusinessBase{}.SetCommunityHistoryHandler()
 	business.BusinessBase{}.SetUserListHandler()
+	business.BusinessBase{}.SetSetUserPrivateHandler()
+	business.BusinessBase{}.SetSetUserEnableHandler()
 
 }
 

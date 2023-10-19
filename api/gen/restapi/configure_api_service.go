@@ -83,6 +83,16 @@ func configureAPI(api *operations.APIServiceAPI) http.Handler {
 			return middleware.NotImplemented("operation system.OpenDiscordServer has not yet been implemented")
 		})
 	}
+	if api.AdminSetUserEnableHandler == nil {
+		api.AdminSetUserEnableHandler = admin.SetUserEnableHandlerFunc(func(params admin.SetUserEnableParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation admin.SetUserEnable has not yet been implemented")
+		})
+	}
+	if api.AdminSetUserPrivateHandler == nil {
+		api.AdminSetUserPrivateHandler = admin.SetUserPrivateHandlerFunc(func(params admin.SetUserPrivateParams, principal interface{}) middleware.Responder {
+			return middleware.NotImplemented("operation admin.SetUserPrivate has not yet been implemented")
+		})
+	}
 	if api.UserUserHistoryHandler == nil {
 		api.UserUserHistoryHandler = user.UserHistoryHandlerFunc(func(params user.UserHistoryParams, principal interface{}) middleware.Responder {
 			return middleware.NotImplemented("operation user.UserHistory has not yet been implemented")
