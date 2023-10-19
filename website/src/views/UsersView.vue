@@ -3,17 +3,16 @@
  * @Date: 2023-10-11 21:36:11
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-12 15:25:11
+ * @LastEditTime: 2023-10-19 20:55:13
  * @Description: file content
 -->
 <script setup>
 import SectionMain from '@/components/SectionMain.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLine from '@/components/SectionTitleLine.vue'
-
-import { mdiAccount, mdiAccountMultiple } from '@mdi/js';
+import { mdiAccount, mdiAccountMultiple, mdiLock,mdiEarth } from '@mdi/js';
 import { onMounted,ref } from 'vue'
-import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell,Avatar,Pagination,Toggle,Badge } from 'flowbite-vue'
+import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell,Avatar,Pagination,Toggle,Badge,Button } from 'flowbite-vue'
 import { userlist } from '@/api/system'
 
 const total = ref(0)
@@ -79,6 +78,7 @@ onMounted(() => {
             <table-head-cell>Created Count</table-head-cell>
             <table-head-cell>Roles</table-head-cell>
             <table-head-cell>Enable</table-head-cell>
+            <table-head-cell>Account Type</table-head-cell>
             <table-head-cell>Created</table-head-cell>
           </table-head>
           <table-body>
@@ -108,6 +108,28 @@ onMounted(() => {
               </table-cell>
               <table-cell>
                 <Toggle v-model="item.enable" :disabled="true" />
+              </table-cell>
+              <table-cell>
+                <div class="text-center">
+                  <Button v-if="item.is_private" size="xs" gradient="purple-pink" style="pointer-events:none">
+                    PRIVATE
+                    <template #prefix >
+                      <!--<BaseIcon :path="mdiLock" size="14" :hidden="true"/>-->
+                      <svg class="-mr-0.5 ml-0.5 -mt-0.5 w-3 h-3" fill="currentColor" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" :d="mdiLock" clip-rule="evenodd"></path>
+                      </svg>
+                    </template>
+                  </Button>
+                  <Button v-else size="xs" gradient="green-blue" style="pointer-events:none">
+                    PUBLIC
+                    <template #prefix>
+                      <!--<BaseIcon :path="mdiEarth" size="14" :hidden="true"/>-->
+                      <svg class="-mr-0.5 ml-0.5 -mt-0.5 w-3 h-3" fill="currentColor" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" :d="mdiEarth" clip-rule="evenodd"></path>
+                      </svg>
+                    </template>
+                  </Button>
+                </div>
               </table-cell>
               <table-cell>
                 <dev class="flex">{{ item.created }}</dev>
