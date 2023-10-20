@@ -3,7 +3,7 @@
  * @Date: 2023-10-11 21:36:11
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-19 20:55:13
+ * @LastEditTime: 2023-10-20 14:15:12
  * @Description: file content
 -->
 <script setup>
@@ -12,8 +12,9 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLine from '@/components/SectionTitleLine.vue'
 import { mdiAccount, mdiAccountMultiple, mdiLock,mdiEarth } from '@mdi/js';
 import { onMounted,ref } from 'vue'
-import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell,Avatar,Pagination,Toggle,Badge,Button } from 'flowbite-vue'
-import { userlist } from '@/api/system'
+import { Table, TableHead, TableBody, TableHeadCell, TableRow, TableCell, Avatar, Pagination, Toggle, Badge, Button } from 'flowbite-vue'
+import { userlist, setuserprivate } from '@/api/system'
+import { notify } from "notiwind"
 
 const total = ref(0)
 const currentPage = ref(1)
@@ -62,8 +63,25 @@ const getUserList = (page) => {
     })
 }
 
+const setPrivate = (uid, isPrivate) => {
+  setuserprivate({
+    user_id: uid,
+    is_private: isPrivate
+  }).then(res =>{
+    if (res.code == 0) {
+      notify({
+        title: "Account type changed",
+        text: "Setted account type to " + (isPrivate ? "private" : "public") + " successfully",
+        type: "success",
+        group: "authenticated",
+      }, 5000)
+      getUserList(currentPage.value)
+    }
+  })
+}
+
 onMounted(() => {
-  getUserList(currentPage.value)
+  getUserList(1)
 })
 
 </script>
@@ -86,7 +104,7 @@ onMounted(() => {
               <table-cell>
                 <div class="-ml-2 flex items-center justify-between max-md:w-full md:justify-start">
                   <Avatar size="xs" status="online" rounded :img="item.avatar"></Avatar>
-                  <p :title="item.name" class="ml-2 text-sm font-medium active:text-blue-100 break-all md:text-sm">{{ item.username }}</p>
+                  <p :title="item.username" class="ml-2 text-sm font-medium active:text-blue-100 break-all md:text-sm">{{ item.username }}</p>
                 </div>
               </table-cell>
               <table-cell>
@@ -111,7 +129,7 @@ onMounted(() => {
               </table-cell>
               <table-cell>
                 <div class="text-center">
-                  <Button v-if="item.is_private" size="xs" gradient="purple-pink" style="pointer-events:none">
+                  <Button v-if="item.is_private" size="xs" gradient="purple-pink" @click="setPrivate(item.id,false)">
                     PRIVATE
                     <template #prefix >
                       <!--<BaseIcon :path="mdiLock" size="14" :hidden="true"/>-->
@@ -120,7 +138,7 @@ onMounted(() => {
                       </svg>
                     </template>
                   </Button>
-                  <Button v-else size="xs" gradient="green-blue" style="pointer-events:none">
+                  <Button v-else size="xs" gradient="green-blue" @click="setPrivate(item.id,true)">
                     PUBLIC
                     <template #prefix>
                       <!--<BaseIcon :path="mdiEarth" size="14" :hidden="true"/>-->
@@ -137,9 +155,9 @@ onMounted(() => {
             </table-row>
           </table-body>
         </Table>
-        <div class="lg:text-center my-3">
-          <Pagination v-model="currentPage" :total-pages="getTotalPage(total)" :slice-length="4" @page-changed="onPageChanged"></Pagination>
-        </div>
+        
+          <Pagination v-model="currentPage" class="lg:text-center my-3" :total-pages="getTotalPage(total)" :slice-length="4" @page-changed="onPageChanged"></Pagination>
+        
       </SectionMain>
     </LayoutAuthenticated>
 </template>
