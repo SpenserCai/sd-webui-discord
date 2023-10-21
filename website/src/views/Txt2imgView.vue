@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-15 01:35:16
+ * @LastEditTime: 2023-10-21 18:41:02
  * @Description: file content
 -->
 <script setup>
@@ -20,7 +20,9 @@ import { useRoute,useRouter } from 'vue-router'
 import SectionTitleLine from '@/components/SectionTitleLine.vue'
 import NotifyGroup from '@/components/NotifyGroup.vue'
 import { notify } from "notiwind"
-import { decode } from "blurhash";
+import { decode } from "blurhash"
+// import * as tf from '@tensorflow/tfjs'
+import * as nsfwjs from 'nsfwjs'
 // import { useMainStore } from '@/stores/main'
 // import { mdiApplicationSettings } from '@mdi/js'
 
@@ -38,6 +40,8 @@ const currentPage = ref(1)
 const gridRowCount = ref(3)
 // 当前list
 const currentList = ref([])
+
+const model = ref(null)
 
 const isUserHistory = () => {
   let history_type = route.path
@@ -259,11 +263,45 @@ const copyCommand = () => {
 
 }
 
+// image detail 的 onload事件
+const imageDetailOnload = () => {
+  document.getElementById('img_info_loaded').hidden=false
+  document.getElementById('img_info_loading').hidden=true
+}
+
+const galleryImageLoaded = async (e) => {
+  // 获取id
+  let id = e.target.id
+  // 获取图片
+  let img = document.getElementById(id)
+  const predictions = await model.value.classify(img)
+  console.log(predictions)
+  // 判断predictions是否成功
+  switch (predictions[0].className) {
+    case 'Hentai':
+    case 'Porn':
+    case 'Sexy':
+      img.classList.add("blur-xl")
+      break
+    default:
+      img.classList.remove("blur-xl")
+      break
+  }
+  img.hidden = false
+
+
+}
+
 const closeImageInfo = () => {
   isShowImageInfoModal.value = false
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await nsfwjs.load('/quant_mid/',{type: 'graph'}).then((m) => {
+    model.value = Object.freeze(m)
+    console.log(model.value)
+  })
+  console.log("mounted")
   getListFunc(1, 4 * gridRowCount.value)
 })
 
@@ -286,7 +324,7 @@ watch(() => router.currentRoute.value.path,() => {
               <div class="h-2"></div>
               <div class="flex justify-center">
                 <Img id="img_info_loading" size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].hash"/>
-                <Img id="img_info_loaded" onload="document.getElementById('img_info_loaded').hidden=false;document.getElementById('img_info_loading').hidden=true;" hidden="hidden" size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].src"/>
+                <Img id="img_info_loaded" hidden="hidden" size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].src" @load="imageDetailOnload"/>
               </div>
               <div class="h-2"></div>
               <div class="flex w-full flex-wrap-reverse justify-between">
@@ -393,7 +431,7 @@ watch(() => router.currentRoute.value.path,() => {
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
           <div v-for="(i_number,i_index) of gridRowCount" :key="i_index">
-            <img class="h-auto max-w-full rounded-lg" :src="getImage(i_index*4+index,true)" alt="" @click="showImageInfo(i_index*4+index)">
+            <img :id="number+'_'+i_number+'_'+'gallery'" hidden="hidden" crossorigin="anonymous" class="h-auto max-w-full rounded-lg" :src="getImage(i_index*4+index,true)" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)">
           </div>
         </div>
       </div>

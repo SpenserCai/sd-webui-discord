@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-02 22:25:11
+ * @LastEditTime: 2023-10-21 12:41:04
  * @Description: file content
  */
 import { fileURLToPath, URL } from "node:url";
@@ -18,6 +18,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "nsfwjs":"nsfwjs/dist/nsfwjs.min.js",
     },
   },
   server:{
