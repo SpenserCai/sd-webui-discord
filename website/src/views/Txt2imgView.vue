@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-21 18:41:02
+ * @LastEditTime: 2023-10-22 00:47:08
  * @Description: file content
 -->
 <script setup>
@@ -29,7 +29,7 @@ import * as nsfwjs from 'nsfwjs'
 // const mainStore = useMainStore()
 // 获取用户历史记录方法，参数为页数和每页数量
 const route = useRoute()
-const isLoading = ref(false)
+const isLoading = ref(true)
 const router = useRouter()
 const isShowImageInfoModal = ref(false)
 const currentImageInfo = ref({})
@@ -275,16 +275,19 @@ const galleryImageLoaded = async (e) => {
   // 获取图片
   let img = document.getElementById(id)
   const predictions = await model.value.classify(img)
-  console.log(predictions)
   // 判断predictions是否成功
   switch (predictions[0].className) {
     case 'Hentai':
     case 'Porn':
     case 'Sexy':
-      img.classList.add("blur-xl")
+      if (predictions[0].probability > 0.50) {
+        img.classList.add("blur-2xl")
+      } else {
+        img.classList.remove("blur-2xl")
+      }
       break
     default:
-      img.classList.remove("blur-xl")
+      img.classList.remove("blur-2xl")
       break
   }
   img.hidden = false
@@ -297,7 +300,8 @@ const closeImageInfo = () => {
 }
 
 onMounted(async () => {
-  await nsfwjs.load('/quant_mid/',{type: 'graph'}).then((m) => {
+  await nsfwjs.load('/model/',{size: 299}).then((m) => {
+    // https://stackoverflow.com/questions/67815952/vue3-app-with-tensorflowjs-throws-typeerror-cannot-read-property-backend-of-u
     model.value = Object.freeze(m)
     console.log(model.value)
   })
@@ -415,13 +419,13 @@ watch(() => router.currentRoute.value.path,() => {
         </template>
       </Modal>
       <SectionTitleLine v-if="isUserHistory()" main title="Gallery" :icon="mdiImageArea">
-        <Button size="xs" gradient="purple-blue" outline square @click="getListFunc(1, 4 * gridRowCount)">
+        <Button size="xs" gradient="purple-blue" outline square @click="getListFunc(currentPage, 4 * gridRowCount)">
           <spinner v-show="isLoading" size="6" />
           <BaseIcon :path="mdiRefresh" />
         </Button>
       </SectionTitleLine>
       <SectionTitleLine v-else main title="Community" :icon="mdiAccountGroup">
-        <Button size="xs" gradient="purple-blue" outline square @click="getListFunc(1, 4 * gridRowCount)">
+        <Button size="xs" gradient="purple-blue" outline square @click="getListFunc(currentPage, 4 * gridRowCount)">
           <spinner v-show="isLoading" size="6" />
           <BaseIcon :path="mdiRefresh" />
         </Button>
@@ -430,8 +434,8 @@ watch(() => router.currentRoute.value.path,() => {
       <div v-if="show" id="t2i_list" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
-          <div v-for="(i_number,i_index) of gridRowCount" :key="i_index">
-            <img :id="number+'_'+i_number+'_'+'gallery'" hidden="hidden" crossorigin="anonymous" class="h-auto max-w-full rounded-lg" :src="getImage(i_index*4+index,true)" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)">
+          <div v-for="(i_number,i_index) of gridRowCount" :key="i_index" class="overflow-hidden rounded-lg">
+              <img :id="number+'_'+i_number+'_'+'gallery'" hidden="hidden" crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" :src="getImage(i_index*4+index,true)" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)">
           </div>
         </div>
       </div>
