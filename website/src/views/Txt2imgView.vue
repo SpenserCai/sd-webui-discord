@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-22 00:47:08
+ * @LastEditTime: 2023-10-22 11:00:06
  * @Description: file content
 -->
 <script setup>
@@ -300,12 +300,18 @@ const closeImageInfo = () => {
 }
 
 onMounted(async () => {
-  await nsfwjs.load('/model/',{size: 299}).then((m) => {
-    // https://stackoverflow.com/questions/67815952/vue3-app-with-tensorflowjs-throws-typeerror-cannot-read-property-backend-of-u
-    model.value = Object.freeze(m)
-    console.log(model.value)
-  })
-  console.log("mounted")
+  // 先尝试从indexdb中获取model，如果失败则从/model/中加载，并保存到indexdb中
+  try{
+    const locationLoaded = await Object.freeze(nsfwjs.load('indexeddb://nsfwjs_model',{size:299}))
+    model.value = Object.freeze(locationLoaded)
+  } catch (e) {
+    console.log("load from /model/")
+    await nsfwjs.load('/model/',{size: 299}).then((m) => {
+      // https://stackoverflow.com/questions/67815952/vue3-app-with-tensorflowjs-throws-typeerror-cannot-read-property-backend-of-u
+      model.value = Object.freeze(m)
+      m.model.save('indexeddb://nsfwjs_model')
+    })
+  }
   getListFunc(1, 4 * gridRowCount.value)
 })
 
