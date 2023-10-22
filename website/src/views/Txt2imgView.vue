@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-22 12:18:01
+ * @LastEditTime: 2023-10-22 12:20:27
  * @Description: file content
 -->
 <script setup>
@@ -280,7 +280,7 @@ const galleryImageLoaded = async (e) => {
     case 'Hentai':
     case 'Porn':
     case 'Sexy':
-      if (predictions[0].probability >= 0.60) {
+      if (predictions[0].probability >= 0.55) {
         img.classList.add("blur-2xl")
       } else {
         img.classList.remove("blur-2xl")
