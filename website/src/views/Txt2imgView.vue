@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-22 12:22:11
+ * @LastEditTime: 2023-10-24 00:02:12
  * @Description: file content
 -->
 <script setup>
@@ -36,6 +36,7 @@ const currentImageInfo = ref({})
 const show = ref(false)
 const total = ref(0)
 const currentPage = ref(1)
+
 // 每页显示多少行
 const gridRowCount = ref(3)
 // 当前list
@@ -111,10 +112,9 @@ const getListFunc = (page, pageSize) => {
   }
 }
 
-const onPageChanged = (page) => {
-  console.log(currentPage.value)
-  getListFunc(page, 4 * gridRowCount.value)
-}
+// const onPageChanged = (page) => {
+//   getListFunc(page, 4 * gridRowCount.value)
+// }
 
 const getImage = (index,isSmall=false) => {
   let history = currentList.value[index]
@@ -144,6 +144,24 @@ const getImage = (index,isSmall=false) => {
       }
     }
     return tmpImage
+  }
+}
+
+const getGalleryImageLoadStartImg = (index) => {
+  let history = currentList.value[index]
+  if (history == undefined) {
+    return ""
+  } else {
+    let tW = history.options.width
+    let tH = history.options.height
+    // 创建一个宽高为tW,tH的灰色canvas
+    let canvas = document.createElement("canvas")
+    canvas.width = tW
+    canvas.height = tH
+    let ctx = canvas.getContext("2d")
+    ctx.fillStyle = "#2d3748"
+    ctx.fillRect(0, 0, tW, tH)
+    return canvas.toDataURL()
   }
 }
 
@@ -269,30 +287,35 @@ const imageDetailOnload = () => {
   document.getElementById('img_info_loading').hidden=true
 }
 
-const galleryImageLoaded = async (e) => {
+const galleryImageLoaded = (e) => {
   // 获取id
   let id = e.target.id
   // 获取图片
   let img = document.getElementById(id)
-  const predictions = await model.value.classify(img)
-  // 判断predictions是否成功
-  switch (predictions[0].className) {
-    case 'Hentai':
-    case 'Porn':
-    case 'Sexy':
-      if (predictions[0].probability >= 0.51) {
-        img.classList.add("blur-2xl")
-      } else {
+  let imgLoading = document.getElementById(id + "_loading")
+  model.value.classify(img).then( predictions => {
+    // 判断predictions是否成功
+    switch (predictions[0].className) {
+      case 'Hentai':
+      case 'Porn':
+      case 'Sexy':
+        if (predictions[0].probability >= 0.51) {
+          img.classList.add("blur-2xl")
+        } else {
+          img.classList.remove("blur-2xl")
+        }
+        break
+      default:
         img.classList.remove("blur-2xl")
-      }
-      break
-    default:
-      img.classList.remove("blur-2xl")
-      break
-  }
-  img.hidden = false
+        break
+    }
+    imgLoading.hidden = true
+    img.hidden = false
+  })
+}
 
-
+const RefreshCurrentPage = () => {
+  getListFunc(currentPage.value, 4 * gridRowCount.value)
 }
 
 const closeImageInfo = () => {
@@ -315,7 +338,17 @@ onMounted(async () => {
   getListFunc(1, 4 * gridRowCount.value)
 })
 
+// 在currentPage变化时，获取list
+watch(currentPage, (newVal, oldVal) => {
+  if (newVal == oldVal) {
+    console.log("currentPage not changed")
+  } else {
+    getListFunc(newVal, 4 * gridRowCount.value)
+  }
+})
+
 watch(() => router.currentRoute.value.path,() => {
+  console.log("path changed")
   getListFunc(1, 4 * gridRowCount.value)
 })
 </script>
@@ -425,28 +458,29 @@ watch(() => router.currentRoute.value.path,() => {
         </template>
       </Modal>
       <SectionTitleLine v-if="isUserHistory()" main title="Gallery" :icon="mdiImageArea">
-        <Button size="xs" gradient="purple-blue" outline square @click="getListFunc(currentPage, 4 * gridRowCount)">
+        <Button size="xs" gradient="purple-blue" outline square @click="RefreshCurrentPage()">
           <spinner v-show="isLoading" size="6" />
           <BaseIcon :path="mdiRefresh" />
         </Button>
       </SectionTitleLine>
       <SectionTitleLine v-else main title="Community" :icon="mdiAccountGroup">
-        <Button size="xs" gradient="purple-blue" outline square @click="getListFunc(currentPage, 4 * gridRowCount)">
+        <Button size="xs" gradient="purple-blue" outline square @click="RefreshCurrentPage()">
           <spinner v-show="isLoading" size="6" />
           <BaseIcon :path="mdiRefresh" />
         </Button>
       </SectionTitleLine>
       
-      <div v-if="show" id="t2i_list" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div v-if="show" id="t2i_list" :key="Date.now()" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
           <div v-for="(i_number,i_index) of gridRowCount" :key="i_index" class="overflow-hidden rounded-lg">
+              <img :id="number+'_'+i_number+'_'+'gallery_loading'" crossorigin="anonymous" class="h-auto animate-pulse max-w-full rounded-lg object-cover" :src="getGalleryImageLoadStartImg(i_index*4+index,true)" alt="" >
               <img :id="number+'_'+i_number+'_'+'gallery'" hidden="hidden" crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" :src="getImage(i_index*4+index,true)" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)">
           </div>
         </div>
       </div>
       <div class="lg:text-center my-3">
-          <Pagination v-model="currentPage" :total-pages="getTotalPage(total)" :slice-length="4" @page-changed="onPageChanged"></Pagination>
+          <Pagination v-model="currentPage" :total-pages="getTotalPage(total)" :slice-length="4"></Pagination>
       </div>
     </SectionMain>
   </LayoutAuthenticated>
