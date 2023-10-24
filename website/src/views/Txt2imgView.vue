@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-24 00:02:12
+ * @LastEditTime: 2023-10-24 09:08:32
  * @Description: file content
 -->
 <script setup>
@@ -470,7 +470,7 @@ watch(() => router.currentRoute.value.path,() => {
         </Button>
       </SectionTitleLine>
       
-      <div v-if="show" id="t2i_list" :key="Date.now()" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div v-if="show" id="t2i_list" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
           <div v-for="(i_number,i_index) of gridRowCount" :key="i_index" class="overflow-hidden rounded-lg">
