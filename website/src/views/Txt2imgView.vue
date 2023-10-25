@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-25 21:39:37
+ * @LastEditTime: 2023-10-25 23:43:59
  * @Description: file content
 -->
 <script setup>
@@ -38,7 +38,7 @@ const total = ref(0)
 const currentPage = ref(1)
 
 // 每页显示多少行
-const gridRowCount = ref(3)
+const gridRowCount = ref(7)
 const gridColCount = ref(4)
 // 当前list
 const currentList = ref([])
@@ -65,7 +65,15 @@ function convertUint8ClampedArrayToBase64Image(uint8Array, width, height) {
   return canvas.toDataURL();
 }
 
-const getUserHistory = (page, pageSize) => {
+const updateToCurrentList = (history,isAppend=false) => {
+  if (isAppend) {
+    currentList.value = currentList.value.concat(history)
+  } else {
+    currentList.value = history
+  }
+}
+
+const getUserHistory = (page, pageSize,isAppend) => {
   isLoading.value = true
   userhistory({
     query: {
@@ -78,14 +86,14 @@ const getUserHistory = (page, pageSize) => {
   }).then(res => {
     total.value = res.data.page_info.total
     currentPage.value = res.data.page_info.page
-    currentList.value = res.data.history
+    updateToCurrentList(res.data.history,isAppend)
     show.value = true
   }).finally(() => {
     isLoading.value = false
   })
 }
 
-const getCommunityHistory = (page, pageSize) => {
+const getCommunityHistory = (page, pageSize,isAppend) => {
   isLoading.value = true
   communityhistory({
     query: {
@@ -98,18 +106,18 @@ const getCommunityHistory = (page, pageSize) => {
   }).then(res => {
     total.value = res.data.page_info.total
     currentPage.value = res.data.page_info.page
-    currentList.value = res.data.history
+    updateToCurrentList(res.data.history,isAppend)
     show.value = true
   }).finally(() => {
     isLoading.value = false
   })
 }
 
-const getListFunc = (page, pageSize) => {
+const getListFunc = (page, pageSize,isAppend=false) => {
   if (isUserHistory()) {
-    getUserHistory(page, pageSize)
+    getUserHistory(page, pageSize,isAppend)
   } else {
-    getCommunityHistory(page, pageSize)
+    getCommunityHistory(page, pageSize,isAppend)
   }
 }
 
@@ -251,6 +259,14 @@ const getImagesList = () => {
   return imagesList
 }
 
+// const LoadNext = () => {
+//   // 判断当前页是否是最后一页，如果是则不执行
+//   if (currentPage.value == getTotalPage(total.value)) {
+//     return
+//   }
+//   getListFunc(currentPage.value + 1, gridColCount.value * gridRowCount.value, true)
+// }
+
 const copyCommand = () => {
   // 获取当前Image的StableConfig
   let stableConfig = currentImageInfo.value.options
@@ -306,7 +322,6 @@ const galleryImageLoaded = (e) => {
   let id = e.target.id
   // 获取图片
   let img = document.getElementById(id)
-  let imgLoading = document.getElementById(id + "_loading")
   model.value.classify(img).then( predictions => {
     // 判断predictions是否成功
     switch (predictions[0].className) {
@@ -323,7 +338,6 @@ const galleryImageLoaded = (e) => {
         img.classList.remove("blur-2xl")
         break
     }
-    imgLoading.hidden = true
     img.hidden = false
   })
 }
@@ -490,13 +504,15 @@ watch(() => router.currentRoute.value.path,() => {
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
           <div v-for="(i_number,i_index) of gridRowCount" :key="i_index" class="overflow-hidden rounded-lg">
-              <img :id="number+'_'+i_number+'_'+'gallery_loading'" crossorigin="anonymous" class="h-auto animate-pulse max-w-full rounded-lg object-cover" :src="getGalleryImageLoadStartImg(i_index*4+index,true)" alt="" >
-              <img :id="number+'_'+i_number+'_'+'gallery'" hidden="hidden" crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" :src="getImage(i_index*4+index,true)" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)">
+              <img :id="number+'_'+i_number+'_'+'gallery'" v-lazy="{ src: getImage(i_index*4+index,true), loading: getGalleryImageLoadStartImg(i_index*4+index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)" >
           </div>
         </div>
       </div>
       <div class="lg:text-center my-3">
           <Pagination v-model="currentPage" :total-pages="getTotalPage(total)" :slice-length="4"></Pagination>
+          <!--<Button size="lg" @click="LoadNext()">
+            Load
+          </Button>-->
       </div>
     </SectionMain>
   </LayoutAuthenticated>
