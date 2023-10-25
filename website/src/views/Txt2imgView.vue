@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-25 23:43:59
+ * @LastEditTime: 2023-10-26 00:15:46
  * @Description: file content
 -->
 <script setup>
@@ -374,6 +374,8 @@ watch(currentPage, (newVal, oldVal) => {
     console.log("currentPage not changed")
   } else {
     getListFunc(newVal, gridColCount.value * gridRowCount.value)
+    // 把滚动条滚动到顶部
+    document.documentElement.scrollTop = 0
   }
 })
 
