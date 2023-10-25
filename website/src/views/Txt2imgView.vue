@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-24 09:08:32
+ * @LastEditTime: 2023-10-25 21:39:37
  * @Description: file content
 -->
 <script setup>
@@ -39,6 +39,7 @@ const currentPage = ref(1)
 
 // 每页显示多少行
 const gridRowCount = ref(3)
+const gridColCount = ref(4)
 // 当前list
 const currentList = ref([])
 
@@ -113,7 +114,7 @@ const getListFunc = (page, pageSize) => {
 }
 
 // const onPageChanged = (page) => {
-//   getListFunc(page, 4 * gridRowCount.value)
+//   getListFunc(page, gridColCount.value * gridRowCount.value)
 // }
 
 const getImage = (index,isSmall=false) => {
@@ -200,10 +201,10 @@ const showImageInfo = (index) => {
 
 const getTotalPage = (total) => {
   // 如果total是12的倍数，返回total/12，否则返回total/12取整+1
-  if (total % 12 == 0) {
-    return total / 12
+  if (total % (gridColCount.value * gridRowCount.value) == 0) {
+    return total / (gridColCount.value * gridRowCount.value)
   } else {
-    return Math.floor(total / 12) + 1
+    return Math.floor(total / (gridColCount.value * gridRowCount.value)) + 1
   }
 }
 
@@ -225,8 +226,21 @@ const getImagesList = () => {
       blurdata = "KED+rLozE4~UakohE4IW%3"
     }  
     
-    let pixels = decode(blurdata, currentImageInfo.value.options.width/2, currentImageInfo.value.options.height/2);
-    base64data = convertUint8ClampedArrayToBase64Image(pixels, currentImageInfo.value.options.width/2, currentImageInfo.value.options.height/2)
+    let tmpWidth = currentImageInfo.value.options.width/2
+    let tmpHeight = currentImageInfo.value.options.height/2
+    // 如果/2之之后任何一个不是4的倍数，则调整成最接近当前值的4的倍数
+    if (tmpWidth % 4 != 0) {
+      tmpWidth = Math.floor(tmpWidth / 4) * 4
+      // 等比例调整高度(判断新的tmpWidth相比于原来的tmpWidth的比例，然后等比例调整tmpHeight)
+      tmpHeight = Math.floor(tmpHeight * (tmpWidth / (currentImageInfo.value.options.width / 2)))
+    } else if (tmpHeight % 4 != 0) {
+      tmpHeight = Math.floor(tmpHeight / 4) * 4
+      // 等比例调整宽度
+      tmpWidth = Math.floor(tmpWidth * (tmpHeight / (currentImageInfo.value.options.height / 2)))
+    }
+    
+    let pixels = decode(blurdata, tmpWidth, tmpHeight);
+    base64data = convertUint8ClampedArrayToBase64Image(pixels, tmpWidth, tmpHeight)
     imagesList.push({
       src: images[i],
       alt: "image_" + i,
@@ -315,7 +329,7 @@ const galleryImageLoaded = (e) => {
 }
 
 const RefreshCurrentPage = () => {
-  getListFunc(currentPage.value, 4 * gridRowCount.value)
+  getListFunc(currentPage.value, gridColCount.value * gridRowCount.value)
 }
 
 const closeImageInfo = () => {
@@ -335,7 +349,9 @@ onMounted(async () => {
       m.model.save('indexeddb://nsfwjs_model')
     })
   }
-  getListFunc(1, 4 * gridRowCount.value)
+  getListFunc(1, gridColCount.value * gridRowCount.value)
+
+  
 })
 
 // 在currentPage变化时，获取list
@@ -343,13 +359,13 @@ watch(currentPage, (newVal, oldVal) => {
   if (newVal == oldVal) {
     console.log("currentPage not changed")
   } else {
-    getListFunc(newVal, 4 * gridRowCount.value)
+    getListFunc(newVal, gridColCount.value * gridRowCount.value)
   }
 })
 
 watch(() => router.currentRoute.value.path,() => {
   console.log("path changed")
-  getListFunc(1, 4 * gridRowCount.value)
+  getListFunc(1, gridColCount.value * gridRowCount.value)
 })
 </script>
 

@@ -3,12 +3,13 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-09 18:25:35
+ * @LastEditTime: 2023-10-24 21:42:42
  * @Description: file content
  */
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import Notifications from 'notiwind'
+import VueLazyLoad from 'vue3-lazyload'
 // import { initFlowbite,initModals } from 'flowbite'
 
 
@@ -26,7 +27,7 @@ const pinia = createPinia()
 
 // Create Vue app
 // createApp(App).use(router).use(pinia).use(Notifications).use(flowbite).use(modals).mount('#app')
-createApp(App).use(router).use(pinia).use(Notifications).mount('#app')
+createApp(App).use(router).use(pinia).use(Notifications).use(VueLazyLoad).mount('#app')
 
 // Init main store
 // const mainStore = useMainStore(pinia)
