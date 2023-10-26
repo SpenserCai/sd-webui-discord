@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-26 23:18:01
+ * @LastEditTime: 2023-10-27 00:16:56
  * @Description: file content
 -->
 <script setup>
@@ -67,6 +67,16 @@ function convertUint8ClampedArrayToBase64Image(uint8Array, width, height) {
 }
 
 const updateToCurrentList = (history,isAppend=false) => {
+  // 循环history，把根据history.images创建small_images,同时创建loading
+  for (let i = 0; i < history.length; i++) {
+    let tmpImages = history[i].images
+    let tmpSmallImages = []
+    for (let j = 0; j < tmpImages.length; j++) {
+      tmpSmallImages.push(GetSmallImageUrl(tmpImages[j],history[i]))
+    }
+    history[i].small_images = tmpSmallImages
+    history[i].loading_image = GetImageLoadUrl(history[i].options.width,history[i].options.height)
+  }
   if (isAppend) {
     currentList.value = [...currentList.value, ...history]
   } else {
@@ -127,55 +137,60 @@ const getListFunc = (page, pageSize,isAppend=false) => {
 //   getListFunc(page, gridColCount.value * gridRowCount.value)
 // }
 
+const GetSmallImageUrl = (url,history) => {
+  if (isDiscordImage(url)) {
+    // 把cdn.discordapp.com替换为media.discordapp.net
+    url = url.replace("cdn.discordapp.com", "media.discordapp.net")
+    // 获取长宽
+    let tmpImageWidth = history.options.width
+    let tmpImageHeight = history.options.height
+    // 如果宽高大于等于512，把宽设置为256，高等比例缩放
+    if (tmpImageWidth >= 512 || tmpImageHeight >= 512) {
+      tmpImageWidth = 256
+      tmpImageHeight = Math.floor(tmpImageHeight * 256 / history.options.width)
+    }
+    let whString = "width=" + tmpImageWidth + "&height=" + tmpImageHeight
+    // 如果url中没有?，则在后面加上?,如果结尾的是&，则直接加上whString，否则加上&whString
+    if (url.indexOf("?") == -1) {
+      url += "?" + whString
+    } else if (url[url.length - 1] == "&") {
+      url += whString
+    } else {
+      url += "&" + whString
+    }
+  }
+  return url
+}
+
+// 计算图片加载时的base64url
+const GetImageLoadUrl = (width,height) => {
+  let tW = width
+  let tH = height
+  let canvas = document.createElement("canvas")
+  canvas.width = tW
+  canvas.height = tH
+  let ctx = canvas.getContext("2d")
+  ctx.fillStyle = "#2d3748"
+  ctx.fillRect(0, 0, tW, tH)
+  return canvas.toDataURL()
+}
+
 const getImage = (index,isSmall=false) => {
-  console.log("getImage",index)
+  // console.log(index)
   let history = currentList.value[index]
   if (history == undefined) {
-    console.log(index)
     return ""
   } else {
     let tmpImage = history.images[0]
-    if (isSmall && isDiscordImage(tmpImage)) {
-      // 把cdn.discordapp.com替换为media.discordapp.net
-      tmpImage = tmpImage.replace("cdn.discordapp.com", "media.discordapp.net")
-      // 获取长宽
-      let tmpImageWidth = history.options.width
-      let tmpImageHeight = history.options.height
-      // 如果宽高大于等于512，把宽设置为256，高等比例缩放
-      if (tmpImageWidth >= 512 || tmpImageHeight >= 512) {
-        tmpImageWidth = 256
-        tmpImageHeight = Math.floor(tmpImageHeight * 256 / history.options.width)
-      }
-      let whString = "width=" + tmpImageWidth + "&height=" + tmpImageHeight
-      // 如果url中没有?，则在后面加上?,如果结尾的是&，则直接加上whString，否则加上&whString
-      if (tmpImage.indexOf("?") == -1) {
-        tmpImage += "?" + whString
-      } else if (tmpImage[tmpImage.length - 1] == "&") {
-        tmpImage += whString
-      } else {
-        tmpImage += "&" + whString
-      }
+    if (isSmall) {
+      tmpImage = history.small_images[0]
     }
     return tmpImage
   }
 }
 
 const getGalleryImageLoadStartImg = (index) => {
-  let history = currentList.value[index]
-  if (history == undefined) {
-    return ""
-  } else {
-    let tW = history.options.width
-    let tH = history.options.height
-    // 创建一个宽高为tW,tH的灰色canvas
-    let canvas = document.createElement("canvas")
-    canvas.width = tW
-    canvas.height = tH
-    let ctx = canvas.getContext("2d")
-    ctx.fillStyle = "#2d3748"
-    ctx.fillRect(0, 0, tW, tH)
-    return canvas.toDataURL()
-  }
+  return currentList.value[index].loading_image
 }
 
 const getCurrentImageVae = () => {
@@ -202,14 +217,22 @@ const showImageInfo = (index) => {
   currentImageInfo.value = history
   isShowImageInfoModal.value = true
   // 延时0.5秒执行，等待Modal显示
-  setTimeout(() => {
-    // 给image_detail内的第一个div设置style: top: 0
-    let div = document.getElementById("image_detail").children[1].children[0]
-    // 如果div的高度大于app高度，设置top为3rem
-    if (div.clientHeight > window.innerHeight) {
-      div.style.top = "3rem"
-    }
-  }, 100)
+  // setTimeout(() => {
+  //   // 给image_detail内的第一个div设置style: top: 0
+  //   let div = document.getElementById("image_detail").children[1].children[0]
+  //   // 如果div的高度大于app高度，设置top为3rem
+  //   if (div.clientHeight > window.innerHeight) {
+  //     div.style.top = "3rem"
+  //   }
+  // }, 100)
+  
+  // 给image_detail内的第一个div设置style: top: 0
+  let div = document.getElementById("image_detail").children[1].children[0]
+  // 如果div的高度大于app高度，设置top为3rem
+  if (div.clientHeight > window.innerHeight) {
+    div.style.top = "3rem"
+  }
+  
 }
 
 const getTotalPage = (total) => {
@@ -238,17 +261,17 @@ const getImagesList = () => {
     if (blurdata == undefined) {
       blurdata = "KED+rLozE4~UakohE4IW%3"
     }  
-    let tmpWidth = currentImageInfo.value.options.width/4
-    let tmpHeight = currentImageInfo.value.options.height/4
+    let tmpWidth = currentImageInfo.value.options.width/2
+    let tmpHeight = currentImageInfo.value.options.height/2
     // 如果/2之之后任何一个不是4的倍数，则调整成最接近当前值的4的倍数
     if (tmpWidth % 4 != 0) {
       tmpWidth = Math.floor(tmpWidth / 4) * 4
       // 等比例调整高度(判断新的tmpWidth相比于原来的tmpWidth的比例，然后等比例调整tmpHeight)
-      tmpHeight = Math.floor(tmpHeight * (tmpWidth / (currentImageInfo.value.options.width / 4)))
+      tmpHeight = Math.floor(tmpHeight * (tmpWidth / (currentImageInfo.value.options.width / 2)))
     } else if (tmpHeight % 4 != 0) {
       tmpHeight = Math.floor(tmpHeight / 4) * 4
       // 等比例调整宽度
-      tmpWidth = Math.floor(tmpWidth * (tmpHeight / (currentImageInfo.value.options.height / 4)))
+      tmpWidth = Math.floor(tmpWidth * (tmpHeight / (currentImageInfo.value.options.height / 2)))
     }
     let pixels = decode(blurdata, tmpWidth, tmpHeight);
     base64data = convertUint8ClampedArrayToBase64Image(pixels, tmpWidth, tmpHeight)
@@ -391,9 +414,9 @@ watch(() => router.currentRoute.value.path,() => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <Modal v-if="isShowImageInfoModal" id="image_detail" size="5xl" @close="closeImageInfo">
+      <Modal v-show="isShowImageInfoModal" id="image_detail" size="5xl" @close="closeImageInfo">
         <template #body>
-          <div class="content relative mx-auto w-full max-w-5xl rounded-2xl p-4 pt-1 text-white md:p-8 md:pt-1 translate-y-0 opacity-100">
+          <div v-if="isShowImageInfoModal" class="content relative mx-auto w-full max-w-5xl rounded-2xl p-4 pt-1 text-white md:p-8 md:pt-1 translate-y-0 opacity-100">
             <CardBox>
               <span class="flex items-center justify-start gap-1 text-xs font-bold uppercase leading-[0] tracking-wide text-slate-400 md:text-sm">
                 <BaseIcon :path="mdiImage" class="text-indigo-500" size="16"/>
@@ -494,7 +517,7 @@ watch(() => router.currentRoute.value.path,() => {
       <SectionTitleLine v-if="isUserHistory()" main title="Gallery" :icon="mdiImageArea"></SectionTitleLine>
       <SectionTitleLine v-else main title="Community" :icon="mdiAccountGroup"></SectionTitleLine>
       
-      <div v-if="show" class="grid grid-cols-2 md:grid-cols-4 gap-4" @scroll="handlerScroll" >
+      <div v-if="show" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4 grid-flow-row grid-rows-none">
           <div v-for="(i_number,i_index) of gridRowCount * currentPage" :key="i_index" class="overflow-hidden rounded-lg">
