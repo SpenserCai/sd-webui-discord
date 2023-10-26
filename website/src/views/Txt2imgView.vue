@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-26 09:17:18
+ * @LastEditTime: 2023-10-26 12:08:40
  * @Description: file content
 -->
 <script setup>
@@ -13,8 +13,8 @@ import SectionMain from '@/components/SectionMain.vue'
 import { userhistory,communityhistory } from '@/api/account'
 import CardBox from '@/components/CardBox.vue'
 import BaseIcon from '@/components/BaseIcon.vue'
-import { Pagination,Modal,Img,Avatar,Button,Spinner } from 'flowbite-vue'
-import { mdiDrawPen,mdiCancel,mdiCogOutline,mdiImageArea,mdiImage,mdiAccountGroup, mdiRefresh, mdiContentCopy } from '@mdi/js'
+import { Modal,Img,Avatar,Button,Spinner } from 'flowbite-vue'
+import { mdiDrawPen,mdiCancel,mdiCogOutline,mdiImageArea,mdiImage,mdiAccountGroup, mdiContentCopy } from '@mdi/js'
 import { useRoute,useRouter } from 'vue-router'
 // import CardBox from '@/components/CardBox.vue'
 import SectionTitleLine from '@/components/SectionTitleLine.vue'
@@ -28,6 +28,7 @@ import * as nsfwjs from 'nsfwjs'
 
 // const mainStore = useMainStore()
 // 获取用户历史记录方法，参数为页数和每页数量
+
 const route = useRoute()
 const isLoading = ref(true)
 const router = useRouter()
@@ -85,8 +86,8 @@ const getUserHistory = (page, pageSize,isAppend) => {
     }
   }).then(res => {
     total.value = res.data.page_info.total
-    currentPage.value = res.data.page_info.page
     updateToCurrentList(res.data.history,isAppend)
+    currentPage.value = res.data.page_info.page
     show.value = true
   }).finally(() => {
     isLoading.value = false
@@ -105,8 +106,8 @@ const getCommunityHistory = (page, pageSize,isAppend) => {
     }
   }).then(res => {
     total.value = res.data.page_info.total
-    currentPage.value = res.data.page_info.page
     updateToCurrentList(res.data.history,isAppend)
+    currentPage.value = res.data.page_info.page
     show.value = true
   }).finally(() => {
     isLoading.value = false
@@ -128,6 +129,7 @@ const getListFunc = (page, pageSize,isAppend=false) => {
 const getImage = (index,isSmall=false) => {
   let history = currentList.value[index]
   if (history == undefined) {
+    console.log(index)
     return ""
   } else {
     let tmpImage = history.images[0]
@@ -259,13 +261,13 @@ const getImagesList = () => {
   return imagesList
 }
 
-// const LoadNext = () => {
-//   // 判断当前页是否是最后一页，如果是则不执行
-//   if (currentPage.value == getTotalPage(total.value)) {
-//     return
-//   }
-//   getListFunc(currentPage.value + 1, gridColCount.value * gridRowCount.value, true)
-// }
+const LoadNext = () => {
+  // 判断当前页是否是最后一页，如果是则不执行
+  if (currentPage.value == getTotalPage(total.value)) {
+    return
+  }
+  getListFunc(currentPage.value + 1, gridColCount.value * gridRowCount.value, true)
+}
 
 const copyCommand = () => {
   // 获取当前Image的StableConfig
@@ -342,9 +344,9 @@ const galleryImageLoaded = (e) => {
   })
 }
 
-const RefreshCurrentPage = () => {
-  getListFunc(currentPage.value, gridColCount.value * gridRowCount.value)
-}
+// const RefreshCurrentPage = () => {
+//   getListFunc(currentPage.value, gridColCount.value * gridRowCount.value)
+// }
 
 const closeImageInfo = () => {
   isShowImageInfoModal.value = false
@@ -363,21 +365,32 @@ onMounted(async () => {
       m.model.save('indexeddb://nsfwjs_model')
     })
   }
+
   getListFunc(1, gridColCount.value * gridRowCount.value)
 
-  
 })
 
-// 在currentPage变化时，获取list
-watch(currentPage, (newVal, oldVal) => {
-  if (newVal == oldVal) {
-    console.log("currentPage not changed")
-  } else {
-    getListFunc(newVal, gridColCount.value * gridRowCount.value)
-    // 把滚动条滚动到顶部
-    document.documentElement.scrollTop = 0
+onscroll = () => {
+  const scrollHeight = document.documentElement.scrollHeight
+  const scrollTop = document.documentElement.scrollTop
+  const clientHeight = document.documentElement.clientHeight
+ 
+  if ((scrollTop + clientHeight >= scrollHeight) && !isLoading.value) {
+    console.log('到底了!')
+    LoadNext()
   }
-})
+}
+
+// 在currentPage变化时，获取list
+// watch(currentPage, (newVal, oldVal) => {
+//   if (newVal == oldVal) {
+//     console.log("currentPage not changed")
+//   } else {
+//     getListFunc(newVal, gridColCount.value * gridRowCount.value)
+//     // 把滚动条滚动到顶部
+//     // document.documentElement.scrollTop = 0
+//   }
+// })
 
 watch(() => router.currentRoute.value.path,() => {
   console.log("path changed")
@@ -489,32 +502,27 @@ watch(() => router.currentRoute.value.path,() => {
           <NotifyGroup group="t2i_image_info" />
         </template>
       </Modal>
-      <SectionTitleLine v-if="isUserHistory()" main title="Gallery" :icon="mdiImageArea">
-        <Button size="xs" gradient="purple-blue" outline square @click="RefreshCurrentPage()">
-          <spinner v-show="isLoading" size="6" />
-          <BaseIcon :path="mdiRefresh" />
-        </Button>
-      </SectionTitleLine>
-      <SectionTitleLine v-else main title="Community" :icon="mdiAccountGroup">
-        <Button size="xs" gradient="purple-blue" outline square @click="RefreshCurrentPage()">
-          <spinner v-show="isLoading" size="6" />
-          <BaseIcon :path="mdiRefresh" />
-        </Button>
-      </SectionTitleLine>
+      <SectionTitleLine v-if="isUserHistory()" main title="Gallery" :icon="mdiImageArea"></SectionTitleLine>
+      <SectionTitleLine v-else main title="Community" :icon="mdiAccountGroup"></SectionTitleLine>
       
-      <div v-if="show" id="t2i_list" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div v-if="show" id="t2i_list" class="grid grid-cols-2 md:grid-cols-4 gap-4" @scroll="handlerScroll" >
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
-          <div v-for="(i_number,i_index) of gridRowCount" :key="i_index" class="overflow-hidden rounded-lg">
+          <div v-for="(i_number,i_index) of gridRowCount * currentPage" :key="i_index" class="overflow-hidden rounded-lg">
               <img :id="number+'_'+i_number+'_'+'gallery'" v-lazy="{ src: getImage(i_index*4+index,true), loading: getGalleryImageLoadStartImg(i_index*4+index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)" >
           </div>
         </div>
+        <!--<div v-for="(item, index) in currentList" :key="index" class="overflow-hidden rounded-lg">
+          <img :id="index+'_gallery'" v-lazy="{ src: getImage(index,true), loading: getGalleryImageLoadStartImg(index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @click="showImageInfo(index)" >
+        </div>-->
       </div>
       <div class="lg:text-center my-3">
-          <Pagination v-model="currentPage" :total-pages="getTotalPage(total)" :slice-length="4"></Pagination>
-          <!--<Button size="lg" @click="LoadNext()">
-            Load
-          </Button>-->
+        <Button v-if="isLoading" color="default" outline size="xl" >
+          <spinner color="blue" />
+          <template #suffix>
+            <span class="ml-2">Loading More...</span>
+          </template>
+        </Button>
       </div>
     </SectionMain>
   </LayoutAuthenticated>
