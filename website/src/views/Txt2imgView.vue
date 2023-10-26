@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-26 22:50:04
+ * @LastEditTime: 2023-10-26 22:51:56
  * @Description: file content
 -->
 <script setup>
@@ -375,7 +375,7 @@ onscroll = () => {
   const clientHeight = document.documentElement.clientHeight
   // 滚动条到最后10%时加载下一页
   if (Math.floor(scrollTop + clientHeight) >= scrollHeight * 0.9) {
-    console.log('快到底了!')
+    // console.log('快到底了!')
     LoadNext()
   }
 }
@@ -500,9 +500,6 @@ watch(() => router.currentRoute.value.path,() => {
               <img :id="number+'_'+i_number+'_'+'gallery'" v-lazy="{ src: getImage(i_index*4+index,true), loading: getGalleryImageLoadStartImg(i_index*4+index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)" >
           </div>
         </div>
-        <!--<div v-for="(item, index) in currentList" :key="index" class="overflow-hidden rounded-lg">
-          <img :id="index+'_gallery'" v-lazy="{ src: getImage(index,true), loading: getGalleryImageLoadStartImg(index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @click="showImageInfo(index)" >
-        </div>-->
       </div>
       <div class="lg:text-center my-3">
         <Button v-show="isLoading" color="default" outline size="xl" >
