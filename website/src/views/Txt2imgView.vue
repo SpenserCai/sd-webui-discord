@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-26 22:51:56
+ * @LastEditTime: 2023-10-26 23:18:01
  * @Description: file content
 -->
 <script setup>
@@ -128,6 +128,7 @@ const getListFunc = (page, pageSize,isAppend=false) => {
 // }
 
 const getImage = (index,isSmall=false) => {
+  console.log("getImage",index)
   let history = currentList.value[index]
   if (history == undefined) {
     console.log(index)
@@ -493,7 +494,7 @@ watch(() => router.currentRoute.value.path,() => {
       <SectionTitleLine v-if="isUserHistory()" main title="Gallery" :icon="mdiImageArea"></SectionTitleLine>
       <SectionTitleLine v-else main title="Community" :icon="mdiAccountGroup"></SectionTitleLine>
       
-      <div v-if="show" id="t2i_list" class="grid grid-cols-2 md:grid-cols-4 gap-4" @scroll="handlerScroll" >
+      <div v-if="show" class="grid grid-cols-2 md:grid-cols-4 gap-4" @scroll="handlerScroll" >
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
         <div v-for="(number,index) of 4" :key="index" class="grid gap-4 grid-flow-row grid-rows-none">
           <div v-for="(i_number,i_index) of gridRowCount * currentPage" :key="i_index" class="overflow-hidden rounded-lg">
