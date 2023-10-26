@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-26 21:12:18
+ * @LastEditTime: 2023-10-26 22:50:04
  * @Description: file content
 -->
 <script setup>
@@ -13,7 +13,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import { userhistory,communityhistory } from '@/api/account'
 import CardBox from '@/components/CardBox.vue'
 import BaseIcon from '@/components/BaseIcon.vue'
-import { Modal,Img,Avatar,Button,Spinner } from 'flowbite-vue'
+import { Modal,Avatar,Button,Spinner } from 'flowbite-vue'
 import { mdiDrawPen,mdiCancel,mdiCogOutline,mdiImageArea,mdiImage,mdiAccountGroup, mdiContentCopy } from '@mdi/js'
 import { useRoute,useRouter } from 'vue-router'
 // import CardBox from '@/components/CardBox.vue'
@@ -115,6 +115,7 @@ const getCommunityHistory = (page, pageSize,isAppend) => {
 }
 
 const getListFunc = (page, pageSize,isAppend=false) => {
+  console.log("getListFunc")
   if (isUserHistory()) {
     getUserHistory(page, pageSize,isAppend)
   } else {
@@ -195,6 +196,7 @@ const getCurrentImageModel = () => {
 }
 
 const showImageInfo = (index) => {
+  // 计算每一步消耗的时间单位ms,先获取当前时间
   let history = currentList.value[index]
   currentImageInfo.value = history
   isShowImageInfoModal.value = true
@@ -235,7 +237,6 @@ const getImagesList = () => {
     if (blurdata == undefined) {
       blurdata = "KED+rLozE4~UakohE4IW%3"
     }  
-    
     let tmpWidth = currentImageInfo.value.options.width/4
     let tmpHeight = currentImageInfo.value.options.height/4
     // 如果/2之之后任何一个不是4的倍数，则调整成最接近当前值的4的倍数
@@ -248,7 +249,6 @@ const getImagesList = () => {
       // 等比例调整宽度
       tmpWidth = Math.floor(tmpWidth * (tmpHeight / (currentImageInfo.value.options.height / 4)))
     }
-    
     let pixels = decode(blurdata, tmpWidth, tmpHeight);
     base64data = convertUint8ClampedArrayToBase64Image(pixels, tmpWidth, tmpHeight)
     imagesList.push({
@@ -318,12 +318,6 @@ const copyCommand = () => {
 
 }
 
-// image detail 的 onload事件
-const imageDetailOnload = () => {
-  document.getElementById('img_info_loaded').hidden=false
-  document.getElementById('img_info_loading').hidden=true
-}
-
 const galleryImageLoaded = (e) => {
   // 获取id
   let id = e.target.id
@@ -379,10 +373,9 @@ onscroll = () => {
   const scrollHeight = document.documentElement.scrollHeight
   const scrollTop = document.documentElement.scrollTop
   const clientHeight = document.documentElement.clientHeight
-  // console.log(event)
-  // console.log(scrollHeight, scrollTop, clientHeight)
-  if (Math.floor(scrollTop + clientHeight) + 1 >= scrollHeight) {
-    // console.log('到底了!')
+  // 滚动条到最后10%时加载下一页
+  if (Math.floor(scrollTop + clientHeight) >= scrollHeight * 0.9) {
+    console.log('快到底了!')
     LoadNext()
   }
 }
@@ -407,8 +400,7 @@ watch(() => router.currentRoute.value.path,() => {
               </span>
               <div class="h-2"></div>
               <div class="flex justify-center">
-                <Img id="img_info_loading" size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].hash"/>
-                <Img id="img_info_loaded" hidden="hidden" size="max-w-lg max-h-80" alt="My gallery" img-class="rounded-lg transition-all duration-300 cursor-pointer filter" :src="getImagesList()[0].src" @load="imageDetailOnload"/>
+                <img v-lazy="{ src:getImagesList()[0].src, loading: getImagesList()[0].hash, delay: 500}" class="rounded-lg transition-all duration-300 cursor-pointer filter max-w-lg max-h-80" alt="My gallery"/>
               </div>
               <div class="h-2"></div>
               <div class="flex w-full flex-wrap-reverse justify-between">
@@ -513,7 +505,7 @@ watch(() => router.currentRoute.value.path,() => {
         </div>-->
       </div>
       <div class="lg:text-center my-3">
-        <Button v-if="isLoading" color="default" outline size="xl" >
+        <Button v-show="isLoading" color="default" outline size="xl" >
           <spinner color="blue" />
           <template #suffix>
             <span class="ml-2">Loading More...</span>
