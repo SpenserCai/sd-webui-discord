@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-26 12:27:28
+ * @LastEditTime: 2023-10-26 17:55:50
  * @Description: file content
 -->
 <script setup>
@@ -513,7 +513,7 @@ watch(() => router.currentRoute.value.path,() => {
       
       <div v-if="show" id="t2i_list" class="grid grid-cols-2 md:grid-cols-4 gap-4" @scroll="handlerScroll" >
         <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
-        <div v-for="(number,index) of 4" :key="index" class="grid gap-4">
+        <div v-for="(number,index) of 4" :key="index" class="grid gap-4 grid-flow-row grid-rows-none">
           <div v-for="(i_number,i_index) of gridRowCount * currentPage" :key="i_index" class="overflow-hidden rounded-lg">
               <img :id="number+'_'+i_number+'_'+'gallery'" v-lazy="{ src: getImage(i_index*4+index,true), loading: getGalleryImageLoadStartImg(i_index*4+index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)" >
           </div>
