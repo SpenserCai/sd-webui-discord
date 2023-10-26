@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-26 12:08:40
+ * @LastEditTime: 2023-10-26 12:27:28
  * @Description: file content
 -->
 <script setup>
@@ -262,8 +262,13 @@ const getImagesList = () => {
 }
 
 const LoadNext = () => {
+  if (isLoading.value) {
+    console.log("isLoading is true")
+    return
+  }
   // 判断当前页是否是最后一页，如果是则不执行
   if (currentPage.value == getTotalPage(total.value)) {
+    console.log("currentPage is last page")
     return
   }
   getListFunc(currentPage.value + 1, gridColCount.value * gridRowCount.value, true)
@@ -370,12 +375,13 @@ onMounted(async () => {
 
 })
 
-onscroll = () => {
+onscroll = (event) => {
   const scrollHeight = document.documentElement.scrollHeight
   const scrollTop = document.documentElement.scrollTop
   const clientHeight = document.documentElement.clientHeight
- 
-  if ((scrollTop + clientHeight >= scrollHeight) && !isLoading.value) {
+  console.log(event)
+  console.log(scrollHeight, scrollTop, clientHeight)
+  if (Math.floor(scrollTop + clientHeight) + 1 >= scrollHeight) {
     console.log('到底了!')
     LoadNext()
   }
