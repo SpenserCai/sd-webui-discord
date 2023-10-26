@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-26 00:15:46
+ * @LastEditTime: 2023-10-26 09:17:18
  * @Description: file content
 -->
 <script setup>
@@ -67,7 +67,7 @@ function convertUint8ClampedArrayToBase64Image(uint8Array, width, height) {
 
 const updateToCurrentList = (history,isAppend=false) => {
   if (isAppend) {
-    currentList.value = currentList.value.concat(history)
+    currentList.value = [...currentList.value, ...history]
   } else {
     currentList.value = history
   }
