@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-26 17:55:50
+ * @LastEditTime: 2023-10-26 21:12:18
  * @Description: file content
 -->
 <script setup>
@@ -39,7 +39,7 @@ const total = ref(0)
 const currentPage = ref(1)
 
 // 每页显示多少行
-const gridRowCount = ref(7)
+const gridRowCount = ref(12)
 const gridColCount = ref(4)
 // 当前list
 const currentList = ref([])
@@ -139,10 +139,10 @@ const getImage = (index,isSmall=false) => {
       // 获取长宽
       let tmpImageWidth = history.options.width
       let tmpImageHeight = history.options.height
-      // 如果宽高大于等于1024，把宽设置为512，高等比例缩放
-      if (tmpImageWidth >= 1024 || tmpImageHeight >= 1024) {
-        tmpImageWidth = 512
-        tmpImageHeight = Math.floor(tmpImageHeight * 512 / history.options.width)
+      // 如果宽高大于等于512，把宽设置为256，高等比例缩放
+      if (tmpImageWidth >= 512 || tmpImageHeight >= 512) {
+        tmpImageWidth = 256
+        tmpImageHeight = Math.floor(tmpImageHeight * 256 / history.options.width)
       }
       let whString = "width=" + tmpImageWidth + "&height=" + tmpImageHeight
       // 如果url中没有?，则在后面加上?,如果结尾的是&，则直接加上whString，否则加上&whString
@@ -236,17 +236,17 @@ const getImagesList = () => {
       blurdata = "KED+rLozE4~UakohE4IW%3"
     }  
     
-    let tmpWidth = currentImageInfo.value.options.width/2
-    let tmpHeight = currentImageInfo.value.options.height/2
+    let tmpWidth = currentImageInfo.value.options.width/4
+    let tmpHeight = currentImageInfo.value.options.height/4
     // 如果/2之之后任何一个不是4的倍数，则调整成最接近当前值的4的倍数
     if (tmpWidth % 4 != 0) {
       tmpWidth = Math.floor(tmpWidth / 4) * 4
       // 等比例调整高度(判断新的tmpWidth相比于原来的tmpWidth的比例，然后等比例调整tmpHeight)
-      tmpHeight = Math.floor(tmpHeight * (tmpWidth / (currentImageInfo.value.options.width / 2)))
+      tmpHeight = Math.floor(tmpHeight * (tmpWidth / (currentImageInfo.value.options.width / 4)))
     } else if (tmpHeight % 4 != 0) {
       tmpHeight = Math.floor(tmpHeight / 4) * 4
       // 等比例调整宽度
-      tmpWidth = Math.floor(tmpWidth * (tmpHeight / (currentImageInfo.value.options.height / 2)))
+      tmpWidth = Math.floor(tmpWidth * (tmpHeight / (currentImageInfo.value.options.height / 4)))
     }
     
     let pixels = decode(blurdata, tmpWidth, tmpHeight);
@@ -375,31 +375,21 @@ onMounted(async () => {
 
 })
 
-onscroll = (event) => {
+onscroll = () => {
   const scrollHeight = document.documentElement.scrollHeight
   const scrollTop = document.documentElement.scrollTop
   const clientHeight = document.documentElement.clientHeight
-  console.log(event)
-  console.log(scrollHeight, scrollTop, clientHeight)
+  // console.log(event)
+  // console.log(scrollHeight, scrollTop, clientHeight)
   if (Math.floor(scrollTop + clientHeight) + 1 >= scrollHeight) {
-    console.log('到底了!')
+    // console.log('到底了!')
     LoadNext()
   }
 }
 
-// 在currentPage变化时，获取list
-// watch(currentPage, (newVal, oldVal) => {
-//   if (newVal == oldVal) {
-//     console.log("currentPage not changed")
-//   } else {
-//     getListFunc(newVal, gridColCount.value * gridRowCount.value)
-//     // 把滚动条滚动到顶部
-//     // document.documentElement.scrollTop = 0
-//   }
-// })
-
 watch(() => router.currentRoute.value.path,() => {
-  console.log("path changed")
+  // 清空currentList
+  currentList.value = []
   getListFunc(1, gridColCount.value * gridRowCount.value)
 })
 </script>
