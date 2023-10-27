@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-28 00:04:08
+ * @LastEditTime: 2023-10-28 00:24:42
  * @Description: file content
 -->
 <script setup>
@@ -190,7 +190,12 @@ const getImage = (index,isSmall=false) => {
 }
 
 const getGalleryImageLoadStartImg = (index) => {
-  return currentList.value[index].loading_image
+  let history = currentList.value[index]
+  if (history == undefined) {
+    return ""
+  } else {
+    return history.loading_image
+  }
 }
 
 const getCurrentImageVae = () => {
@@ -526,7 +531,7 @@ watch(() => router.currentRoute.value.path,() => {
       
       <div v-if="show" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div v-for="(number,index) of 4" :key="index" class="columns-1">
-          <div v-for="(i_number,i_index) of Math.floor(currentList.length / gridColCount)" :key="i_index" class="overflow-hidden rounded-lg mb-4" >
+          <div v-for="(i_number,i_index) of ((currentList.length % gridColCount == 0) ? Math.floor(currentList.length / gridColCount) : Math.floor(currentList.length / gridColCount) + 1)" :key="i_index" class="overflow-hidden rounded-lg mb-4" >
               <img :id="number+'_'+i_number+'_'+'gallery'" v-lazy="{ src: getImage(i_index*4+index,true), loading: getGalleryImageLoadStartImg(i_index*4+index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)" >
           </div>
         </div>
