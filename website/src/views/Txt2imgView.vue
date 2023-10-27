@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-28 00:24:42
+ * @LastEditTime: 2023-10-28 00:39:56
  * @Description: file content
 -->
 <script setup>
@@ -238,6 +238,15 @@ const showImageInfo = (index) => {
     div.style.top = "3rem"
   }
   
+}
+
+const galleryImageError = (index) => {
+  // 加载失败，把图片从currentList中删除
+  let history = currentList.value[index]
+  if (history == undefined) {
+    return
+  }
+  currentList.value = [...currentList.value.slice(0,index-1), ...currentList.value.slice(index+1,currentList.value.length)]
 }
 
 const getTotalPage = (total) => {
@@ -532,7 +541,7 @@ watch(() => router.currentRoute.value.path,() => {
       <div v-if="show" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div v-for="(number,index) of 4" :key="index" class="columns-1">
           <div v-for="(i_number,i_index) of ((currentList.length % gridColCount == 0) ? Math.floor(currentList.length / gridColCount) : Math.floor(currentList.length / gridColCount) + 1)" :key="i_index" class="overflow-hidden rounded-lg mb-4" >
-              <img :id="number+'_'+i_number+'_'+'gallery'" v-lazy="{ src: getImage(i_index*4+index,true), loading: getGalleryImageLoadStartImg(i_index*4+index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)" >
+              <img :id="number+'_'+i_number+'_'+'gallery'" v-lazy="{ src: getImage(i_index*4+index,true), loading: getGalleryImageLoadStartImg(i_index*4+index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @error="galleryImageError(i_index*4+index)" @click="showImageInfo(i_index*4+index)" >
           </div>
         </div>
       </div>
