@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-27 00:16:56
+ * @LastEditTime: 2023-10-27 09:42:25
  * @Description: file content
 -->
 <script setup>
@@ -406,7 +406,7 @@ onscroll = () => {
 
 watch(() => router.currentRoute.value.path,() => {
   // 清空currentList
-  currentList.value = []
+  // currentList.value = []
   getListFunc(1, gridColCount.value * gridRowCount.value)
 })
 </script>
@@ -526,7 +526,7 @@ watch(() => router.currentRoute.value.path,() => {
         </div>
       </div>
       <div class="lg:text-center my-3">
-        <Button v-show="isLoading" color="default" outline size="xl" >
+        <Button v-if="isLoading" color="default" outline size="xl" >
           <spinner color="blue" />
           <template #suffix>
             <span class="ml-2">Loading More...</span>
