@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-27 14:20:08
+ * @LastEditTime: 2023-10-27 22:06:26
  * @Description: file content
 -->
 <script setup>
@@ -37,6 +37,8 @@ const currentImageInfo = ref({})
 const show = ref(false)
 const total = ref(0)
 const currentPage = ref(1)
+
+const overCount = ref(0)
 
 // 每页显示多少行
 const gridRowCount = ref(12)
@@ -81,6 +83,12 @@ const updateToCurrentList = (history,isAppend=false) => {
     currentList.value = [...currentList.value, ...history]
   } else {
     currentList.value = history
+  }
+  let nextTotal = currentPage.value + 1
+  if (nextTotal == getTotalPage(total.value)) {
+    overCount.value = gridColCount.value * gridRowCount.value - (total.value - (currentPage.value * gridColCount.value * gridRowCount.value))
+  } else {
+    overCount.value = 0
   }
 }
 
@@ -295,6 +303,8 @@ const LoadNext = () => {
     console.log("currentPage is last page")
     return
   }
+  // 计算下一页是否最后一页，如果是则计算下一页多余的数量
+
   getListFunc(currentPage.value + 1, gridColCount.value * gridRowCount.value, true)
 }
 
@@ -347,6 +357,10 @@ const galleryImageLoaded = (e) => {
   let id = e.target.id
   // 获取图片
   let img = document.getElementById(id)
+  // if img is null, return
+  if (img == null) {
+    return
+  }
   model.value.classify(img).then( predictions => {
     // 判断predictions是否成功
     switch (predictions[0].className) {
@@ -406,7 +420,8 @@ onscroll = () => {
 
 watch(() => router.currentRoute.value.path,() => {
   // 清空currentList
-  // currentList.value = []
+  show.value = false
+  currentList.value = []
   getListFunc(1, gridColCount.value * gridRowCount.value)
 })
 </script>
@@ -519,7 +534,7 @@ watch(() => router.currentRoute.value.path,() => {
       
       <div v-if="show" class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div v-for="(number,index) of 4" :key="index" class="columns-1">
-          <div v-for="(i_number,i_index) of gridRowCount * currentPage" :key="i_index" class="overflow-hidden rounded-lg mb-4" >
+          <div v-for="(i_number,i_index) of gridRowCount * currentPage - overCount" :key="i_index" class="overflow-hidden rounded-lg mb-4" >
               <img :id="number+'_'+i_number+'_'+'gallery'" v-lazy="{ src: getImage(i_index*4+index,true), loading: getGalleryImageLoadStartImg(i_index*4+index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)" >
           </div>
         </div>
