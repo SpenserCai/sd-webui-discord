@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-27 09:42:25
+ * @LastEditTime: 2023-10-27 11:37:43
  * @Description: file content
 -->
 <script setup>
@@ -518,13 +518,13 @@ watch(() => router.currentRoute.value.path,() => {
       <SectionTitleLine v-else main title="Community" :icon="mdiAccountGroup"></SectionTitleLine>
       
       <div v-if="show" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <!--循环4次生存4个<div class="grid gap-4">，每个里面有3个div-->
-        <div v-for="(number,index) of 4" :key="index" class="grid gap-4 grid-flow-row grid-rows-none">
-          <div v-for="(i_number,i_index) of gridRowCount * currentPage" :key="i_index" class="overflow-hidden rounded-lg">
+        <div v-for="(number,index) of 4" :key="index" class="columns-1">
+          <div v-for="(i_number,i_index) of gridRowCount * currentPage" :key="i_index" class="overflow-hidden rounded-lg mb-4" >
               <img :id="number+'_'+i_number+'_'+'gallery'" v-lazy="{ src: getImage(i_index*4+index,true), loading: getGalleryImageLoadStartImg(i_index*4+index,true), delay: 500}"  crossorigin="anonymous" class="h-auto max-w-full rounded-lg object-cover" alt="" @load="galleryImageLoaded" @click="showImageInfo(i_index*4+index)" >
           </div>
         </div>
       </div>
+
       <div class="lg:text-center my-3">
         <Button v-if="isLoading" color="default" outline size="xl" >
           <spinner color="blue" />
