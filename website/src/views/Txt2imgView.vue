@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-28 00:02:13
+ * @LastEditTime: 2023-10-28 00:04:08
  * @Description: file content
 -->
 <script setup>
@@ -37,8 +37,6 @@ const currentImageInfo = ref({})
 const show = ref(false)
 const total = ref(0)
 const currentPage = ref(1)
-
-const overCount = ref(0)
 
 // 每页显示多少行
 const gridRowCount = ref(12)
@@ -83,13 +81,6 @@ const updateToCurrentList = (history,isAppend=false) => {
     currentList.value = [...currentList.value, ...history]
   } else {
     currentList.value = history
-  }
-  let nextTotal = currentPage.value + 1
-  if (nextTotal >= getTotalPage(total.value)) {
-    overCount.value = gridRowCount.value - Math.floor((total.value - (currentPage.value * gridColCount.value * gridRowCount.value))/gridColCount.value)
-    console.log(overCount.value)
-  } else {
-    overCount.value = 0
   }
 }
 
