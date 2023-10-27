@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-27 11:37:43
+ * @LastEditTime: 2023-10-27 14:20:08
  * @Description: file content
 -->
 <script setup>
@@ -146,8 +146,8 @@ const GetSmallImageUrl = (url,history) => {
     let tmpImageHeight = history.options.height
     // 如果宽高大于等于512，把宽设置为256，高等比例缩放
     if (tmpImageWidth >= 512 || tmpImageHeight >= 512) {
-      tmpImageWidth = 256
-      tmpImageHeight = Math.floor(tmpImageHeight * 256 / history.options.width)
+      tmpImageWidth = 384
+      tmpImageHeight = Math.floor(tmpImageHeight * 384 / history.options.width)
     }
     let whString = "width=" + tmpImageWidth + "&height=" + tmpImageHeight
     // 如果url中没有?，则在后面加上?,如果结尾的是&，则直接加上whString，否则加上&whString
