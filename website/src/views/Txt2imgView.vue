@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-27 22:06:26
+ * @LastEditTime: 2023-10-27 23:46:24
  * @Description: file content
 -->
 <script setup>
@@ -85,8 +85,9 @@ const updateToCurrentList = (history,isAppend=false) => {
     currentList.value = history
   }
   let nextTotal = currentPage.value + 1
-  if (nextTotal == getTotalPage(total.value)) {
-    overCount.value = gridColCount.value * gridRowCount.value - (total.value - (currentPage.value * gridColCount.value * gridRowCount.value))
+  if (nextTotal >= getTotalPage(total.value)) {
+    overCount.value = gridRowCount.value - Math.floor((total.value - (currentPage.value * gridColCount.value * gridRowCount.value))/gridColCount.value)
+    console.log(overCount.value)
   } else {
     overCount.value = 0
   }
