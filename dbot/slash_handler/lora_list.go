@@ -3,7 +3,7 @@
  * @Date: 2023-10-13 11:33:20
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-29 17:31:03
+ * @LastEditTime: 2023-10-29 18:03:52
  * @Description: file content
  */
 package slash_handler
@@ -11,6 +11,7 @@ package slash_handler
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/SpenserCai/sd-webui-discord/cluster"
@@ -132,8 +133,31 @@ func (shdl SlashHandler) LoraListAction(s *discordgo.Session, i *discordgo.Inter
 
 }
 
-func (shdl SlashHandler) LoraListPageChange(changeType string, currentPage int, pageSize int, s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (shdl SlashHandler) LoraListPageChange(changeType string, pageSize int, s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// 先把消息改成Running
+	currentPage := 1
+	currentCommpoents, err := s.ChannelMessage(i.ChannelID, i.Interaction.Message.ID)
+	if err != nil {
+		s.ChannelMessageSend(i.ChannelID, "Error: "+err.Error())
+		return
+	}
+	// 获取当前页
+	for _, v := range currentCommpoents.Components {
+		// 判断是否是Button，如果是转成Button处理
+		if v.Type() == discordgo.ActionsRowComponent {
+			component := v.(*discordgo.ActionsRow)
+			for _, v := range component.Components {
+				if v.Type() == discordgo.ButtonComponent {
+					button := v.(*discordgo.Button)
+					if button.CustomID == "lora_list|current" {
+						pageLabel := strings.Split(button.Label, "/")
+						currentPage, _ = strconv.Atoi(pageLabel[0])
+						break
+					}
+				}
+			}
+		}
+	}
 	s.ChannelMessageDelete(i.ChannelID, i.Interaction.Message.ID)
 	shdl.RespondStateMessage("Running", s, i)
 	lora_list := &intersvc.SdapiV1Loras{}
@@ -191,13 +215,13 @@ func (shdl SlashHandler) LoraListComponentHandler(s *discordgo.Session, i *disco
 	cmd := fmt.Sprintf("%s|%s", customIDList[0], customIDList[1])
 	switch cmd {
 	case "lora_list|first":
-		shdl.LoraListPageChange("first", 1, pageSize, s, i)
+		shdl.LoraListPageChange("first", pageSize, s, i)
 	case "lora_list|prev":
-		shdl.LoraListPageChange("prev", 1, pageSize, s, i)
+		shdl.LoraListPageChange("prev", pageSize, s, i)
 	case "lora_list|next":
-		shdl.LoraListPageChange("next", 1, pageSize, s, i)
+		shdl.LoraListPageChange("next", pageSize, s, i)
 	case "lora_list|last":
-		shdl.LoraListPageChange("last", 1, pageSize, s, i)
+		shdl.LoraListPageChange("last", pageSize, s, i)
 	}
 }
 
