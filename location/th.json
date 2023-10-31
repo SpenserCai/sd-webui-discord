@@ -4,6 +4,9 @@
             "command": "txt2img",
             "description": "สร้างภาพจากข้อความ"
         },
+        {   "command": "lora_list",
+            "description": "แสดงข้อมูล LoRa List ที่มีอยู่"
+        },
         {
             "command": "deoldify",
             "description": "เปลี่ยนภาพเก่าให้มีสี"
