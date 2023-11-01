@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:02:04
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-11-01 10:20:30
+ * @LastEditTime: 2023-11-01 12:25:22
  * @Description: file content
  */
 package dbot
@@ -196,6 +196,11 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 						return false
 					}
 
+				}
+
+				// if min/max values are different
+				if option.MinValue != registeredCommand.Options[i].MinValue || option.MaxValue != registeredCommand.Options[i].MaxValue {
+					return true
 				}
 				// no new choices
 			}

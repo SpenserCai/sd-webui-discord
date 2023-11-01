@@ -3,7 +3,7 @@
  * @Date: 2023-08-20 12:45:58
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-23 17:19:16
+ * @LastEditTime: 2023-11-01 12:22:34
  * @Description: file content
  */
 
@@ -124,6 +124,8 @@ func (shdl SlashHandler) ControlnetDetectOptions() *discordgo.ApplicationCommand
 				Name:        "weight",
 				Description: "The weight of the module. Default: 1.0",
 				Required:    false,
+				MinValue:    func() *float64 { v := float64(0.0); return &v }(),
+				MaxValue:    2.0,
 			},
 			{
 				Type:        discordgo.ApplicationCommandOptionInteger,
