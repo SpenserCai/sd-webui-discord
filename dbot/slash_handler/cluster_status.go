@@ -3,7 +3,7 @@
  * @Date: 2023-09-24 18:25:37
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 19:03:44
+ * @LastEditTime: 2023-11-01 10:21:21
  * @Description: file content
  */
 package slash_handler
@@ -18,7 +18,7 @@ import (
 func (shdl SlashHandler) ClusterStatusOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "cluster_status",
-		Description: "View cluster status",
+		Description: "View cluster status ",
 		Options:     []*discordgo.ApplicationCommandOption{},
 	}
 }

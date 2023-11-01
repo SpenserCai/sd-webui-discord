@@ -50,11 +50,15 @@
         },
         {
             "command": "cluster_status",
-            "description": "获取集群状态"
+            "description": "获取集群状态1"
         },
         {
             "command": "user_info",
             "description": "获取用户信息（管理员）"
+        },
+        {
+            "command": "lora_list",
+            "description": "获取LoRa模型列表"
         }
     ]
 }

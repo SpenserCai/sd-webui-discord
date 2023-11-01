@@ -3,7 +3,7 @@
  * @Date: 2023-10-13 11:33:20
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-29 18:03:52
+ * @LastEditTime: 2023-11-01 10:03:32
  * @Description: file content
  */
 package slash_handler
@@ -24,7 +24,7 @@ import (
 func (shdl SlashHandler) LoraListOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "lora_list",
-		Description: "Get Lora list",
+		Description: "Get Lora list ",
 		Options:     []*discordgo.ApplicationCommandOption{},
 	}
 }

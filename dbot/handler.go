@@ -3,7 +3,7 @@
  * @Date: 2023-08-16 22:02:04
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-18 22:19:45
+ * @LastEditTime: 2023-11-01 10:20:30
  * @Description: file content
  */
 package dbot
@@ -148,6 +148,9 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 				}
 				// 再判断有没有新的location的description
 				for k, v := range *command.DescriptionLocalizations {
+					// if command.Name == "lora_list" || command.Name == "cluster_status" {
+					// 	log.Println("Registered description '", (*registeredCommand.DescriptionLocalizations)[k], "' is different from command description '", v, "' for command", command.Name)
+					// }
 					if (*registeredCommand.DescriptionLocalizations)[k] != v {
 						return true
 					}
