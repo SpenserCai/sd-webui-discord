@@ -3,7 +3,7 @@
  * @Date: 2023-10-06 17:25:44
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-28 00:39:56
+ * @LastEditTime: 2023-11-03 21:35:29
  * @Description: file content
 -->
 <script setup>
@@ -23,6 +23,7 @@ import { notify } from "notiwind"
 import { decode } from "blurhash"
 // import * as tf from '@tensorflow/tfjs'
 import * as nsfwjs from 'nsfwjs'
+import Cookies from "js-cookie"
 // import { useMainStore } from '@/stores/main'
 // import { mdiApplicationSettings } from '@mdi/js'
 
@@ -367,6 +368,11 @@ const galleryImageLoaded = (e) => {
   if (img == null) {
     return
   }
+  // 判断是否开启nsfw_filter且模型是否加载成功
+  if (!isNsfwFilter() || model.value == null) {
+    img.hidden = false
+    return
+  }
   model.value.classify(img).then( predictions => {
     // 判断predictions是否成功
     switch (predictions[0].className) {
@@ -395,18 +401,30 @@ const closeImageInfo = () => {
   isShowImageInfoModal.value = false
 }
 
+const isNsfwFilter = () => {
+  var nsfw_filter = Cookies.get('nsfw_filter')
+  if (nsfw_filter == undefined) {
+    return true
+  } else {
+    // 转换为布尔值
+    return nsfw_filter == 'true'
+  }
+}
+
 onMounted(async () => {
   // 先尝试从indexdb中获取model，如果失败则从/model/中加载，并保存到indexdb中
-  try{
-    const locationLoaded = await Object.freeze(nsfwjs.load('indexeddb://nsfwjs_model',{size:299}))
-    model.value = Object.freeze(locationLoaded)
-  } catch (e) {
-    console.log("load from /model/")
-    await nsfwjs.load('/model/',{size: 299}).then((m) => {
-      // https://stackoverflow.com/questions/67815952/vue3-app-with-tensorflowjs-throws-typeerror-cannot-read-property-backend-of-u
-      model.value = Object.freeze(m)
-      m.model.save('indexeddb://nsfwjs_model')
-    })
+  if (isNsfwFilter()) {
+    try{
+      const locationLoaded = await Object.freeze(nsfwjs.load('indexeddb://nsfwjs_model',{size:299}))
+      model.value = Object.freeze(locationLoaded)
+    } catch (e) {
+      console.log("load from /model/")
+      await nsfwjs.load('/model/',{size: 299}).then((m) => {
+        // https://stackoverflow.com/questions/67815952/vue3-app-with-tensorflowjs-throws-typeerror-cannot-read-property-backend-of-u
+        model.value = Object.freeze(m)
+        m.model.save('indexeddb://nsfwjs_model')
+      })
+    }
   }
 
   getListFunc(1, gridColCount.value * gridRowCount.value)
