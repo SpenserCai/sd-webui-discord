@@ -3,12 +3,14 @@
  * @Date: 2023-08-22 12:58:13
  * @version:
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-09-24 21:32:49
+ * @LastEditTime: 2023-11-03 13:00:34
  * @Description: file content
  */
 package slash_handler
 
 import (
+	"log"
+
 	"github.com/SpenserCai/sd-webui-discord/cluster"
 	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/utils"
@@ -87,7 +89,7 @@ func (shdl SlashHandler) RoopImageAction(s *discordgo.Session, i *discordgo.Inte
 				Content: func() *string { v := err.Error(); return &v }(),
 			})
 		} else {
-			msg, _ := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+			msg, err := s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Success"; return &v }(),
 				Files: []*discordgo.File{
 					{
@@ -97,7 +99,11 @@ func (shdl SlashHandler) RoopImageAction(s *discordgo.Session, i *discordgo.Inte
 					},
 				},
 			})
-			shdl.SetHistory("roop_image", msg.ID, i, opt)
+			if err != nil {
+				log.Println(err)
+			} else {
+				shdl.SetHistory("roop_image", msg.ID, i, opt)
+			}
 		}
 
 	}
