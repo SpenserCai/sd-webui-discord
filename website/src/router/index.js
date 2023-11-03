@@ -3,7 +3,7 @@
  * @Date: 2023-10-01 10:22:20
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-11 21:42:40
+ * @LastEditTime: 2023-11-03 13:21:33
  * @Description: file content
  */
 import { createRouter,createWebHashHistory } from 'vue-router'
@@ -13,7 +13,7 @@ import Home from '@/views/HomeView.vue'
 const routes = [
   {
     meta: {
-      title: 'Wecome'
+      title: 'Welcome'
     },
     path: '/',
     name: 'first',
