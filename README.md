@@ -3,7 +3,7 @@
  * @Date: 2023-08-17 18:23:21
  * @version: 
  * @LastEditors: SpenserCai
- * @LastEditTime: 2023-10-17 09:59:59
+ * @LastEditTime: 2023-11-17 11:51:53
  * @Description: file content
 -->
 <div align="center">
@@ -157,6 +157,9 @@ This is an ongoing project, and if you are interested in contributing, you can j
 
 ### AIGC
 [![Discord](https://invidget.switchblade.xyz/aigc)](https://discord.gg/aigc)
+
+### MultiPlayer DAO
+[![Discord](https://invidget.switchblade.xyz/XsJgWfDqjR)](https://discord.gg/XsJgWfDqjR)
 
 ## Support Development
 If you like this project and would like to become a supporter or sponsor, you will receive:
