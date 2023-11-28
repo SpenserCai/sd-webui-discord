@@ -46,25 +46,26 @@ SD-WEBUI-DISCORD هو بوت ديسكورد تم تطويره بلغة Go لصا
       ![مثال](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/website_image_detail.png)
 
    </details>
- - `2023-09-24 `: Support multi image generate in `txt2img` command
- - `2023-09-23 `: Support `Retry` and `Delete` in `txt2img` command
- - `2023-09-22 ` 
-     - Support `setting_ui` command
-     - Better `txt2img` response ui,thanks for [venetanji](https://github.com/venetanji) support that! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
-     - Optimize command add when bot start,thanks for [venetanji](https://github.com/venetanji) support that! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
- - `2023-09-10 `: Support local language
- - `2023-09-05 `: Support User Center on Windows
- - `2023-09-04 `: Support Image to Image
- - `2023-08-31 `: Support User Center
- - `2023-08-27 `:
-     - Support txt2img choice model checkpoint
-     - Support upload image with attachment: `deoldify` `png_info` `roop_image` commands
+ - `2023-09-24`: دعم إنشاء صور متعددة في أمر `txt2img`
+ - `2023-09-23`: دعم `إعادة المحاولة` و `الحذف` في أمر `txt2img`
+ - `2023-09-22`:
+     - دعم أمر `setting_ui`
+     - تحسين واجهة الرد في `txt2img`، شكرًا لـ [venetanji](https://github.com/venetanji) لدعمه! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
+     - تحسين إضافة الأوامر عند بدء تشغيل البوت، شكرًا لـ [venetanji](https://github.com/venetanji) لدعمه! [#5](https://github.com/SpenserCai/sd-webui-discord/pull/5)
+ - `2023-09-10`: دعم اللغة المحلية
+ - `2023-09-05`: دعم مركز المستخدم على نظام Windows
+ - `2023-09-04`: دعم تحويل الصورة إلى صورة
+ - `2023-08-31`: دعم مركز المستخدم
+ - `2023-08-27`:
+     - دعم اختيار نقطة فحص النموذج في `txt2img`
+     - دعم رفع الصور بواسطة المرفقات: أوامر `deoldify`، `png_info`، `roop_image`
      <details>
-     <summary>See Image</summary>
+     <summary>راجع الصورة</summary>
 
-      ![example](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/support_attechment.png)
+      ![مثال](https://raw.githubusercontent.com/SpenserCai/sd-webui-discord/main/res/support_attechment.png)
      
      </details>
+
   
  - `24 سبتمبر 2023`: دعم إنشاء عدة صور في أمر `txt2img`
  - `23 سبتمبر 2023`: دعم `إعادة المحاولة` و `الحذف` في أمر `txt2img`
@@ -173,7 +174,7 @@ SD-WEBUI-DISCORD هو بوت ديسكورد تم تطويره بلغة Go لصا
 ### MultiPlayer DAO
 [![Discord](https://invidget.switchblade.xyz/XsJgWfDqjR)](https://discord.gg/XsJgWfDqjR)
 
-## Support Development
+##  لدعم تطوير
 إذا أعجبك هذا المشروع وترغب في أن تصبح مؤيدًا أو راعيًا، ستحصل على:
 
 دعم فني فردي.
