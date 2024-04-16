@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/SpenserCai/sd-webui-discord/cluster"
+	"github.com/SpenserCai/sd-webui-discord/dbot/slash_handler/option_values"
 	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/utils"
 
@@ -45,35 +46,13 @@ func (shdl SlashHandler) Img2imgOptions() *discordgo.ApplicationCommand {
 				Description: "Prompt text",
 				Required:    false,
 			},
-			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "negative_prompt",
-				Description: "Negative prompt text",
-				Required:    false,
-			},
-			{
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Name:        "height",
-				Description: "Height of the generated image. Default: 512",
-				MinValue:    func() *float64 { v := 64.0; return &v }(),
-				MaxValue:    2048.0,
-				Required:    false,
-			},
-			{
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Name:        "width",
-				Description: "Width of the generated image. Default: 512",
-				MinValue:    func() *float64 { v := 64.0; return &v }(),
-				MaxValue:    2048.0,
-				Required:    false,
-			},
-			{
-				Type:         discordgo.ApplicationCommandOptionString,
-				Name:         "sampler",
-				Description:  "Sampler of the generated image. Default: Euler",
-				Required:     false,
-				Autocomplete: true,
-			},
+			option_values.NegativePrompt(),
+			option_values.Height(),
+			option_values.Width(),
+			option_values.Sampler(),
+			option_values.Steps(),
+			option_values.CfgScale(),
+			option_values.Seed(),
 			{
 				Type:        discordgo.ApplicationCommandOptionInteger,
 				Name:        "resize_mode",
@@ -169,26 +148,6 @@ func (shdl SlashHandler) Img2imgOptions() *discordgo.ApplicationCommand {
 				MaxValue:    256.0,
 			},
 			{
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Name:        "steps",
-				Description: "Steps of the generated image. Default: 20",
-				Required:    false,
-			},
-			{
-				Type:        discordgo.ApplicationCommandOptionNumber,
-				Name:        "cfg_scale",
-				Description: "Cfg scale of the generated image. Default:7",
-				MinValue:    func() *float64 { v := 1.0; return &v }(),
-				MaxValue:    30.0,
-				Required:    false,
-			},
-			{
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Name:        "seed",
-				Description: "Seed of the generated image. Default: -1",
-				Required:    false,
-			},
-			{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "styles",
 				Description: "Style of the generated image,splite with | . Default: None",
@@ -234,8 +193,8 @@ func (shdl SlashHandler) Img2imgSetOptions(cmd discordgo.ApplicationCommandInter
 	opt.SamplerIndex = func() *string { v := shdl.GetDefaultSettingFromUser("sampler", "Euler", i).(string); return &v }()
 	opt.Steps = func() *int64 { v := shdl.GetDefaultSettingFromUser("steps", int64(20), i).(int64); return &v }()
 	opt.CfgScale = func() *float64 { v := shdl.GetDefaultSettingFromUser("cfg_scale", 7.0, i).(float64); return &v }()
-	opt.Seed = func() *int64 { v := int64(-1); return &v }()
-	opt.NIter = func() *int64 { v := int64(1); return &v }()
+	opt.Seed = func() *int64 { v := shdl.GetDefaultSettingFromUser("seed", int64(-1), i).(int64); return &v }()
+	opt.NIter = func() *int64 { v := shdl.GetDefaultSettingFromUser("n_iter", int64(1), i).(int64); return &v }()
 	opt.Styles = []string{}
 	opt.RefinerCheckpoint = ""
 	opt.RefinerSwitchAt = float64(0.0)
@@ -253,6 +212,8 @@ func (shdl SlashHandler) Img2imgSetOptions(cmd discordgo.ApplicationCommandInter
 	isSetSize := false
 	isSetCheckpoints := false
 	defaultCheckpoints := shdl.GetDefaultSettingFromUser("sd_model_checkpoint", "", i).(string)
+	freeu := global.Features.FreeU && strings.ToLower(shdl.GetDefaultSettingFromUser("freeu", "false", i).(string)) == "true"
+	sag := global.Features.Sag && strings.ToLower(shdl.GetDefaultSettingFromUser("sag", "false", i).(string)) == "true"
 	for _, v := range cmd.Options {
 		switch v.Name {
 		case "prompt":
@@ -332,6 +293,26 @@ func (shdl SlashHandler) Img2imgSetOptions(cmd discordgo.ApplicationCommandInter
 		tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
 		tmpOverrideSettings["sd_model_checkpoint"] = defaultCheckpoints
 		opt.OverrideSettings = tmpOverrideSettings
+	}
+	if freeu {
+		b1 := shdl.GetDefaultSettingFromUser("freeu_b1", 1.01, i).(float64)
+		b2 := shdl.GetDefaultSettingFromUser("freeu_b2", 1.02, i).(float64)
+		s1 := shdl.GetDefaultSettingFromUser("freeu_s1", 0.99, i).(float64)
+		s2 := shdl.GetDefaultSettingFromUser("freeu_s2", 0.95, i).(float64)
+		freeuScript := &FreeUScript{}
+		freeuScript.Set(b1, b2, s1, s2)
+		tmpAScript := opt.AlwaysonScripts.(map[string]interface{})
+		tmpAScript["freeu integrated"] = freeuScript
+		opt.AlwaysonScripts = tmpAScript
+	}
+	if sag {
+		scale := shdl.GetDefaultSettingFromUser("sag_scale", 0.5, i).(float64)
+		blurSigma := shdl.GetDefaultSettingFromUser("sag_blur_sigma", 2.0, i).(float64)
+		sagScript := &SagScript{}
+		sagScript.Set(scale, blurSigma)
+		tmpAScript := opt.AlwaysonScripts.(map[string]interface{})
+		tmpAScript["selfattentionguidance integrated"] = sagScript
+		opt.AlwaysonScripts = tmpAScript
 	}
 }
 

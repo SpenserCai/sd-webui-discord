@@ -16,16 +16,29 @@ type ServerItem struct {
 	MaxVRAM       string `json:"max_vram"`
 }
 
-type DefaultSetting struct {
-	CfgScale       float64 `json:"cfg_scale"`
-	NegativePrompt string  `json:"negative_prompt"`
-	Sampler        string  `json:"sampler"`
+type StableConfig struct {
+	Model          string  `json:"sd_model_checkpoint"`
+	Vae            string  `json:"sd_vae"`
 	Height         int64   `json:"height"`
 	Width          int64   `json:"width"`
 	Steps          int64   `json:"steps"`
-	Model          string  `json:"sd_model_checkpoint"`
-	Vae            string  `json:"sd_vae"`
+	CfgScale       float64 `json:"cfg_scale"`
+	NegativePrompt string  `json:"negative_prompt"`
+	Sampler        string  `json:"sampler"`
 	ClipSkip       int64   `json:"clip_skip"`
+	NIter          int64   `json:"n_iter"`
+	Seed           int64   `json:"seed"`
+	MaxLoad        int64   `json:"max_load"`
+
+	Sag          string  `json:"sag"`
+	SagScale     float64 `json:"sag_scale"`
+	SagBlurSigma float64 `json:"sag_blur_sigma"`
+
+	FreeU   string  `json:"freeu"`
+	FreeUB1 float64 `json:"freeu_b1"`
+	FreeUB2 float64 `json:"freeu_b2"`
+	FreeUS1 float64 `json:"freeu_s1"`
+	FreeUS2 float64 `json:"freeu_s2"`
 }
 
 type DbConfig struct {
@@ -38,6 +51,11 @@ type UserCenter struct {
 	DbConfig     DbConfig `json:"db_config"`
 	MustRegister bool     `json:"must_register"`
 	EnableCredit bool     `json:"enable_credit"`
+}
+
+type Preset struct {
+	Name     string       `json:"name"`
+	Settings StableConfig `json:"settings"`
 }
 
 type WebSite struct {
@@ -57,8 +75,9 @@ type WebSite struct {
 
 type Config struct {
 	SDWebUi struct {
-		Servers        []ServerItem   `json:"servers"`
-		DefaultSetting DefaultSetting `json:"default_setting"`
+		Servers        []ServerItem `json:"servers"`
+		DefaultSetting StableConfig `json:"default_setting"`
+		Presets        []Preset     `json:"presets"`
 	} `json:"sd_webui"`
 	Discord struct {
 		AppId             string `json:"app_id"`

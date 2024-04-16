@@ -174,11 +174,15 @@ func (shdl SlashHandler) FilterChoice(choices []*discordgo.ApplicationCommandOpt
 		// 如果有输入，就过滤choices
 		newChoices := []*discordgo.ApplicationCommandOptionChoice{}
 		for _, choice := range choices {
-			if strings.Contains(choice.Name, option.StringValue()) {
+			if strings.Contains(strings.ToLower(choice.Name), strings.ToLower(option.StringValue())) {
 				newChoices = append(newChoices, choice)
 			}
 		}
-		return newChoices
+		if len(newChoices) > 25 {
+			return newChoices[:25]
+		} else {
+			return newChoices
+		}
 	}
 }
 
@@ -379,4 +383,19 @@ func (shdl SlashHandler) GetBase64ImageListBlurHash(imageList []string) []string
 		}
 	}
 	return blurHashList
+}
+
+func (shdl SlashHandler) GetSctipts() *[]string {
+
+	scriptsSvc := &intersvc.SdapiV1Scripts{}
+	scriptsSvc.Action(global.ClusterManager.GetNodeAuto().StableClient)
+	if scriptsSvc.Error != nil {
+		return &[]string{}
+	}
+	scripts := scriptsSvc.GetResponse()
+	scriptsResult := make([]string, len(scripts.Txt2img))
+	for i, script := range scripts.Txt2img {
+		scriptsResult[i] = script.(string)
+	}
+	return &scriptsResult
 }

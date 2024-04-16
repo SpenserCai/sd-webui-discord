@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/SpenserCai/sd-webui-discord/cluster"
+	"github.com/SpenserCai/sd-webui-discord/config"
 	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/user"
 
@@ -29,7 +30,7 @@ func (shdl SlashHandler) SettingUiOptions() *discordgo.ApplicationCommand {
 	}
 }
 
-func (shdl SlashHandler) SettingUiSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *user.StableConfig) {
+func (shdl SlashHandler) SettingUiSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *config.StableConfig) {
 
 	for _, v := range dsOpt {
 		switch v.Name {
@@ -38,7 +39,7 @@ func (shdl SlashHandler) SettingUiSetOptions(dsOpt []*discordgo.ApplicationComma
 	}
 }
 
-func (shdl SlashHandler) BuildSettingUiComponent(opt *user.StableConfig, i *discordgo.InteractionCreate) *[]discordgo.MessageComponent {
+func (shdl SlashHandler) BuildSettingUiComponent(opt *config.StableConfig, i *discordgo.InteractionCreate) *[]discordgo.MessageComponent {
 	adminRow := discordgo.ActionsRow{
 		Components: []discordgo.MessageComponent{
 			discordgo.Button{

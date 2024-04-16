@@ -10,13 +10,15 @@ package slash_handler
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 
-	"github.com/SpenserCai/sd-webui-discord/user"
+	"github.com/SpenserCai/sd-webui-discord/config"
 
 	"reflect"
 
 	"github.com/SpenserCai/sd-webui-discord/cluster"
+	"github.com/SpenserCai/sd-webui-discord/dbot/slash_handler/option_values"
 	"github.com/SpenserCai/sd-webui-discord/global"
 
 	"github.com/bwmarrin/discordgo"
@@ -36,48 +38,18 @@ func (shdl SlashHandler) SettingOptions() *discordgo.ApplicationCommand {
 			},
 			{
 				Name:         "sd_vae",
-				Description:  "Vae model(If you don't know what this is, please set it to Automatic)",
+				Description:  "Vae model (If you don't know what this is, please set it to Automatic)",
 				Type:         discordgo.ApplicationCommandOptionString,
 				Required:     false,
 				Autocomplete: true,
 			},
-			{
-				Name:         "sampler",
-				Description:  "Sampler",
-				Type:         discordgo.ApplicationCommandOptionString,
-				Required:     false,
-				Autocomplete: true,
-			},
-			{
-				Name:        "height",
-				Description: "Height of the output image",
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Required:    false,
-			},
-			{
-				Name:        "width",
-				Description: "Width of the output image",
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Required:    false,
-			},
-			{
-				Name:        "steps",
-				Description: "Number of steps to run",
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Required:    false,
-			},
-			{
-				Name:        "cfg_scale",
-				Description: "Scale of the config",
-				Type:        discordgo.ApplicationCommandOptionNumber,
-				Required:    false,
-			},
-			{
-				Name:        "negative_prompt",
-				Description: "Negative prompt",
-				Type:        discordgo.ApplicationCommandOptionString,
-				Required:    false,
-			},
+			option_values.NegativePrompt(),
+			option_values.Height(),
+			option_values.Width(),
+			option_values.Sampler(),
+			option_values.Steps(),
+			option_values.CfgScale(),
+			option_values.Seed(),
 			{
 				Name:        "clip_skip",
 				Description: "Clip skip",
@@ -86,11 +58,12 @@ func (shdl SlashHandler) SettingOptions() *discordgo.ApplicationCommand {
 				MinValue:    func() *float64 { v := 1.0; return &v }(),
 				MaxValue:    12.0,
 			},
+			option_values.NIter(),
 		},
 	}
 }
 
-func (shdl SlashHandler) SettingSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *user.StableConfig) {
+func (shdl SlashHandler) SettingSetOptions(dsOpt []*discordgo.ApplicationCommandInteractionDataOption, opt *config.StableConfig) {
 
 	for _, v := range dsOpt {
 		switch v.Name {
@@ -112,11 +85,15 @@ func (shdl SlashHandler) SettingSetOptions(dsOpt []*discordgo.ApplicationCommand
 			opt.Sampler = v.StringValue()
 		case "clip_skip":
 			opt.ClipSkip = v.IntValue()
+		case "n_iter":
+			opt.NIter = v.IntValue()
+		case "seed":
+			opt.Seed = v.IntValue()
 		}
 	}
 }
 
-func (shdl SlashHandler) SettingAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *user.StableConfig, node *cluster.ClusterNode) {
+func (shdl SlashHandler) SettingAction(s *discordgo.Session, i *discordgo.InteractionCreate, opt *config.StableConfig, node *cluster.ClusterNode) error {
 	userInfo, err := shdl.GetUserInfoWithInteraction(i)
 	isEmptyOpt := true
 	if err == nil {
@@ -125,7 +102,7 @@ func (shdl SlashHandler) SettingAction(s *discordgo.Session, i *discordgo.Intera
 			s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 				Content: func() *string { v := "Please register first!"; return &v }(),
 			})
-			return
+			return errors.New("please register first")
 		}
 		// 通过反射将opt中的非零值赋值给userInfo.StableConfig
 		optVal := reflect.ValueOf(opt).Elem()
@@ -143,6 +120,7 @@ func (shdl SlashHandler) SettingAction(s *discordgo.Session, i *discordgo.Intera
 		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: func() *string { v := "SETTING ERROR!"; return &v }(),
 		})
+		return err
 	} else {
 		content := "SETTING SUCCESS!"
 		if isEmptyOpt {
@@ -153,13 +131,14 @@ func (shdl SlashHandler) SettingAction(s *discordgo.Session, i *discordgo.Intera
 		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 			Content: &content,
 		})
+		return nil
 	}
 }
 
 func (shdl SlashHandler) SettingCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	switch i.Type {
 	case discordgo.InteractionApplicationCommand:
-		option := &user.StableConfig{}
+		option := &config.StableConfig{}
 		shdl.RespondStateMessage("Running", s, i)
 		node := global.ClusterManager.GetNodeAuto()
 		action := func() (map[string]interface{}, error) {

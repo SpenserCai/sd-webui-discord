@@ -24,7 +24,7 @@ import (
 func (shdl SlashHandler) LoraListOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "lora_list",
-		Description: "Get Lora list ",
+		Description: "Get Lora list",
 		Options:     []*discordgo.ApplicationCommandOption{},
 	}
 }

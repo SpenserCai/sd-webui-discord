@@ -48,12 +48,19 @@ func (dbot *DiscordBot) GenerateCommandList() {
 	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.Txt2imgOptions())
 	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.Img2imgOptions())
 	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.LoraListOptions())
+	dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.PresetOptions())
 	if global.Config.UserCenter.Enable {
 		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.RegisterOptions())
 		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.SettingOptions())
 		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.SettingUiOptions())
 		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.ClusterStatusOptions())
 		dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.UserInfoOptions())
+		if global.Features.Sag {
+			dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.SagOptions())
+		}
+		if global.Features.FreeU {
+			dbot.AppCommands = append(dbot.AppCommands, slash_handler.SlashHandler{}.FreeUOptions())
+		}
 	}
 }
 
@@ -64,4 +71,5 @@ func (dbot *DiscordBot) SetLongChoice() {
 	global.LongDBotChoice["sd_model_checkpoint"] = slash_handler.SlashHandler{}.SdModelChoice()
 	global.LongDBotChoice["sampler"] = slash_handler.SlashHandler{}.SamplerChoice()
 	global.LongDBotChoice["sd_vae"] = slash_handler.SlashHandler{}.SdVaeChoice()
+	global.LongDBotChoice["presets"] = slash_handler.SlashHandler{}.PresetChoice()
 }

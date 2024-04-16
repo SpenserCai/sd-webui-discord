@@ -9,7 +9,13 @@
                 "max_vram":"20G"
             }
         ],
-        "default_setting":{}
+        "default_setting":{},
+        "presets": [
+			{
+				"name": "Preset Name",
+				"settings":{ }
+			}
+        ]
     },
     "discord":{
         "app_id":"<your app id here>",

@@ -18,7 +18,7 @@ import (
 func (shdl SlashHandler) ClusterStatusOptions() *discordgo.ApplicationCommand {
 	return &discordgo.ApplicationCommand{
 		Name:        "cluster_status",
-		Description: "View cluster status ",
+		Description: "View cluster status",
 		Options:     []*discordgo.ApplicationCommandOption{},
 	}
 }

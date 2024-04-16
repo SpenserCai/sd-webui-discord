@@ -11,12 +11,14 @@ package slash_handler
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
 
 	"github.com/SpenserCai/sd-webui-discord/cluster"
+	"github.com/SpenserCai/sd-webui-discord/dbot/slash_handler/option_values"
 	"github.com/SpenserCai/sd-webui-discord/global"
 	"github.com/SpenserCai/sd-webui-discord/utils"
 
@@ -93,58 +95,14 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				Name:        "prompt",
 				Description: "Prompt text",
 				Required:    true,
-				MaxLength:   600,
 			},
-			{
-				Type:        discordgo.ApplicationCommandOptionString,
-				Name:        "negative_prompt",
-				Description: "Negative prompt text",
-				Required:    false,
-			},
-			{
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Name:        "height",
-				Description: "Height of the generated image. Default: 512",
-				MinValue:    func() *float64 { v := 64.0; return &v }(),
-				MaxValue:    2048.0,
-				Required:    false,
-			},
-			{
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Name:        "width",
-				Description: "Width of the generated image. Default: 512",
-				MinValue:    func() *float64 { v := 64.0; return &v }(),
-				MaxValue:    2048.0,
-				Required:    false,
-			},
-			{
-				Type:         discordgo.ApplicationCommandOptionString,
-				Name:         "sampler",
-				Description:  "Sampler of the generated image. Default: Euler",
-				Required:     false,
-				Autocomplete: true,
-			},
-			{
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Name:        "steps",
-				Description: "Steps of the generated image. Default: 30",
-				Required:    false,
-			},
-			{
-				Type:        discordgo.ApplicationCommandOptionNumber,
-				Name:        "cfg_scale",
-				Description: "Cfg scale of the generated image. Default: 7",
-				MinValue:    func() *float64 { v := 1.0; return &v }(),
-				MaxValue:    30.0,
-				Required:    false,
-			},
-			{
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Name:        "seed",
-				Description: "Seed of the generated image. Default: -1",
-				Required:    false,
-			},
-
+			option_values.NegativePrompt(),
+			option_values.Height(),
+			option_values.Width(),
+			option_values.Sampler(),
+			option_values.Steps(),
+			option_values.CfgScale(),
+			option_values.Seed(),
 			{
 				Type:        discordgo.ApplicationCommandOptionString,
 				Name:        "styles",
@@ -160,7 +118,7 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 			{
 				Type:         discordgo.ApplicationCommandOptionString,
 				Name:         "checkpoint",
-				Description:  "Sd model checkpoint. Default: SDXL 1.0",
+				Description:  "Sd model checkpoint. Default: " + global.Config.SDWebUi.DefaultSetting.Model,
 				Required:     false,
 				Autocomplete: true,
 			},
@@ -186,28 +144,7 @@ func (shdl SlashHandler) Txt2imgOptions() *discordgo.ApplicationCommand {
 				MinValue:    func() *float64 { v := 0.0; return &v }(),
 				MaxValue:    1.0,
 			},
-			{
-				Type:        discordgo.ApplicationCommandOptionInteger,
-				Name:        "n_iter",
-				Description: "Number of iterations. Default: 1",
-				Required:    false,
-				MinValue:    func() *float64 { v := 1.0; return &v }(),
-				MaxValue:    4.0,
-				Choices: []*discordgo.ApplicationCommandOptionChoice{
-					{
-						Name:  "1",
-						Value: 1,
-					},
-					{
-						Name:  "2",
-						Value: 2,
-					},
-					{
-						Name:  "4",
-						Value: 4,
-					},
-				},
-			},
+			option_values.NIter(),
 		},
 	}
 }
@@ -219,8 +156,8 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 	opt.SamplerIndex = func() *string { v := shdl.GetDefaultSettingFromUser("sampler", "Euler", i).(string); return &v }()
 	opt.Steps = func() *int64 { v := shdl.GetDefaultSettingFromUser("steps", int64(20), i).(int64); return &v }()
 	opt.CfgScale = func() *float64 { v := shdl.GetDefaultSettingFromUser("cfg_scale", 7.0, i).(float64); return &v }()
-	opt.Seed = func() *int64 { v := int64(-1); return &v }()
-	opt.NIter = func() *int64 { v := int64(1); return &v }()
+	opt.Seed = func() *int64 { v := shdl.GetDefaultSettingFromUser("seed", int64(-1), i).(int64); return &v }()
+	opt.NIter = func() *int64 { v := shdl.GetDefaultSettingFromUser("n_iter", int64(1), i).(int64); return &v }()
 	opt.Styles = []string{}
 	opt.RefinerCheckpoint = ""
 	opt.RefinerSwitchAt = float64(0.0)
@@ -232,6 +169,8 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 	defaultCheckpoints := shdl.GetDefaultSettingFromUser("sd_model_checkpoint", "", i).(string)
 	defaultVae := shdl.GetDefaultSettingFromUser("sd_vae", "", i).(string)
 	clipSkip := shdl.GetDefaultSettingFromUser("clip_skip", int64(1), i).(int64)
+	freeu := global.Features.FreeU && strings.ToLower(shdl.GetDefaultSettingFromUser("freeu", "false", i).(string)) == "true"
+	sag := global.Features.Sag && strings.ToLower(shdl.GetDefaultSettingFromUser("sag", "false", i).(string)) == "true"
 
 	for _, v := range dsOpt {
 		switch v.Name {
@@ -281,6 +220,8 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 			opt.RefinerSwitchAt = v.FloatValue()
 		case "n_iter":
 			opt.NIter = func() *int64 { v := v.IntValue(); return &v }()
+		case "clip_skip":
+			clipSkip = v.IntValue()
 		}
 	}
 	if !isSetCheckpoints && defaultCheckpoints != "" {
@@ -292,6 +233,26 @@ func (shdl SlashHandler) Txt2imgSetOptions(dsOpt []*discordgo.ApplicationCommand
 		tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
 		tmpOverrideSettings["sd_vae"] = defaultVae
 		opt.OverrideSettings = tmpOverrideSettings
+	}
+	if freeu {
+		b1 := shdl.GetDefaultSettingFromUser("freeu_b1", 1.01, i).(float64)
+		b2 := shdl.GetDefaultSettingFromUser("freeu_b2", 1.02, i).(float64)
+		s1 := shdl.GetDefaultSettingFromUser("freeu_s1", 0.99, i).(float64)
+		s2 := shdl.GetDefaultSettingFromUser("freeu_s2", 0.95, i).(float64)
+		freeuScript := &FreeUScript{}
+		freeuScript.Set(b1, b2, s1, s2)
+		tmpAScript := opt.AlwaysonScripts.(map[string]interface{})
+		tmpAScript["freeu integrated"] = freeuScript
+		opt.AlwaysonScripts = tmpAScript
+	}
+	if sag {
+		scale := shdl.GetDefaultSettingFromUser("sag_scale", 0.5, i).(float64)
+		blurSigma := shdl.GetDefaultSettingFromUser("sag_blur_sigma", 2.0, i).(float64)
+		sagScript := &SagScript{}
+		sagScript.Set(scale, blurSigma)
+		tmpAScript := opt.AlwaysonScripts.(map[string]interface{})
+		tmpAScript["selfattentionguidance integrated"] = sagScript
+		opt.AlwaysonScripts = tmpAScript
 	}
 	if clipSkip != 1 {
 		tmpOverrideSettings := opt.OverrideSettings.(map[string]interface{})
@@ -420,10 +381,16 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 		mainEmbed.Image = &discordgo.MessageEmbedImage{
 			URL: fmt.Sprintf("attachment://%s", files[0].Name),
 		}
+
+		prompt := opt.Prompt
+		if len(prompt) > 600 {
+			prompt = prompt[:600] + "..."
+		}
+
 		mainEmbed.Fields = []*discordgo.MessageEmbedField{
 			{
 				Name:  "Prompt",
-				Value: opt.Prompt,
+				Value: prompt,
 			},
 			{
 				Name:  "Model",
@@ -503,6 +470,37 @@ func (shdl SlashHandler) Txt2imgAction(s *discordgo.Session, i *discordgo.Intera
 
 }
 
+func (shdl SlashHandler) MaxLoadGuard(s *discordgo.Session, i *discordgo.InteractionCreate, option *intersvc.SdapiV1Txt2imgRequest) error {
+
+	maxLoad := shdl.GetDefaultSettingFromUser("max_load", int64(1<<16), i).(int64)
+	if maxLoad == 0 {
+		maxLoad = 1 << 16
+	}
+	niter := int64(1)
+	if option.NIter != nil {
+		niter = *option.NIter
+	}
+	steps := int64(1)
+	if option.Steps != nil {
+		steps = *option.Steps
+	}
+	widthScore := 1 + ((*option.Width - 1) / 64)
+	heightScore := 1 + ((*option.Height - 1) / 64)
+	if widthScore*heightScore*steps*niter > maxLoad {
+		var content string
+		if niter > 1 {
+			content = "Request is too heavy. Consider decresing widht, height, steps or n_iter."
+		} else {
+			content = "Request is too heavy. Consider decresing widht, height, or steps."
+		}
+		s.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+			Content: &content,
+		})
+		return errors.New("request is too heavy")
+	}
+	return nil
+}
+
 func (shdl SlashHandler) Txt2imgAppHandler(s *discordgo.Session, i *discordgo.InteractionCreate, otherOption *intersvc.SdapiV1Txt2imgRequest, useOtherOption bool) {
 	option := &intersvc.SdapiV1Txt2imgRequest{}
 	shdl.RespondStateMessage("Running", s, i)
@@ -512,6 +510,10 @@ func (shdl SlashHandler) Txt2imgAppHandler(s *discordgo.Session, i *discordgo.In
 			shdl.Txt2imgSetOptions(i.ApplicationCommandData().Options, option, i)
 		} else {
 			option = otherOption
+		}
+		err := shdl.MaxLoadGuard(s, i, option)
+		if err != nil {
+			return nil, err
 		}
 		shdl.Txt2imgAction(s, i, option, node)
 		return nil, nil

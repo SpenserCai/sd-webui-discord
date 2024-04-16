@@ -22,4 +22,5 @@ var (
 	LongDBotChoice map[string][]*discordgo.ApplicationCommandOptionChoice
 	UserCenterSvc  *user.UserCenterService
 	ApiService     *operations.APIServiceAPI
+	Features       *FeatureGate
 )

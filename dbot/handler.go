@@ -134,9 +134,10 @@ func (dbot *DiscordBot) CheckCommandInList(name string) bool {
 func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand) bool {
 	for _, registeredCommand := range dbot.RegisteredCommands {
 		if registeredCommand.Name == command.Name {
-
+			// log.Println("Processing command", command.Name)
 			// new description
 			if registeredCommand.Description != command.Description {
+				// log.Println("New description for command", command.Name, "old: '"+registeredCommand.Description+"', new: '"+command.Description+"', not equal:", registeredCommand.Description != command.Description)
 				return true
 			}
 
@@ -144,14 +145,13 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 			if registeredCommand.DescriptionLocalizations != nil {
 				// 先判断有没有新的location
 				if len(*registeredCommand.DescriptionLocalizations) != len(*command.DescriptionLocalizations) {
+					// log.Println("New localization for command", command.Name)
 					return true
 				}
 				// 再判断有没有新的location的description
 				for k, v := range *command.DescriptionLocalizations {
-					// if command.Name == "lora_list" || command.Name == "cluster_status" {
-					// 	log.Println("Registered description '", (*registeredCommand.DescriptionLocalizations)[k], "' is different from command description '", v, "' for command", command.Name)
-					// }
 					if (*registeredCommand.DescriptionLocalizations)[k] != v {
+						// log.Println("Different localization for command", command.Name)
 						return true
 					}
 				}
@@ -159,6 +159,7 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 
 			// new options
 			if len(registeredCommand.Options) != len(command.Options) {
+				// log.Println("New options for command", command.Name)
 				return true
 			}
 
@@ -169,9 +170,9 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 					return true
 				}
 
-				if option.Autocomplete {
-					return true
-				}
+				// if option.Autocomplete {
+				// 	return true
+				// }
 
 				// new choices
 				for k, choice := range option.Choices {
@@ -199,7 +200,10 @@ func (dbot *DiscordBot) CommandNeedsUpdate(command *discordgo.ApplicationCommand
 				}
 
 				// if min/max values are different
-				if option.MinValue != registeredCommand.Options[i].MinValue || option.MaxValue != registeredCommand.Options[i].MaxValue {
+				newIsNull := option.MinValue == nil
+				oldIsNull := registeredCommand.Options[i].MinValue == nil
+				if newIsNull != oldIsNull || (!newIsNull && !oldIsNull && *option.MinValue != *registeredCommand.Options[i].MinValue) || option.MaxValue != registeredCommand.Options[i].MaxValue {
+					//log.Println("New min/max values for command", command.Name, "old min:", registeredCommand.Options[i].MinValue, "new min:", option.MinValue, "old max:", registeredCommand.Options[i].MaxValue, "new max:", option.MaxValue)
 					return true
 				}
 				// no new choices

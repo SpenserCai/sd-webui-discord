@@ -25,31 +25,19 @@ var PermissionTable = map[string][]string{
 	"admin": {"user_info", "cluster_status"},
 }
 
-type StableConfig struct {
-	Model          string  `json:"sd_model_checkpoint"`
-	Vae            string  `json:"sd_vae"`
-	Height         int64   `json:"height"`
-	Width          int64   `json:"width"`
-	Steps          int64   `json:"steps"`
-	CfgScale       float64 `json:"cfg_scale"`
-	NegativePrompt string  `json:"negative_prompt"`
-	Sampler        string  `json:"sampler"`
-	ClipSkip       int64   `json:"CLIP_stop_at_last_layers"`
-}
-
 type UserInfo struct {
-	Enable             bool         `json:"enable"`
-	IsPrivate          bool         `json:"is_private"`
-	Avatar             string       `json:"avatar"`
-	Name               string       `json:"name"`
-	Id                 string       `json:"id"`
-	Roles              string       `json:"roles"`
-	Created            string       `json:"created"`
-	StableConfig       StableConfig `json:"stable_config"`
-	CycleCredit        int          `json:"cycle_credit"`         // 周期credit
-	CreditUpdateCycle  string       `json:"credit_update_cycle"`  // credit更新周期 格式 1|H 1|D 1|W 1|M
-	CycleCreditUpdated string       `json:"cycle_credit_updated"` // 周期credit更新时间，用于判断是否需要更新credit
-	PlusCredit         int          `json:"plus_credit"`          // 充值的credit
+	Enable             bool                `json:"enable"`
+	IsPrivate          bool                `json:"is_private"`
+	Avatar             string              `json:"avatar"`
+	Name               string              `json:"name"`
+	Id                 string              `json:"id"`
+	Roles              string              `json:"roles"`
+	Created            string              `json:"created"`
+	StableConfig       config.StableConfig `json:"stable_config"`
+	CycleCredit        int                 `json:"cycle_credit"`         // 周期credit
+	CreditUpdateCycle  string              `json:"credit_update_cycle"`  // credit更新周期 格式 1|H 1|D 1|W 1|M
+	CycleCreditUpdated string              `json:"cycle_credit_updated"` // 周期credit更新时间，用于判断是否需要更新credit
+	PlusCredit         int                 `json:"plus_credit"`          // 充值的credit
 }
 
 type UserCenterService struct {
@@ -74,7 +62,7 @@ func (ucs *UserCenterService) GetUserInfo(id string) (*UserInfo, error) {
 		return nil, nil
 	}
 
-	stableConfig := StableConfig{}
+	stableConfig := config.StableConfig{}
 	if userInfo.StableConfig != "" {
 		err := json.NewDecoder(strings.NewReader(userInfo.StableConfig)).Decode(&stableConfig)
 		if err != nil {
@@ -129,7 +117,7 @@ func (ucs *UserCenterService) GetUserInfoList(ids []string) ([]*UserInfo, error)
 		return nil, err
 	}
 	for _, v := range dbUserInfos {
-		stableConfig := StableConfig{}
+		stableConfig := config.StableConfig{}
 		if v.StableConfig != "{}" {
 			err := json.NewDecoder(strings.NewReader(v.StableConfig)).Decode(&stableConfig)
 			if err != nil {
@@ -188,7 +176,7 @@ func (ucs *UserCenterService) SearchUserInfoList(page int, pageSize int, query m
 	}
 	userInfos := []*UserInfo{}
 	for _, v := range dbUserInfos {
-		stableConfig := StableConfig{}
+		stableConfig := config.StableConfig{}
 		if v.StableConfig != "{}" {
 			err := json.NewDecoder(strings.NewReader(v.StableConfig)).Decode(&stableConfig)
 			if err != nil {
@@ -507,7 +495,7 @@ func (ucs *UserCenterService) GetUserList(id string) ([]*UserInfo, error) {
 		return func() []*UserInfo {
 			var userInfos []*UserInfo
 			for _, v := range dbUserInfos {
-				stableConfig := StableConfig{}
+				stableConfig := config.StableConfig{}
 				if v.StableConfig != "{}" {
 					err := json.NewDecoder(strings.NewReader(v.StableConfig)).Decode(&stableConfig)
 					if err != nil {

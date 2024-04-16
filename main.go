@@ -142,6 +142,7 @@ func main() {
 	}
 	InitClusterManager()
 	go PrintEvent()
+	global.Features = global.InitFeatureGate()
 	disBot, err := dbot.NewDiscordBot(global.Config.Discord.Token, global.Config.Discord.ServerId)
 	if err != nil {
 		log.Println(err)
